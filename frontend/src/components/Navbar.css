@@ -1,0 +1,107 @@
+
+/* سبک کلی نوار ناوبری */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 50px;
+  color: #fff;
+  direction: rtl;
+  border-bottom: #444444;
+  border-style: solid;
+  font-family: myFirstFont;
+  font-size: larger;
+  text-decoration: none;
+}
+@font-face {
+  font-family: myFirstFont;
+  src: url("B-NAZANIN.TTF");
+}
+/* سبک دکمه‌های ورود و ثبت‌نام */
+.navbar__left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__button {
+  background-color: #fff;
+  color: #222;
+  border: none;
+  padding: 5px 20px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+.navbar__button:hover{
+  background-color: #357abd;
+}
+.navbar__button--inactive {
+  background-color: #0bd587;
+  color: #fff;
+}
+.navbar__button--inactive:hover {
+  background-color: #357abd;
+}
+
+/* سبک بخش جستجو */
+.navbar__search {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 5px;
+  margin-left: 15px;
+}
+
+.navbar__search-input {
+  padding: 5px 10px;
+  border: none;
+  outline: none;
+  border-radius: 15px;
+  width: 200px;
+  text-align: right;
+  background-color:#F5F5F5;
+}
+
+.navbar__search-button {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: #dbcfcf;
+  font-size: 18px;
+  margin-right: 175px;
+}
+
+/* سبک لینک‌های ناوبری */
+.navbar__right {
+  display: flex;
+  align-items: center;
+  text-decoration: none !important;
+}
+
+.navbar__link {
+  margin-left: 20px;
+  text-decoration: none;
+  color: black;
+}
+.navbar__link:hover{
+  background-color: #fff;
+  color: #0bd587;
+  transition:all 0.3s ease-in-out 0s ;
+  text-decoration: none;
+} 
+
+/* سبک لوگو */
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  color:black;
+}
+
+.navbar__logo img {
+  width: 36px;
+  height: 33px;
+  margin-left: 5px;
+}

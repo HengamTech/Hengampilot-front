@@ -1,0 +1,10 @@
+<a target="_blank" href="https://icons8.com/icon/UHfPUJ7HQWiY/soccer-ball">Soccer Ball</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-education-glyph-neue-16.png">
+<a target="_blank" href="https://icons8.com/icon/2797/home">Home</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+<a target="_blank" href="https://icons8.com/icon/1beHyTq0WPpj/lawyer">Lawyer</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+<a target="_blank" href="https://icons8.com/icon/47802/news">News</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-coins-hatch-16.png">
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-jobs-external-sbts2018-outline-sbts2018-16.png">
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-public-m_two_tone-16.png">
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-fridge with open door-m_sharp-16.png">
+<link type="image/png" sizes="16x16" rel="icon" href=".../icons8-travel diary-ios7-16.png">

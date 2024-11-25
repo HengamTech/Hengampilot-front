@@ -1,0 +1,72 @@
+/*.category-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}*/
+
+.category-card:hover {
+  transform: scale(1.05); /* بزرگتر شدن در هاور */
+    cursor: pointer;
+}
+
+.category-card  {
+  transition: color 0.3s ease;
+}
+
+.category-card:hover  {
+  color: #007bff; /* تغییر رنگ متن هنگام هاور */
+}
+
+.categories-container {
+    display: grid;
+   /* grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));*/
+    gap: 16px;
+    text-align: center;
+    grid-template-columns: repeat(6, 5fr);
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 90%;
+    margin-bottom: 2% !important;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border-radius: 34%;
+    background-color:white;
+    text-decoration: none;
+    margin-bottom: 5% !important;
+
+}
+.category-item:hover{
+    background-color: #63F3BA;
+}
+
+.category-icon {
+    font-size: 30px; /* Adjust as needed */
+    margin-bottom: 15px;
+
+}
+
+.category-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+.centered-header{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    position: absolute;
+    top:680px;
+    left:680px;
+
+}
+
+.row{
+    margin-bottom: 5%;
+}
+

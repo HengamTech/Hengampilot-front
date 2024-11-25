@@ -1,0 +1,50 @@
+.review-section1 {
+  text-align: center;
+  padding: 20px;
+}
+
+.review-grid1 {
+  display: grid;
+  grid-template-columns: 1fr; /* هر سطر شامل یک کارت با عرض کامل */
+  gap: 20px; /* فاصله بین کارت‌ها */
+  padding-bottom: 20px;
+}
+
+.review-card1 {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: right;
+  width: 100%; /* کارت‌ها تمام عرض سطر را می‌گیرند */
+}
+
+.user-image1 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.review-info1 {
+  margin-bottom: 10px;
+}
+
+.date1 {
+  color: gray;
+  font-size: 0.9em;
+}
+
+.stars .star1 {
+  font-size: 1.2em;
+  color: #ddd;
+}
+
+.stars .filled1 {
+  color: #ffc107;
+}
+
+.comment1 {
+  font-size: 0.95em;
+  line-height: 1.5;
+}

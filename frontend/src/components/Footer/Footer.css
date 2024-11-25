@@ -1,0 +1,145 @@
+.footer {
+    background-color: black;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    direction: ltr; /* Keep RTL for text alignment */
+    margin-top: 140px;
+    font-family: myFirstFont; 
+}
+@font-face {
+    font-family: myFirstFont;
+    src: url("B-NAZANIN.TTF");
+  }
+.footer-content {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    flex-direction: row;
+    margin-right: 5%;
+}
+
+.footer-section {
+    margin-bottom: 20px;
+    text-align: right;
+    flex: 1 1 100%; /* Make each section full width on smaller screens */
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.footer-logo img {
+    width: 111px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.footer-section h4 {
+    margin-bottom: 10px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin: 5px 0;
+}
+
+.footer-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+.footer-social-media {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.footer-social-media a {
+    color: #fff;
+    font-size: 24px;
+    transition: color 0.3s;
+}
+
+.footer-social-media a:hover {
+    color: #ddd;
+}
+
+.footer-bottom-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.footer-bottom {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Tablet view */
+@media (min-width: 600px) {
+    .footer {
+        padding: 60px;
+        justify-content: center; /* Center align on medium screens */
+    }
+
+    .footer-section {
+        flex: 1 1 45%; /* Two columns on tablet */
+        margin: 10px;
+        text-align: right;
+    }
+
+    .footer-logo {
+        justify-content: flex-end;
+    }
+}
+
+/* Desktop view */
+@media (min-width: 1024px) {
+    .footer {
+        padding: 15px 30px;
+        justify-content: flex-end;
+    }
+
+    .footer-section {
+        flex: 1 1 30%; /* Three columns on desktop */
+        text-align: right;
+    }
+
+    .footer-logo {
+        justify-content: flex-end;
+    }
+
+    .footer-bottom-container {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 40px;
+    }
+
+    .footer-social-media {
+        justify-content: flex-start;
+    }
+
+    .footer-bottom {
+        font-size: 14px;
+        text-align: right;
+    }
+}

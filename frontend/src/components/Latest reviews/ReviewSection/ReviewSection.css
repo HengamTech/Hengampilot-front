@@ -1,0 +1,117 @@
+.review-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.review-grid {
+  display: flex;
+  gap: 60px;
+  overflow-x: auto; /* اضافه کردن اسکرول افقی */
+  padding-bottom: 20px;
+  justify-content: center; /* برای قرارگیری کارت‌ها در مرکز */
+  margin-top: 15px;
+}
+
+.review-card {
+  width: 250px; /* عرض ثابت کارت‌ها */
+  height: 224px; /* ارتفاع ثابت کارت‌ها */
+  background-color:white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: right;
+  flex-shrink: 0; /* جلوگیری از تغییر عرض کارت‌ها */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* فاصله دهی یکنواخت بین عناصر کارت */
+  padding-bottom: 40px; /* فضای اضافی برای دکمه‌ها در پایین کارت*/
+}
+.review-detail{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.like-dislike-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.like-button, .dislike-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.like-button:hover, .dislike-button:hover {
+  background-color: #e0e0e0;
+}
+
+
+.user-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.review-info {
+  margin-bottom: 10px;
+}
+.read-more-button{
+  background-color: #28a745;
+  color:white;
+  padding:8px 10px;
+  border-radius:8%;
+  border:none;
+}
+.date {
+  color: gray;
+  font-size: 0.9em;
+}
+
+.stars .star {
+  font-size: 1.2em;
+  color: #ddd;
+}
+
+.stars .filled {
+  color: #ffc107;
+}
+
+.product-image-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.product-image {
+  width: 50px;
+  height: 50px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+
+
+.view-more-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.view-more-button:hover {
+  background-color: #218838;
+}

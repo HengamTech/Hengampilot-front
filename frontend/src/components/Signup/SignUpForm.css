@@ -1,0 +1,154 @@
+/* General page layout */
+.login-page {
+    display: flex;
+    min-height: 70vh;
+    width: 100%;
+    background-color: white;
+    font-family: sans-serif;
+    margin-top: 5%;
+}
+
+@font-face {
+    font-family: Calibri !important;
+}
+
+/* Left section with the illustration */
+.login-illustration_1 {
+    flex: 1;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 3%;
+}
+
+.login-illustration_1 img {
+    height: auto;
+    border-radius: 10px;
+    max-width: 100% !important;
+}
+
+/* Right section with the login form */
+.login-form-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+
+}
+
+.login-form {
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+    font-size: 1.8rem;
+    color: #4a4a4a;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    color: #707070;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: #707070;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.input-group input {
+    width: 95%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #4a90e2;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.remember-me input {
+    margin-right: 10px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    background-color: #0bd587;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #357abd;
+}
+
+.forgot-password {
+    display: block;
+    text-align: right;
+    margin-top: 10px;
+    color: #4a90e2;
+}
+
+.create-account {
+    text-align: center;
+    text-decoration: none;
+}
+
+.create-account p {
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.create-account a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.social-login p {
+    margin-bottom: 10px;
+}
+
+.social-icons a {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.social-icons img {
+    width: 30px;
+    height: 30px;
+}

@@ -1,0 +1,138 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+@font-face {
+    font-family: myFirstFont;
+    src: url("B-NAZANIN.TTF");
+}
+/* Main login page container */
+.login-page {
+    display: flex;
+    min-height: 50vh;
+    align-items: center;
+    justify-content: center;
+    padding:1rem;
+    background-color: #f5f7fa;
+    font-family: myFirstFont;
+}
+
+/* Left Section - Image */
+.login-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.login-illustration img {
+    max-width: 70% !important;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Right Section - Login Form */
+.login-form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    max-width: 600px;
+    width: 100%;
+}
+
+.login-title {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.forgot-password {
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.create-account {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.social-icons a {
+    margin: 0 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .login-illustration, .login-form-container {
+        flex: unset;
+        width: 100%;
+    }
+
+    .login-illustration img {
+        width: 80%;
+        margin-bottom: 1.5rem;
+    }
+}

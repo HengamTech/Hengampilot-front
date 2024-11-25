@@ -1,0 +1,61 @@
+  .review-card2 {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: right;
+    flex-shrink: 0; /* جلوگیری از تغییر عرض کارت‌ها */
+  }
+  
+  
+  .review-detail2 {
+    width: 100%;
+    max-width: 800px;
+    
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .review-card-horizontal2 {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-image2 {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .review-info2 {
+    flex: 1;
+  }
+  
+  .review-info2 h4 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .date2 {
+    color: #888;
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  .stars2 {
+    color: #FFD700;
+    font-size: 20px;
+  }
+  
+  .comment2 {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
