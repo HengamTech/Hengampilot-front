@@ -1,6 +1,6 @@
 import React from "react";
 import './category.css';
-
+import { Link } from "react-router-dom"; // Import Link for navigation
 const categories = [
   {
     icon: "🍴",
@@ -21,6 +21,7 @@ const categories = [
   {
     icon: "🏠",
     text: "خدمات منزل",
+    link: "/Home" // Add a link for "خدمات منزل"
   },
   {
     icon: "✈️",
@@ -52,13 +53,21 @@ const categories = [
   },
 ];
 
+
 const Categories = () => {
+
+    const handleClick = (link) => {
+      if (link) {
+        window.location.href = link; // هدایت به سایت خارجی
+      }
+    };
   return (
+
     <div className="container mt-4">
       <h2 className="text-center mb-5">دسته‌بندی‌ها</h2>
       <div className="row text-center">
         {categories.map((category, index) => (
-          <div className="category-card col-6 col-md-2 mb-3" key={index}>
+          <div className="category-card col-6 col-md-2 mb-3" key={index}  onClick={() => handleClick(category.link)} >
             <div className="category-card-inner shadow p-3 mb-3 bg-white rounded h-100 hover-scale">
               <span
                 className="fs-1 mb-2"

@@ -67,10 +67,8 @@ function LoginPage2() {
          if (response.data.token) {
                 // Save token to localStorage (or send via navigation)
                 localStorage.setItem('token', response.data.token);
-
                 // Navigate to login page
                 navigate("/login", { state: { token: response.data.token } }); // Pass token in state
-
             }
          navigate("/login")
     } catch (error) {

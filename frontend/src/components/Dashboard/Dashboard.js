@@ -9,16 +9,18 @@ import {
   faUser,
   faCrown,
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const UserDashboard = () => {
   const userData = {
-    firstName: "بهرام",
-    lastName: "دیانتی",
-    username: "bahramd1",
-    email: "bahramd1@example.com",
-    address: "تهران، خیابان آزادی",
+    id: 1,
+    firstName: "علی",
+    lastName: "رضایی",
+    username: "ali.rezaei",
+    email: "ali@example.com",
+    address: "تهران، خیابان ولیعصر",
     reviewsCount: 5,
-    accountType: "آزاد", // یا "پرمیوم"
+    accountType: "پرمیوم",
   };
 
   const accountIcon =
@@ -32,7 +34,7 @@ const UserDashboard = () => {
     <div className="container-fluid" style={{ direction: "rtl" }}>
       <div className="row min-vh-10">
         {/* Sidebar */}
-        <aside className="col-4 col-md-3 bg-dark text-white p-3">
+        <aside className="col-12 col-md-3 bg-dark text-white p-3">
           <div className="text-center mb-4">
             <img
               src="https://via.placeholder.com/80"
@@ -69,10 +71,13 @@ const UserDashboard = () => {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="#" className="nav-link text-white d-flex align-items-center gap-2">
+                  <Link
+                    to={`/submit/${userData.id}`}
+                    className="nav-link text-white d-flex align-items-center gap-2"
+                  >
                     <FontAwesomeIcon icon={faCommentDots} />
                     ثبت نظر
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
                   <a href="#" className="nav-link text-white d-flex align-items-center gap-2">
@@ -95,40 +100,40 @@ const UserDashboard = () => {
         <main className="col-12 col-md-9 bg-light p-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h4>داشبورد کاربری</h4>
-            <a href="#" className="btn btn-outline-primary">
+            <Link to="/" className="btn btn-outline-primary">
               بازگشت به صفحه اصلی
-            </a>
+            </Link>
           </div>
 
           <div className="card mb-4 p-3">
             <h5 className="card-title">مشخصات کاربر</h5>
             <div className="card-body">
               <div className="row mb-3">
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>نام:</strong> {userData.firstName}
                 </div>
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>نام خانوادگی:</strong> {userData.lastName}
                 </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>یوزرنیم:</strong> {userData.username}
                 </div>
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>ایمیل:</strong> {userData.email}
                 </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>آدرس:</strong> {userData.address}
                 </div>
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>تعداد نظرات ثبت‌شده:</strong> {userData.reviewsCount}
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-12 col-md-6">
                   <strong>نوع حساب کاربری:</strong> {userData.accountType}
                 </div>
               </div>

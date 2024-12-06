@@ -13,8 +13,8 @@
 }
 
 .review-card {
-  width: 250px; /* عرض ثابت کارت‌ها */
-  height: 224px; /* ارتفاع ثابت کارت‌ها */
+  width: 279px; /* عرض ثابت کارت‌ها */
+  height: 280px; /* ارتفاع ثابت کارت‌ها */
   background-color:white;
   padding: 15px;
   border-radius: 8px;
@@ -69,6 +69,9 @@
   border-radius:8%;
   border:none;
 }
+.read-more-button:hover{
+  background-color: #218838;
+}
 .date {
   color: gray;
   font-size: 0.9em;
@@ -114,4 +117,8 @@
 
 .view-more-button:hover {
   background-color: #218838;
+}
+.row{
+  margin-bottom: 2%;
+  margin-top: 2%;
 }
