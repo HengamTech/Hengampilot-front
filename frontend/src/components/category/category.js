@@ -5,52 +5,54 @@ const categories = [
   {
     icon: "🍴",
     text: "غذا، رستوران، کافه",
+    link: "/foods",
   },
   {
     icon: "⚽",
     text: "ورزش",
+    link: "/sports",
   },
   {
     icon: "📺",
     text: "لوازم منزل",
+    link: "/furnishings",
   },
   {
     icon: "🎓",
     text: "آموزشی",
+    link: "education",
   },
   {
     icon: "🏠",
     text: "خدمات منزل",
-    link: "/Home" // Add a link for "خدمات منزل"
+    link: "/Home-services", // Add a link for "خدمات منزل"
   },
   {
     icon: "✈️",
     text: "خدمات مسافرتی",
+    link: "travel-services",
   },
   {
     icon: "⚖️",
     text: "خدمات حقوقی",
+    link: "Legal-services",
   },
   {
     icon: "📰",
     text: "رسانه و اخبار",
+    link: "news-media",
   },
   {
     icon: "💰",
     text: "خدمات مالی",
+    link: "Financial-services",
   },
   {
     icon: "🚶",
     text: "خدمات عمومی",
+    link: "general-services",
   },
-  {
-    icon: "",
-    text: "",
-  },
-  {
-    icon: "",
-    text: "",
-  },
+
 ];
 
 
