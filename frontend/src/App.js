@@ -13,15 +13,20 @@ import PilotHeader from './components/hero/hero';
 import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
 import UserDashboard from './components/Dashboard/Dashboard'
+/*
 import HomeAndGardenPage from './components/Home/Home';
 import AdminDashboard from './components/Dashboard/Dashboard_admin';
 import UserManagement from './components/User Management/UserManagement';
 import UserCommentsPage from './components/User Management/UserCommentsPage';
 import EditUserForm from './components/EditUserForm/EditUserForm';
+/*
 import SettingsPage from './components/Settings/Settings';
 import CompanyDetailPage from './components/CompaniesData/CompanyDetailPage';
 import ReviewManagementPage from './components/Dashboard/managementreview';
 import website_management from './components/Dashboard/WebsiteManagement/WebsiteManagement';
+ */
+import NotFoundPage from './components/404 page/404'
+
 function App() {
   return (
     <Router>
@@ -40,14 +45,14 @@ function App() {
             </>
           }
         />
-        <Route
-          path="Home"
-          element={
-            <>
-            <HomeAndGardenPage/>
-            </>
-            }
-          />
+        {/*<Route*/}
+        {/*  path="Home"*/}
+        {/*  element={*/}
+        {/*    <>*/}
+        {/*    <HomeAndGardenPage/>*/}
+        {/*    </>*/}
+        {/*    }*/}
+        {/*  />*/}
         <Route path='/Dashboard'
             element={
             <>
@@ -57,22 +62,22 @@ function App() {
             </>
           }
           />
-           <Route path="/companies/:id" element={
-                    <>
-                    <CompanyDetailPage/>
-                    </>
-                    }
-             />
+           {/*<Route path="/companies/:id" element={*/}
+           {/*         <>*/}
+           {/*         <CompanyDetailPage/>*/}
+           {/*         </>*/}
+           {/*         }*/}
+           {/*  />*/}
 
-          <Route path='/AdminDashboard'
-          element={
-            <>
-            <Navbar/>
-            <AdminDashboard/>
-            <Footer/>
-            </>
-          }
-          />
+          {/*<Route path='/AdminDashboard'*/}
+          {/*element={*/}
+          {/*  <>*/}
+          {/*  <Navbar/>*/}
+          {/*  <AdminDashboard/>*/}
+          {/*  <Footer/>*/}
+          {/*  </>*/}
+          {/*}*/}
+          {/*/>*/}
           <Route path="/submit/:id" element={
            <>
            <Navbar/>            
@@ -80,58 +85,58 @@ function App() {
             <Footer/>
             </>
             } />
-                <Route path="/edit-profile/:userId" element={<EditUserForm />} />
+                {/*<Route path="/edit-profile/:userId" element={<EditUserForm />} />*/}
 
           
-        <Route path="/UserManagement" element={
-          <>
-          <Navbar/>
-          <UserManagement/>
-          <Footer/>
-          </>
-        }
-          />
-        <Route path="/user-comments/:userId" element={
-          <>          <Navbar/>
-          <UserCommentsPage/>
-          <Footer/> 
-          </>
+        {/*<Route path="/UserManagement" element={*/}
+        {/*  <>*/}
+        {/*  <Navbar/>*/}
+        {/*  <UserManagement/>*/}
+        {/*  <Footer/>*/}
+        {/*  </>*/}
+        {/*}*/}
+        {/*  />*/}
+        {/*<Route path="/user-comments/:userId" element={*/}
+        {/*  <>          <Navbar/>*/}
+        {/*  <UserCommentsPage/>*/}
+        {/*  <Footer/> */}
+        {/*  </>*/}
 
-          }/>
-        <Route path="/edit-user/:userId" 
-        element={
-        <>
-        <Navbar/>
-        <EditUserForm/>
-        <Footer/>
-        </>
-        }
+        {/*  }/>*/}
+        {/*<Route path="/edit-user/:userId"*/}
+        {/*element={*/}
+        {/*<>*/}
+        {/*<Navbar/>*/}
+        {/*<EditUserForm/>*/}
+        {/*<Footer/>*/}
+        {/*</>*/}
+        {/*}*/}
 
-        />
-        <Route path='/ReviewManagement'
-        element={
-          <>
-          <Navbar/>
-          <ReviewManagementPage/>
-          <Footer/>
-          </>
-        }
-        />
-             <Route path='/Settings'
-             element={
-              <>
-              <Navbar/>
-              <SettingsPage/>
-              <Footer/>
-              
-              </>
+        {/*/>*/}
+        {/*<Route path='/ReviewManagement'*/}
+        {/*element={*/}
+        {/*  <>*/}
+        {/*  <Navbar/>*/}
+        {/*  <ReviewManagementPage/>*/}
+        {/*  <Footer/>*/}
+        {/*  </>*/}
+        {/*}*/}
+        {/*/>*/}
+        {/*     <Route path='/Settings'*/}
+        {/*     element={*/}
+        {/*      <>*/}
+        {/*      <Navbar/>*/}
+        {/*      <SettingsPage/>*/}
+        {/*      <Footer/>*/}
+
+        {/*      </>*/}
 
 
-             }
-             
+        {/*     }*/}
 
-             />
-          
+
+        {/*     />*/}
+
        <Route path='WebsiteManagement'
         element={
           <>
@@ -198,6 +203,17 @@ function App() {
         />
 
         {/* سایر مسیرها */}
+          <Route
+              path="*"
+              element={
+                  <>
+                      <Navbar />
+                      <NotFoundPage />
+                      <Footer />
+                  </>
+              }
+          />
+
       </Routes>
     </Router>
   );
