@@ -3,7 +3,7 @@ import './SignUpForm.css';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
-function LoginPage2() {
+function SignUpPage() { // تغییر نام تابع به SignUpPage برای وضوح بیشتر
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -50,69 +50,46 @@ function LoginPage2() {
 
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    // Validate the form before sending the request
-    if (!validate()) return;  // If validation fails, do not send the request
+        // Validate the form before sending the request
+        if (!validate()) return;  // If validation fails, do not send the request
 
-    try {
-        // Sending POST request to the API to create a user
-        const response = await axios.post('http://127.0.0.1:8000/user_management/users/', {
-            "username": username,  // Sending username
-            "email": email,        // Sending email
-            "password": password,  // Sending password
-        });
-
-        // Handle success response
-         if (response.data.token) {
-                // Save token to localStorage (or send via navigation)
-                localStorage.setItem('token', response.data.token);
-                // Navigate to login page
-                navigate("/login", { state: { token: response.data.token } }); // Pass token in state
-            }
-         navigate("/login")
-    } catch (error) {
-        // Handle API errors
-        if (error.response) {
-            console.error('Error Response:', error.response);
-            // Display error message from API
-            setErrors({
-                api: error.response.data.detail || 'Error sending request to server',
+        try {
+            // Sending POST request to the API to create a user
+            const response = await axios.post('http://127.0.0.1:8000/user_management/users/', {
+                "username": username,  // Sending username
+                "email": email,        // Sending email
+                "password": password,  // Sending password
             });
-        } else {
-            console.error('Request Error:', error.message);
-            setErrors({ api: 'Error connecting to the server' });
+
+            // Handle success response
+            // فرض بر این است که پاسخ شامل token و user_id است
+            if (response.data.token && response.data.user_id) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('username', username);
+                localStorage.setItem('userId', response.data.user_id); // ذخیره userId
+
+                navigate("/dashboard"); // هدایت به داشبورد پس از ثبت‌نام موفق
+            } else {
+                // اگر پاسخ شامل token و user_id نباشد، نیاز به دریافت آن‌ها از طریق درخواست جداگانه دارید
+                // فرض بر این است که سرور پس از ثبت‌نام موفق به صورت خودکار کاربر را لاگین می‌کند و token و user_id را برمی‌گرداند
+                navigate("/login");
+            }
+        } catch (error) {
+            // Handle API errors
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                // Display error message from API
+                setErrors({
+                    api: error.response.data.detail || 'Error sending request to server',
+                });
+            } else {
+                console.error('Request Error:', error.message);
+                setErrors({ api: 'Error connecting to the server' });
+            }
         }
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    };
 
     return (
         <div className="login-page">
@@ -124,7 +101,7 @@ function LoginPage2() {
                 />
             </div>
 
-            {/* Right Section with Login Form */}
+            {/* Right Section with Sign Up Form */}
             <div className="login-form-container">
                 <div dir="rtl" className="login-form">
                     <h2 className="login-title">به هنگام پایلت خوش آمدید</h2>
@@ -165,12 +142,13 @@ function LoginPage2() {
                             />
                             {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
                         </div>
+                        {errors.api && <p style={{ color: 'red' }}>{errors.api}</p>}
                         <button type="submit" className="login-btn">
                             ثبت نام
                         </button>
                     </form>
                     <div className="create-account">
-                        <p>قبلا ثبت نام کردید؟   <a href="http://localhost:3000/login">  ورود </a></p>
+                        <p>قبلا ثبت نام کردید؟ <a href="/login">ورود</a></p>
                     </div>
                 </div>
             </div>
@@ -178,7 +156,4 @@ function LoginPage2() {
     );
 }
 
-export default LoginPage2;
-
-
-
+export default SignUpPage;

@@ -10,7 +10,6 @@ function LoginPage() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // اعتبارسنجی اطلاعات ورودی
     const validate = () => {
         const errors = {};
         if (!username) errors.username = 'نام کاربری الزامی است';
@@ -19,29 +18,26 @@ function LoginPage() {
         return Object.keys(errors).length === 0;
     };
 
-    // مدیریت ثبت فرم
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
         setLoading(true);
         try {
-            // درخواست به سرور برای دریافت توکن
+            // درخواست ورود به سرور
             const response = await axios.post('http://127.0.0.1:8000/api/token/', {
                 username,
                 password,
             });
 
             if (response.status === 200) {
-                // ذخیره توکن در localStorage
-                const token = response.data.token;
-                localStorage.setItem('token', token);
+                const { access: token, user_id } = response.data; // فرض بر این است که سرور user_id را برمی‌گرداند
+                localStorage.setItem('token', token); // ذخیره توکن
+                localStorage.setItem('username', username);
+                localStorage.setItem('userId', user_id); // ذخیره userId
 
-                // تنظیم توکن در هدر درخواست‌ها
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-                // ریدایرکت به داشبورد
-                navigate('/dashboard');
+                navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
             }
         } catch (error) {
             setErrors({ login: 'ورود ناموفق بود، لطفاً دوباره تلاش کنید!' });
@@ -97,7 +93,7 @@ function LoginPage() {
                         </button>
                     </form>
                     <div className="create-account">
-                        <p>ثبت نام نکردی؟ <a href="http://localhost:3000/signup">حساب کاربری درست کن</a></p>
+                        <p>ثبت نام نکردی؟ <a href="/signup">حساب کاربری درست کن</a></p>
                     </div>
                 </div>
             </div>
@@ -106,4 +102,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
