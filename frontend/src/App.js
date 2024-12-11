@@ -13,11 +13,15 @@ import PilotHeader from './components/hero/hero';
 import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
 import UserDashboard from './components/Dashboard/Dashboard'
-import HomeAndGardenPage from './HomeCategory';
-import AdminDashboard from "./components/Dashboard/Dashboard-Admin";
-import UserManagement from "./components/UserManagement/UserManagement";
-import UserCommentsPage from "./components/UserManagement/UserCommnetPage";
+import HomeAndGardenPage from './components/Home/Home';
+import AdminDashboard from './components/Dashboard/Dashboard_admin';
+import UserManagement from './components/User Management/UserManagement';
+import UserCommentsPage from './components/User Management/UserCommentsPage';
 import EditUserForm from './components/EditUserForm/EditUserForm';
+import SettingsPage from './components/Settings/Settings';
+import CompanyDetailPage from './components/CompaniesData/CompanyDetailPage';
+import ReviewManagementPage from './components/Dashboard/managementreview';
+import website_management from './components/Dashboard/WebsiteManagement/WebsiteManagement';
 function App() {
   return (
     <Router>
@@ -29,7 +33,8 @@ function App() {
             <>
               <Navbar />
               <PilotHeader/>
-                    <Categories/>
+          
+                    <Categories/>                  
               <ReviewSection/>
               <Footer />
             </>
@@ -46,12 +51,19 @@ function App() {
         <Route path='/Dashboard'
             element={
             <>
-            <Navbar/>
+            <Navbar/>   
             <UserDashboard/>
             <Footer />
             </>
           }
           />
+           <Route path="/companies/:id" element={
+                    <>
+                    <CompanyDetailPage/>
+                    </>
+                    }
+             />
+
           <Route path='/AdminDashboard'
           element={
             <>
@@ -63,13 +75,14 @@ function App() {
           />
           <Route path="/submit/:id" element={
            <>
-           <Navbar/>
+           <Navbar/>            
             <ReviewForm/>
             <Footer/>
             </>
             } />
+                <Route path="/edit-profile/:userId" element={<EditUserForm />} />
 
-
+          
         <Route path="/UserManagement" element={
           <>
           <Navbar/>
@@ -81,11 +94,11 @@ function App() {
         <Route path="/user-comments/:userId" element={
           <>          <Navbar/>
           <UserCommentsPage/>
-          <Footer/>
+          <Footer/> 
           </>
 
           }/>
-        <Route path="/edit-user/:userId"
+        <Route path="/edit-user/:userId" 
         element={
         <>
         <Navbar/>
@@ -95,9 +108,37 @@ function App() {
         }
 
         />
+        <Route path='/ReviewManagement'
+        element={
+          <>
+          <Navbar/>
+          <ReviewManagementPage/>
+          <Footer/>
+          </>
+        }
+        />
+             <Route path='/Settings'
+             element={
+              <>
+              <Navbar/>
+              <SettingsPage/>
+              <Footer/>
+              
+              </>
 
 
+             }
+             
 
+             />
+          
+       <Route path='WebsiteManagement'
+        element={
+          <>
+          <website_management/>
+          </>
+        }
+       />
 
 
         {/* سایر صفحات شامل نوبار و فوتر به همراه محتوای مخصوص همان صفحه */}
