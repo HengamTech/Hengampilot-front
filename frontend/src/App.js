@@ -18,6 +18,8 @@ import AdminDashboard from "./components/Dashboard/Dashboard-Admin";
 import UserManagement from "./components/UserManagement/UserManagement";
 import UserCommentsPage from "./components/UserManagement/UserCommnetPage";
 import EditUserForm from './components/EditUserForm/EditUserForm';
+import NotFoundPage from './components/404 page/404';
+
 function App() {
   return (
     <Router>
@@ -157,6 +159,17 @@ function App() {
         />
 
         {/* سایر مسیرها */}
+          <Route
+              path="*"
+              element={
+                  <>
+                      <Navbar />
+                      <NotFoundPage />
+                      <Footer />
+                  </>
+              }
+          />
+
       </Routes>
     </Router>
   );
