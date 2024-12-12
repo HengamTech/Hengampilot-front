@@ -108,7 +108,7 @@ const SettingsPage = () => {
                   className="nav-link text-white d-flex align-items-center gap-2"
                   onClick={() => handlePageChange("usermanagement")}
                 >
-                  <FontAwesomeIcon icon={faChartBar} />
+                  <FontAwesomeIcon icon={faUsers} />
                   مدیریت کاربران
                 </a>
               </li>
@@ -118,7 +118,7 @@ const SettingsPage = () => {
                   className="nav-link text-white d-flex align-items-center gap-2"
                   onClick={() => handlePageChange("Reviewmanagement")}
                 >
-                  <FontAwesomeIcon icon={faChartBar} />
+                  <FontAwesomeIcon icon={faCommentDots} />
                   مدیریت نظرات
                 </a>
               </li>

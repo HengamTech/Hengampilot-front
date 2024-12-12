@@ -93,8 +93,9 @@ const handlePageChange = (page) => {
         {/* Sidebar */}
         <aside className="col-12 col-md-3 bg-dark text-white p-3">
           <div className="text-center mb-4">
-            <h4>{adminData.name}</h4>
-            <p>{adminData.role}</p>
+          <h4>مدیر سیستم</h4>
+            <p>نقش: مدیر</p>
+
           </div>
           <nav>
             <ul className="nav flex-column">
