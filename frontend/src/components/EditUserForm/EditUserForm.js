@@ -103,7 +103,7 @@ const EditUserForm = () => {
 
             if (response.status === 200) {
                 alert('اطلاعات با موفقیت به‌روزرسانی شد.');
-                navigate('/dashboard'); // هدایت به داشبورد بعد از ویرایش
+                navigate('/login'); // هدایت به داشبورد بعد از ویرایش
             } else {
                 alert('خطا در به‌روزرسانی اطلاعات.');
             }
