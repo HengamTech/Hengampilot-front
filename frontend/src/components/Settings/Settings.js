@@ -122,7 +122,7 @@ const SettingsPage = () => {
                   مدیریت نظرات
                 </a>
               </li>
-              <li className="nav-item mb-3">
+             {/* <li className="nav-item mb-3">
                 <a
                   href="#"
                   className="nav-link text-white d-flex align-items-center gap-2"
@@ -132,7 +132,7 @@ const SettingsPage = () => {
                   مدیریت سایت
                 </a>
               </li>
-             
+             */}
               <li className="nav-item mb-3">
                 <a
                   href="#"
