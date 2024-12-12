@@ -284,8 +284,8 @@ const ReviewManagementPage = () => {
 
           {/* جدول نظرات */}
           <div className="table-responsive">
-            <table className="table table-bordered table-hover align-middle">
-              <thead className="table-dark">
+            <table className="table table-striped table-bordered table-hover align-middle text-center">
+              <thead>
                 <tr>
                   <th scope="col">نام کاربری</th>
                   <th scope="col">دسته‌بندی</th>

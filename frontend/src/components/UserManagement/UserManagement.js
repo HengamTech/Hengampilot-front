@@ -191,10 +191,10 @@ const handlePageChange = (page) => {
           {/* User Table */}
           <div className="card p-3">
             <h5>لیست کاربران</h5>
-            <table className="table table-striped mt-3">
+            <table className="table table-bordered table-striped mt-3 text-center">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th>ردیف</th>
                   <th>نام</th>
                   <th>نام خانوادگی</th>
                   <th>ایمیل</th>

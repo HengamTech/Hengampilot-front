@@ -193,10 +193,10 @@ const handlePageChange = (page) => {
           {/* Recent Activity */}
           <div className="mt-5">
             <h5>آخرین فعالیت‌ها</h5>
-            <table className="table table-striped">
+            <table className="table table-striped table-bordered text-center">
               <thead>
                 <tr>
-                  <th>#</th>
+                  <th>ردیف</th>
                   <th>کاربر</th>
                   <th>عملیات</th>
                   <th>تاریخ</th>
