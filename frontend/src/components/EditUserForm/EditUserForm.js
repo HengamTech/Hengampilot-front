@@ -9,8 +9,8 @@ const EditUserForm = () => {
     
     // state برای ذخیره داده‌های فرم
     const [formData, setFormData] = useState({
-        //name: '',
-        //lastName: '',
+        first_name: '',
+        last_name: '',
         email: '',
         username: '',
         password: '',
@@ -41,8 +41,8 @@ const EditUserForm = () => {
 
                 // فرض بر این است که داده‌های کاربر شامل name، lastName، email، username و password است
                 setFormData({
-                    //name: response.data.name || '',
-                    //lastName: response.data.lastName || '',
+                    first_name: response.data.first_name || '',
+                    last_name: response.data.last_name || '',
                     email: response.data.email || '',
                     username: response.data.username || '',
                     password: response.data.password || '', // بهتر است پسورد در واکشی نمایش داده نشود
@@ -88,8 +88,8 @@ const EditUserForm = () => {
             const response = await axios.put(
                 `http://127.0.0.1:8000/user_management/users/${userId}/`,
                 {
-                    //name: formData.name,
-                    //lastName: formData.lastName,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
                     email: formData.email,
                     username: formData.username,
                     password: formData.password, // توجه داشته باشید که ارسال پسورد به صورت ساده ممکن است امنیتی نباشد
@@ -143,7 +143,36 @@ const EditUserForm = () => {
                 {/* بخش فرم */}
                 <div className="col-md-6" dir="rtl">
                     <form onSubmit={handleSubmit}>
-                        
+                    <div className="mb-3">
+                            <label htmlFor="first_name" className="form-label">
+                                نام
+                            </label>
+                            <input
+                                type="first_name"
+                                className="form-control"
+                                id="first_name"
+                                name="first_name"
+                                value={formData.first_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                    <div className="mb-3">
+                            <label htmlFor="last_name" className="form-label">
+                                نام خانوادگی
+                            </label>
+                            <input
+                                type="last_name"
+                                className="form-control"
+                                id="last_name"
+                                name="last_name"
+                                value={formData.last_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">
                                 ایمیل
@@ -161,7 +190,7 @@ const EditUserForm = () => {
 
                         <div className="mb-3">
                             <label htmlFor="username" className="form-label">
-                                یوزرنیم
+                                نام کاربری
                             </label>
                             <input
                                 type="text"
