@@ -94,17 +94,7 @@ const CompanyDetailPage = () => {
 
   return (
     <div>
-      {/* Header */}
-      <header className="bg-dark text-white py-3">
-        <div className="container d-flex justify-content-between align-items-center">
-          <h1 className="text-uppercase m-0">Trustpilot</h1>
-          <input
-            type="text"
-            className="form-control w-50"
-            placeholder="Search for companies or categories..."
-          />
-        </div>
-      </header>
+     
 
       {/* Company Details */}
       <div className="container my-5" dir="rtl">
@@ -242,21 +232,6 @@ const CompanyDetailPage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4">
-        <div className="container text-center">
-          <p>© 2024 Trustpilot. All rights reserved.</p>
-          <p>
-            <a href="#" className="text-white text-decoration-none">
-              Terms & Conditions
-            </a>{" "}
-            |{" "}
-            <a href="#" className="text-white text-decoration-none">
-              Privacy Policy
-            </a>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
