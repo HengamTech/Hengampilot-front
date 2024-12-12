@@ -37,7 +37,7 @@ function LoginPage() {
                 localStorage.setItem('userId', user_id); // ذخیره userId
 
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
+                navigate('/login'); // هدایت به داشبورد بدون ارسال state
             }
         } catch (error) {
             setErrors({ login: 'ورود ناموفق بود، لطفاً دوباره تلاش کنید!' });
