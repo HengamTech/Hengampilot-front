@@ -52,7 +52,9 @@ function App() {
           path="Home"
           element={
             <>
+            <Navbar/>
             <HomeAndGardenPage/>
+            <Footer/>
             </>
             }
          />
