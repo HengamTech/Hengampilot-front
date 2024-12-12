@@ -93,7 +93,7 @@ const handlePageChange = (page) => {
                   مدیریت نظرات
                 </a>
               </li>
-              <li className="nav-item mb-3">
+             {/* <li className="nav-item mb-3">
                 <a
                   href="#"
                   className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageSite" ? "bg-primary" : ""}`}
@@ -103,17 +103,7 @@ const handlePageChange = (page) => {
                   مدیریت سایت
                 </a>
               </li>
-              <li className="nav-item mb-3">
-                <a
-                  href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageReports" ? "bg-primary" : ""}`}
-                  onClick={() => handlePageChange("manageReports")}
-                >
-                  <FontAwesomeIcon icon={faChartBar} />
-                  مدیریت گزارش ها
-                </a>
-              </li>
-              
+             */}
  
               <li className="nav-item mb-3">
                 <a href="#" className="nav-link text-white d-flex align-items-center gap-2"
