@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Tab, Form, Button, Table, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartBar, faUsers, faCommentDots, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faChartBar, faUsers, faCommentDots, faCog, faSignOutAlt, faTrash, faEyeSlash, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
@@ -77,8 +77,10 @@ const SettingsPage = () => {
 
   let displayedCommentText = fullCommentText;
   let reviewId = 4;
+  let showMore = false;
   if (fullCommentText.length > 100) {
     displayedCommentText = fullCommentText.substring(0, 100);
+    showMore = true;
   }
 
   return (
@@ -122,17 +124,7 @@ const SettingsPage = () => {
                   مدیریت نظرات
                 </a>
               </li>
-             {/* <li className="nav-item mb-3">
-                <a
-                  href="#"
-                  className="nav-link text-white d-flex align-items-center gap-2"
-                  onClick={() => setActiveTab("pages")}
-                >
-                  <FontAwesomeIcon icon={faChartBar} />
-                  مدیریت سایت
-                </a>
-              </li>
-             */}
+             
               <li className="nav-item mb-3">
                 <a
                   href="#"
@@ -287,14 +279,23 @@ const SettingsPage = () => {
                 <td>کاربرA</td>
                 <td>تخلف در پروفایل</td>
                 <td>2024-05-01</td>
-                <td><Button variant="warning" size="sm">بلاک</Button></td>
+                <td>
+                  {/* بن کردن یوزر با آیکون faUserSlash */} 
+                  <Button variant="warning" size="sm">
+                    <FontAwesomeIcon icon={faUserSlash} /> بن کردن یوزر
+                  </Button>
+                </td>
               </tr>
               <tr>
                 <td>2</td>
                 <td>کاربرB</td>
                 <td>نام کاربری نامناسب</td>
                 <td>2024-05-02</td>
-                <td><Button variant="warning" size="sm">بلاک</Button></td>
+                <td>
+                  <Button variant="warning" size="sm">
+                    <FontAwesomeIcon icon={faUserSlash} /> بن کردن یوزر
+                  </Button>
+                </td>
               </tr>
             </tbody>
           </Table>
@@ -319,14 +320,13 @@ const SettingsPage = () => {
                   <td>متن کامنت</td>
                   <td>
                     {(()=>{
-                      const fullText = "Inception is, without a doubt, one of my favourite movies of all time. Directed by Christopher Nolan, this film delivers a unique blend of mind-bending storytelling, impeccable performances, and stunning visuals that have left a lasting impression on me.";
-                      if (fullText.length > 100) {
-                        const shortText = fullText.substring(0,100);
+                      if (fullCommentText.length > 100) {
+                        const shortText = fullCommentText.substring(0,100);
                         return (
                           <span>
                             {shortText}
                             <span 
-                              style={{cursor:'pointer',padding:'5px',backgroundColor:'yellow'}} 
+                              style={{cursor:'pointer', textDecoration:'underline'}} 
                               onClick={() => handlePageChange("review/4")}
                               onMouseOver={(e) => e.currentTarget.style.textDecoration='none'}
                               onMouseOut={(e) => e.currentTarget.style.textDecoration='underline'}
@@ -336,30 +336,34 @@ const SettingsPage = () => {
                           </span>
                         );
                       } else {
-                        return fullText;
+                        return fullCommentText;
                       }
                     })()}
                   </td>
                 </tr>
                 <tr>
-                  
                   <td>دلیل گزارش</td>
                   <td>اسپم تبلیغاتی</td>
                 </tr>
                 <tr>
-                  
                   <td>متن گزارش</td>
                   <td>حاوی اطلاعات نادرست</td>
                 </tr>
                 <tr>
-                    
                   <td>اقدامات</td>
                   <td>
-                <Button variant="danger" size="sm">حذف</Button>
-                <Button disabled>Disabled</Button>
-
-                <Button variant="danger" size="sm">نادیده گرفتن</Button>  
-                <Button variant="danger" size="sm">بن کردن یوزر</Button>
+                    {/* حذف کردن کامنت با آیکون faTrash */}
+                    <Button variant="danger" size="sm" className="me-2" onClick={() => alert("کامنت حذف شد!")}>
+                      <FontAwesomeIcon icon={faTrash} /> حذف کامنت
+                    </Button>
+                    {/* نادیده گرفتن کامنت با آیکون faEyeSlash */}
+                    <Button variant="secondary" size="sm" className="me-2" onClick={() => alert("این گزارش نادیده گرفته شد.")}>
+                      <FontAwesomeIcon icon={faEyeSlash} /> نادیده گرفتن
+                    </Button>
+                    {/* بن کردن یوزر با آیکون faUserSlash */}
+                    <Button variant="warning" size="sm" className="me-2" onClick={() => alert("کاربر بن شد!")}>
+                      <FontAwesomeIcon icon={faUserSlash} /> بن کردن یوزر
+                    </Button>
                   </td>
                 </tr>
               </tbody>
