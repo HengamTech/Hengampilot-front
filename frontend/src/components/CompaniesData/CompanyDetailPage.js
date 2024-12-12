@@ -1,8 +1,7 @@
 // CompanyDetailPage.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import companies from "./CompaniesData";
-
+import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
@@ -10,22 +9,9 @@ const CompanyDetailPage = () => {
   const { id } = useParams(); // دریافت شناسه شرکت از URL
   const navigate = useNavigate();
 
-  // پیدا کردن شرکت بر اساس شناسه
-  const company = companies.find((c) => c.id === parseInt(id));
-
-  // اگر شرکت یافت نشد، پیام خطا نمایش داده می‌شود
-  if (!company) {
-    return (
-      <div className="container text-center mt-5">
-        <h2>شرکت مورد نظر یافت نشد.</h2>
-        <button className="btn btn-primary mt-3" onClick={() => navigate(-1)}>
-          بازگشت
-        </button>
-      </div>
-    );
-  }
-
-  // وضعیت نظرات
+  const [company, setCompany] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [comments, setComments] = useState([
     {
       id: 1,
@@ -43,7 +29,6 @@ const CompanyDetailPage = () => {
     },
   ]);
 
-  // وضعیت فرم ثبت نظر
   const [showForm, setShowForm] = useState(false);
   const [newComment, setNewComment] = useState({
     username: "",
@@ -71,6 +56,33 @@ const CompanyDetailPage = () => {
     return stars;
   };
 
+  // واکشی اطلاعات شرکت از API با استفاده از id
+  const fetchCompany = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `http://127.0.0.1:8000/business_management/businesses/${id}/`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      setCompany(response.data);
+    } catch (err) {
+      console.error("Error fetching company details:", err);
+      setError("خطا در دریافت اطلاعات شرکت. لطفاً دوباره تلاش کنید.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompany();
+  }, [id]);
+
   // تابع برای ثبت نظر جدید
   const handleSubmitComment = (e) => {
     e.preventDefault();
@@ -92,35 +104,54 @@ const CompanyDetailPage = () => {
     setShowForm(false);
   };
 
+  if (loading) return <p>در حال بارگذاری...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+
+  // اگر شرکت یافت نشد (مثلاً API خطا ندارد اما داده‌ای برنگرداند)
+  if (!company) {
+    return (
+      <div className="container text-center mt-5">
+        <h2>شرکت مورد نظر یافت نشد.</h2>
+        <button className="btn btn-primary mt-3" onClick={() => navigate(-1)}>
+          بازگشت
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div>
-     
-
-      {/* Company Details */}
       <div className="container my-5" dir="rtl">
         <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
           بازگشت
         </button>
         <div className="card">
-          <div className="card-header d-flex align-items-center"style={{backgroundColor:"white"}}>
+          <div className="card-header d-flex align-items-center" style={{ backgroundColor: "white" }}>
             <img
               src={company.profileImage}
-              alt={company.name}
+              alt={company.business_name}
               className="rounded me-0"
-              style={{ width: "200px", height: "200px", borderRadius:"50%",objectFit: "cover",marginLeft:"10px" }}
+              style={{
+                width: "200px",
+                height: "200px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                marginLeft: "10px",
+              }}
             />
             <div className="d-flex flex-column">
-              <h2>{company.name}</h2>
-              <div>{renderStars(company.rating)}</div>
+              <h2>{company.business_name}</h2>
+              <div>{renderStars(company.average_rank)}</div>
               <small className="text-muted">
-                {company.rating.toFixed(1)} میانگین امتیاز | {company.reviews} نظر
+                {company.average_rank?.toFixed(1)} میانگین امتیاز |{" "}
+                {company.total_reviews} نظر
               </small>
-              {company.isVerified && (
+              {company.is_verified && (
                 <span className="badge bg-success ms-2">تایید شده</span>
               )}
               {/* دکمه ثبت نظر */}
               <button
-                className="btn btn-primary mt-3 "
+                className="btn btn-primary mt-3"
                 onClick={() => setShowForm(!showForm)}
               >
                 {showForm ? "لغو" : "ثبت نظر"}
@@ -129,40 +160,32 @@ const CompanyDetailPage = () => {
           </div>
           <div className="card-body">
             <div className="row">
-              {/* ستون اول: توضیحات، خدمات، موقعیت مکانی */}
-              
-                <h4>توضیحات</h4>
-                <p>{company.description}</p>
+              <h4>توضیحات</h4>
+              <p>{company.description}</p>
 
-                <h4>خدمات</h4>
-                <ul>
-                  {company.services.map((service, index) => (
-                    <li key={index}>{service}</li>
+              <h4>خدمات</h4>
+              <ul>
+                {company.services?.map((service, index) => (
+                  <li key={index}>{service}</li>
+                ))}
+              </ul>
+
+              <h4>نظرات کاربران</h4>
+              {comments.length === 0 ? (
+                <p>هنوز هیچ نظری ثبت نشده است.</p>
+              ) : (
+                <ul className="list-group">
+                  {comments.map((comment) => (
+                    <li key={comment.id} className="list-group-item">
+                      <strong>{comment.username}</strong> -{" "}
+                      {renderStars(comment.rating)}
+                      <br />
+                      <small className="text-muted">{comment.date}</small>
+                      <p>{comment.comment}</p>
+                    </li>
                   ))}
                 </ul>
-
-                <h4>موقعیت مکانی</h4>
-                <p>{company.location}</p>
-              
-
-              {/* ستون دوم: نظرات و فرم ثبت نظر */}
-                <h4>نظرات کاربران</h4>
-                {comments.length === 0 ? (
-                  <p>هنوز هیچ نظری ثبت نشده است.</p>
-                ) : (
-                  <ul className="list-group">
-                    {comments.map((comment) => (
-                      <li key={comment.id} className="list-group-item">
-                        <strong>{comment.username}</strong> -{" "}
-                        {renderStars(comment.rating)}
-                        <br />
-                        <small className="text-muted">{comment.date}</small>
-                        <p>{comment.comment}</p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              
+              )}
 
               {/* فرم ثبت نظر */}
               {showForm && (
@@ -178,7 +201,10 @@ const CompanyDetailPage = () => {
                         id="username"
                         value={newComment.username}
                         onChange={(e) =>
-                          setNewComment({ ...newComment, username: e.target.value })
+                          setNewComment({
+                            ...newComment,
+                            username: e.target.value,
+                          })
                         }
                         required
                       />
@@ -231,7 +257,6 @@ const CompanyDetailPage = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
