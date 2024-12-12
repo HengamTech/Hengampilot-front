@@ -34,7 +34,7 @@ ChartJS.register(
 
 const AdminDashboard = () => {
   const adminData = {
-    name: "بهرام دیانتی",
+    name: "ادمین ",
     role: "مدیر سیستم",
   };
 
@@ -75,11 +75,12 @@ const AdminDashboard = () => {
       },
     ],
   };
+// مدیریت تغییر صفحه
+const handlePageChange = (page) => {
+  setActivePage(page);
+  navigate(`/${page}`); // مسیرها را در App.js تعریف کنید
+};
 
-  // تابع برای تغییر صفحه فعال
-  const handlePageChange = (page) => {
-    setActivePage(page);
-  };
   const navigate = useNavigate();
   const handleUserManagement = () => {
     navigate('/UserManagement');
@@ -121,12 +122,36 @@ const AdminDashboard = () => {
                 <a
                   href="#"
                   className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageComments" ? "bg-primary" : ""}`}
-                  onClick={() => handlePageChange("manageComments")}
+                  onClick={() => handlePageChange("Reviewmanagement")}
                 >
                   <FontAwesomeIcon icon={faCommentDots} />
                   مدیریت نظرات
                 </a>
               </li>
+              <li className="nav-item mb-3">
+                <a
+                  href="#"
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageUsers" ? "bg-primary" : ""}`}
+                  onClick={handleUserManagement}
+                >
+                  <FontAwesomeIcon icon={faUsers } />
+                  مدیریت سایت
+                </a>
+              </li>
+              <li className="nav-item mb-3">
+                <a
+                  href="#"
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageUsers" ? "bg-primary" : ""}`}
+                  onClick={handleUserManagement}
+                >
+                  <FontAwesomeIcon icon={faChartBar} />
+                  مدیریت گزارش ها
+                </a>
+              </li>
+
+              
+              
+              
               <li className="nav-item mb-3">
                 <a
                   href="#"
