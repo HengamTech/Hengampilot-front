@@ -158,6 +158,8 @@ const UserDashboard = () => {
                     <div className="card mb-4 p-3">
                         <h5 className="card-title">مشخصات کاربر</h5>
                         <div className="card-body">
+                         <p><strong>نام:</strong> {userData.first_name}</p>
+                        <p><strong>نام خانوادگی:</strong> {userData.last_name}</p>
                             <p><strong>یوزرنیم:</strong> {userData.username}</p>
                             <p><strong>ایمیل:</strong> {userData.email}</p>
                         </div>
