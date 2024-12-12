@@ -69,7 +69,9 @@ function App() {
           />
            <Route path="/companies/:id" element={
                     <>
+                    <Navbar/>
                     <CompanyDetailPage/>
+                    <Footer/>
                     </>
                     }
              />
