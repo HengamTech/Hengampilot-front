@@ -6,37 +6,24 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const HomeAndGardenPage = () => {
-  // وضعیت‌ها برای فیلترها و مرتب‌سازی
   const [minRating, setMinRating] = useState(1);
   const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [verified, setVerified] = useState(false);
-  const [sortOption, setSortOption] = useState("highestRating"); // معیار مرتب‌سازی
+  const [sortOption, setSortOption] = useState("highestRating");
 
-  // وضعیت برای داده‌ها، بارگذاری و خطا
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // برای هدایت
+  const navigate = useNavigate();
 
-  const countries = {
-    آمریکا: [ "آلاباما", "آلاسکا", "آریزونا", "آرکانزاس", "کالیفرنیا","کلرادو", "کانتیکت", "دلاویر","فلوریدا","جورجیا","هاوایی","آیداهو","ایلینوی","ایندیانا","آیووا","کانزاس","کنتاکی","لوئیزیانا","مین","مریلند","ماساچوست","میشیگان","می‌سی‌سی‌پی","میزوری","مونتانا","نبراسکا","نوادا","نیوهمپشایر","نیوجرسی","نیومکزیکو","نیویورک","کارولینای شمالی","داکوتای شمالی","اوهایو","اوکلاهما","اورگن","پنسیلوانیا","رود آیلند","کارولینای جنوبی","داکوتای جنوبی","تنسی","تگزاس","یوتا","ورمونت","ویرجینیا","واشینگتن","ویرجینیای غربی","ویسکانسین","وایومینگ","مینه‌سوتا",],
-    Canada: ["Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba"],
-    UK: ["England", "Scotland", "Wales", "Northern Ireland"],
-    Australia: ["New South Wales", "Victoria", "Queensland", "Western Australia"],
-    Germany: ["Bavaria","Baden-Württemberg","North Rhine-Westphalia","Hesse","Saxony"],
-    ایران: ["آذربایجان شرقی","آذربایجان غربی","اصفهان","البرز","ایلام","بوشهر","تهران","چهارمحال و بختیاری","خراسان جنوبی","خراسان رضوی","خراسان شمالی","خوزستان","زنجان","سمنان","سیستان و بلوچستان","فارس","قزوین","قم","کردستان","کرمان","کرمانشاه","کهگیلویه و بویراحمد","گلستان","گیلان","لرستان","مازندران","مرکزی","مهرستان","همدان","هرمزگان","یزد"],
-  };
-
-  // داده‌های مرتب‌سازی
   const sortOptions = [
     { value: "highestRating", label: "بالاترین امتیاز" },
     { value: "lowestRating", label: "پایین ترین امتیاز" },
     { value: "mostReviews", label: "بیشترین نظرات" },
   ];
 
-  // تابع برای واکشی داده‌ها از API
   const fetchCompanies = async () => {
     setLoading(true);
     setError(null);
@@ -49,7 +36,6 @@ const HomeAndGardenPage = () => {
         }
       });
 
-      // فرض می‌کنیم داده‌ها شامل فیلدهای rating، reviews، location، isVerified باشد
       let fetchedCompanies = response.data; 
 
       // فیلتر کردن
@@ -57,7 +43,7 @@ const HomeAndGardenPage = () => {
         let matchRating = company.average_rank >= minRating;
         let matchCountry = country === "" || (company.location && company.location.toLowerCase().includes(country.toLowerCase()));
         let matchProvince = province === "" || (company.location && company.location.toLowerCase().includes(province.toLowerCase()));
-        let matchVerified = !verified || (verified && company.is_verified); // فرض می‌کنیم is_verified نام فیلد است
+        let matchVerified = !verified || (verified && company.is_verified);
         return matchRating && matchCountry && matchProvince && matchVerified;
       });
 
@@ -67,7 +53,7 @@ const HomeAndGardenPage = () => {
       } else if (sortOption === "lowestRating") {
         filtered.sort((a, b) => a.average_rank - b.average_rank);
       } else if (sortOption === "mostReviews") {
-        filtered.sort((a, b) => b.total_reviews - a.total_reviews); // فرض می‌کنیم total_reviews نام فیلد نظرات است
+        filtered.sort((a, b) => b.total_reviews - a.total_reviews);
       }
 
       setCompanies(filtered);
@@ -79,13 +65,10 @@ const HomeAndGardenPage = () => {
     }
   };
 
-  // استفاده از useEffect برای واکشی داده‌ها
   useEffect(() => {
     fetchCompanies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minRating, country, province, verified, sortOption]);
 
-  // تابع رندر کردن ستاره‌ها
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -105,7 +88,6 @@ const HomeAndGardenPage = () => {
     return stars;
   };
 
-  // تابع برای هدایت به صفحه جزئیات شرکت
   const handleDetails = (id) => {
     navigate(`/companies/${id}`);
   };
@@ -152,7 +134,6 @@ const HomeAndGardenPage = () => {
               </div>
             </div>
 
-            {/* فیلتر وضعیت شرکت */}
             <div className="mb-3">
               <label className="form-label">وضعیت شرکت</label>
               <div className="form-check">
@@ -194,43 +175,49 @@ const HomeAndGardenPage = () => {
               <p>هیچ شرکتی با این فیلترها یافت نشد.</p>
             ) : (
               <div className="list-group">
-                {companies.map((company) => (
-                  <div
-                    key={company.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    <div className="d-flex align-items-center">
-                      <img
-                        src={company.profileImage}
-                        alt={company.business_name}
-                        className="rounded me-3"
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <div>
-                        <h5 className="mb-1">{company.business_name}</h5>
-                        <div className="mb-1">
-                          {renderStars(company.average_rank)}
-                        </div>
-                        <small className="text-muted">
-                          {company.average_rank.toFixed(1)} میانگین امتیاز |{" "}
-                          {company.total_reviews} نظر
-                          <br />
-                          {company.website_url}
-                        </small>
-                      </div>
-                    </div>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleDetails(company.id)}
+                {companies.map((company) => {
+                  // در صورتی که company.profileImage نباشد، از یک عکس ثابت استفاده می‌کنیم
+                  const imageSrc = company.profileImage || "https://via.placeholder.com/80";
+                  return (
+                    <div
+                      key={company.id}
+                      className="list-group-item d-flex justify-content-between align-items-center"
                     >
-                      جزئیات بیشتر
-                    </button>
-                  </div>
-                ))}
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={imageSrc}
+                          alt={company.business_name}
+                          className="rounded me-3"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            marginLeft:"20px",
+                            marginBottom:"10px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <div>
+                          <h5 className="mb-1">{company.business_name}</h5>
+                          <div className="mb-1">
+                            {renderStars(company.average_rank)}
+                          </div>
+                          <small className="text-muted">
+                            {company.average_rank.toFixed(1)} میانگین امتیاز |{" "}
+                            {company.total_reviews} نظر
+                            <br />
+                            {company.website_url}
+                          </small>
+                        </div>
+                      </div>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleDetails(company.id)}
+                      >
+                        جزئیات بیشتر
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </main>
