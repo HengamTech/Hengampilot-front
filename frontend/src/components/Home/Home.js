@@ -1,4 +1,3 @@
-// HomeAndGardenPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -6,11 +5,16 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const HomeAndGardenPage = () => {
-  const [minRating, setMinRating] = useState(1);
+  const [minRating, setMinRating] = useState(0);
   const [country, setCountry] = useState("");
   const [province, setProvince] = useState("");
   const [verified, setVerified] = useState(false);
   const [sortOption, setSortOption] = useState("highestRating");
+
+  const [tempMinRating, setTempMinRating] = useState(1);
+  const [tempCountry, setTempCountry] = useState("");
+  const [tempProvince, setTempProvince] = useState("");
+  const [tempVerified, setTempVerified] = useState(false);
 
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,14 +33,14 @@ const HomeAndGardenPage = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.get("http://127.0.0.1:8000/business_management/businesses/", {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      let fetchedCompanies = response.data; 
+      let fetchedCompanies = response.data;
 
       // فیلتر کردن
       let filtered = fetchedCompanies.filter((company) => {
@@ -69,6 +73,13 @@ const HomeAndGardenPage = () => {
     fetchCompanies();
   }, [minRating, country, province, verified, sortOption]);
 
+  const applyFilters = () => {
+    setMinRating(tempMinRating);
+    setCountry(tempCountry);
+    setProvince(tempProvince);
+    setVerified(tempVerified);
+  };
+
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -97,9 +108,7 @@ const HomeAndGardenPage = () => {
       <section className="bg-light py-4">
         <div className="container text-center">
           <h2>سرویس خانه</h2>
-          <p className="text-muted">
-            بهترین سایت های سرویس خانه را باهم مقایسه کنید
-          </p>
+          <p className="text-muted">بهترین سایت های سرویس خانه را باهم مقایسه کنید</p>
         </div>
       </section>
 
@@ -121,14 +130,14 @@ const HomeAndGardenPage = () => {
                 {[1, 2, 3, 4, 5].map((rating) => (
                   <span
                     key={rating}
-                    onClick={() => setMinRating(rating)}
+                    onClick={() => setTempMinRating(rating)}
                     style={{
                       cursor: "pointer",
-                      color: rating <= minRating ? "#FFD700" : "#ddd",
+                      color: rating <= tempMinRating ? "#FFD700" : "#ddd",
                       fontSize: "1.5rem",
                     }}
                   >
-                    {rating <= minRating ? <FaStar /> : <FaRegStar />}
+                    {rating <= tempMinRating ? <FaStar /> : <FaRegStar />}
                   </span>
                 ))}
               </div>
@@ -141,14 +150,18 @@ const HomeAndGardenPage = () => {
                   className="form-check-input"
                   type="checkbox"
                   id="verified"
-                  checked={verified}
-                  onChange={() => setVerified(!verified)}
+                  checked={tempVerified}
+                  onChange={() => setTempVerified(!tempVerified)}
                 />
                 <label className="form-check-label" htmlFor="verified">
                   تایید شده
                 </label>
               </div>
             </div>
+
+            <button className="btn btn-success w-100" onClick={applyFilters}>
+              اعمال فیلتر
+            </button>
           </aside>
 
           <main className="col-md-9">
@@ -176,7 +189,6 @@ const HomeAndGardenPage = () => {
             ) : (
               <div className="list-group">
                 {companies.map((company) => {
-                  // در صورتی که company.profileImage نباشد، از یک عکس ثابت استفاده می‌کنیم
                   const imageSrc = company.profileImage || "https://via.placeholder.com/80";
                   return (
                     <div
@@ -191,19 +203,16 @@ const HomeAndGardenPage = () => {
                           style={{
                             width: "80px",
                             height: "80px",
-                            marginLeft:"20px",
-                            marginBottom:"10px",
+                            marginLeft: "20px",
+                            marginBottom: "10px",
                             objectFit: "cover",
                           }}
                         />
                         <div>
                           <h5 className="mb-1">{company.business_name}</h5>
-                          <div className="mb-1">
-                            {renderStars(company.average_rank)}
-                          </div>
+                          <div className="mb-1">{renderStars(company.average_rank)}</div>
                           <small className="text-muted">
-                            {company.average_rank.toFixed(1)} میانگین امتیاز |{" "}
-                            {company.total_reviews} نظر
+                            {company.average_rank.toFixed(1)} میانگین امتیاز | {company.total_reviews} نظر
                             <br />
                             {company.website_url}
                           </small>
