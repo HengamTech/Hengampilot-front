@@ -107,7 +107,7 @@ const CompanyDetailPage = () => {
   if (loading) return <p>در حال بارگذاری...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
-  // اگر شرکت یافت نشد (مثلاً API خطا ندارد اما داده‌ای برنگرداند)
+  // اگر شرکت یافت نشد
   if (!company) {
     return (
       <div className="container text-center mt-5">
@@ -119,6 +119,9 @@ const CompanyDetailPage = () => {
     );
   }
 
+  // اگر عکس شرکت موجود نبود، عکس پیش فرض
+  const imageSrc = company.profileImage || "https://via.placeholder.com/80";
+
   return (
     <div>
       <div className="container my-5" dir="rtl">
@@ -128,7 +131,7 @@ const CompanyDetailPage = () => {
         <div className="card">
           <div className="card-header d-flex align-items-center" style={{ backgroundColor: "white" }}>
             <img
-              src={company.profileImage}
+              src={imageSrc}
               alt={company.business_name}
               className="rounded me-0"
               style={{
