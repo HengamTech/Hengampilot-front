@@ -75,6 +75,7 @@ const ReviewForm = () => {
 
         if (response.status === 201) {
           alert('کسب‌وکار با موفقیت ثبت شد!');
+          navigate("/dashboard")
           setFormData({
             business_name: '',
             //business_category: '',
