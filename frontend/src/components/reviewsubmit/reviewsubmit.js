@@ -157,7 +157,7 @@ const ReviewSubmit = () => {
 
           {/* فیلدهای مخفی */}
           <input type="hidden" name="business_id" value={formData.business_id} />
-          <input type="text" name="user" value={formData.user} />
+          <input type="hidden" name="user" value={formData.user} />
 
           <button type="submit" className="btn btn-primary w-100">ارسال نظر</button>
         </form>
