@@ -1,3 +1,4 @@
+// LoginPage.js
 import React, { useState } from 'react';
 import './loginForm.css';
 import axios from 'axios';
@@ -37,6 +38,11 @@ function LoginPage() {
                 localStorage.setItem('userId', user_id); // ذخیره userId
 
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                
+                // ارسال رویداد سفارشی login
+                const loginEvent = new CustomEvent('login', { detail: { username } });
+                window.dispatchEvent(loginEvent);
+
                 navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
             }
         } catch (error) {

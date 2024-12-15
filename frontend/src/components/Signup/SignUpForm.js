@@ -1,9 +1,10 @@
+// SignUpPage.js
 import React, { useState } from 'react';
 import './SignUpForm.css';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
-function SignUpPage() { // تغییر نام تابع به SignUpPage برای وضوح بیشتر
+function SignUpPage() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -69,6 +70,10 @@ function SignUpPage() { // تغییر نام تابع به SignUpPage برای �
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('username', username);
                 localStorage.setItem('userId', response.data.user_id); // ذخیره userId
+
+                // ارسال رویداد سفارشی login
+                const loginEvent = new CustomEvent('login', { detail: { username } });
+                window.dispatchEvent(loginEvent);
 
                 navigate("/dashboard"); // هدایت به داشبورد پس از ثبت‌نام موفق
             } else {
