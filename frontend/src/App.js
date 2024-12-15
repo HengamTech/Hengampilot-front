@@ -29,6 +29,7 @@ import ReviewManagementPage from './components/Dashboard/ReviewManagementPage';
 import website_management from './components/Dashboard/WebsiteManagement/WebsiteManagement';
  
 import NotFoundPage from './components/404 page/404'
+import ReviewSubmit1 from './components/reviewsubmit/reviewsubmit'
 
 function App() {
   return (
@@ -81,6 +82,15 @@ function App() {
             <>
             <Navbar/>
             <AdminDashboard/>
+            <Footer/>
+            </>
+          }
+          />
+          <Route path="/reviewsubmit/:id"
+          element={
+            <>
+            <Navbar/>
+            <ReviewSubmit1/>
             <Footer/>
             </>
           }
