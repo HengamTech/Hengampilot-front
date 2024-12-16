@@ -26,10 +26,12 @@ import SettingsPage from './components/Settings/Settings';
 
 
 import ReviewManagementPage from './components/Dashboard/ReviewManagementPage';
-import website_management from './components/Dashboard/WebsiteManagement/WebsiteManagement';
+import website_management from './components/Dashboard/WebsiteManagement/BusinessManager';
  
 import NotFoundPage from './components/404 page/404'
 import ReviewSubmit1 from './components/reviewsubmit/reviewsubmit'
+import BusinessManager from './components/Dashboard/WebsiteManagement/BusinessManager';
+import AboutUs from './components/AboutUs/AboutUs';
 
 function App() {
   return (
@@ -68,6 +70,16 @@ function App() {
             </>
           }
           />
+          <Route path='/AboutUs'
+            element={
+            <>
+            <Navbar/>   
+            <AboutUs/>
+            <Footer />
+            </>
+          }
+          />
+          
            <Route path="/companies/:id" element={
                     <>
                     <Navbar/>
@@ -147,7 +159,7 @@ function App() {
        <Route path='WebsiteManagement'
         element={
           <>
-          <website_management/>
+          <BusinessManager/>
           </>
         }
        />

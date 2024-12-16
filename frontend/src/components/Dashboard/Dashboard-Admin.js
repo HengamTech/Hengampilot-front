@@ -129,7 +129,7 @@ const handlePageChange = (page) => {
                   مدیریت نظرات
                 </a>
               </li>
-              {/*<li className="nav-item mb-3">
+              <li className="nav-item mb-3">
                 <a
                   href="#"
                   className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageUsers" ? "bg-primary" : ""}`}
@@ -139,7 +139,7 @@ const handlePageChange = (page) => {
                   مدیریت سایت
                 </a>
               </li>
-             */} 
+              
               <li className="nav-item mb-3">
                 <a
                   href="#"
@@ -171,7 +171,10 @@ const handlePageChange = (page) => {
           {/* Summary Cards */}
           <div className="row mt-4">
             <div className="col-md-4">
-              <div className="card text-center p-4 bg-primary text-white">
+              <div className="card card-hover text-center p-4 bg-primary text-white "style={{hover:" background-color: yellow" }}
+                                onClick={() => handlePageChange("usermanagement")}
+
+              >
                 <h5>تعداد کاربران</h5>
                 <h2>150</h2>
               </div>

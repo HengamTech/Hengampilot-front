@@ -4,13 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserEdit, faTrash, faPlus, faUsers, faCog, faSignOutAlt, faChartBar, faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
-
+import { FaArrowUpWideShort, FaComment, FaUserPlus } from "react-icons/fa6";
+import { FaArrowUp } from "react-icons/fa";
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faLevelUpAlt } from '@fortawesome/free-solid-svg-icons';
 const UserManagement = () => {
   const [users, setUsers] = useState([
     { id: 1, name: "علی", lastName: "رضایی", role: "کاربر عادی", email: "ali@example.com", isBlocked: false, comments: ["نظر 1", "نظر 2"] },
     { id: 2, name: "زهرا", lastName: "کریمی", role: "مدیر", email: "zahra@example.com", isBlocked: false, comments: ["نظر 3"] },
   ]);
-  
+ 
   const [newUser, setNewUser] = useState({ name: "", lastName: "", role: "کاربر عادی", email: "" });
   const [activePage, setActivePage] = useState("manageUsers");
   const [searchTerm, setSearchTerm] = useState("");
@@ -141,9 +144,11 @@ const handlePageChange = (page) => {
 
           {/* Add User */}
           <div className="card p-3 mb-4">
-            <h5>اضافه کردن کاربر جدید</h5>
+            
+            <h5></h5>
             <div className="row g-3 align-items-center mt-3">
-              <div className="col-md-4">
+              
+              {/* <div className="col-md-4">
                 <input
                   type="text"
                   className="form-control"
@@ -151,7 +156,7 @@ const handlePageChange = (page) => {
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                 />
-              </div>
+              </div> */}
               <div className="col-md-4">
                 <input
                   type="text"
@@ -184,6 +189,7 @@ const handlePageChange = (page) => {
                 <button className="btn btn-primary" onClick={handleAddUser}>
                   <FontAwesomeIcon icon={faPlus} />
                 </button>
+                
               </div>
             </div>
           </div>
@@ -230,6 +236,8 @@ const handlePageChange = (page) => {
                       <Link to={`/user-comments/${user.id}`} className="btn btn-sm btn-primary mx-1">
                         <FontAwesomeIcon icon={faCommentDots} />
                       </Link>
+                      <button className="btn btn-primary" onClick={handleAddUser}>
+                      <FontAwesomeIcon icon={faLevelUpAlt} />  </button>
                     </td>
                   </tr>
                 ))}

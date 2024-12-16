@@ -3,6 +3,7 @@ import { Container, Row, Col, Tab, Form, Button, Table, Modal } from "react-boot
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartBar, faUsers, faCommentDots, faCog, faSignOutAlt, faTrash, faEyeSlash, faUserSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
+import BusinessManager from "../Dashboard/WebsiteManagement/BusinessManager";
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("settings");
@@ -124,6 +125,16 @@ const SettingsPage = () => {
                   مدیریت نظرات
                 </a>
               </li>
+              <li className="nav-item mb-3">
+                <a
+                  href="#"
+                  className="nav-link text-white d-flex align-items-center gap-2"
+                  onClick={() => setActiveTab("pages")}
+                >
+                  <FontAwesomeIcon icon={faCommentDots} />
+                  مدیریت سایت ها
+                </a>
+              </li>
              
               <li className="nav-item mb-3">
                 <a
@@ -155,6 +166,7 @@ const SettingsPage = () => {
             <Tab.Content>
               {/* مدیریت صفحات */}
               <Tab.Pane eventKey="pages">
+                <BusinessManager/>
                 <h4>مدیریت صفحات</h4>
                 <Form>
                   <Form.Group controlId="contactUs" className="mb-3">
