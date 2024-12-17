@@ -18,7 +18,7 @@ const ReviewSubmit = () => {
   const [businessName, setBusinessName] = useState("");
   const [errors, setErrors] = useState({});
 
-  // گرفتن اطلاعات کاربر از localStorage
+// گرفتن اطلاعات کاربر از localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
@@ -30,19 +30,19 @@ const ReviewSubmit = () => {
       return;
     }
 
-    // تنظیم اطلاعات کاربر
+// تنظیم اطلاعات کاربر
     setFormData((prev) => ({ ...prev, user: user }));
 
-    // گرفتن نام شرکت از API
+// گرفتن نام شرکت از API
     const fetchBusinessName = async () => {
       try {
         const businessResponse = await axios.get(
-          `http://127.0.0.1:8000/business_management/businesses/${businessId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+            `http://127.0.0.1:8000/business_management/businesses/${businessId}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
         );
         setBusinessName(businessResponse.data.business_name);
       } catch (error) {
@@ -54,19 +54,19 @@ const ReviewSubmit = () => {
     fetchBusinessName();
   }, [businessId, navigate]);
 
-  // مدیریت تغییر در متن نظر
+// مدیریت تغییر در متن نظر
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
 
-  // مدیریت انتخاب تعداد ستاره‌ها
+// مدیریت انتخاب تعداد ستارهها
   const handleStarClick = (rank) => {
     setFormData((prev) => ({ ...prev, rank }));
   };
 
-  // اعتبارسنجی فرم
+// اعتبارسنجی فرم
   const validateForm = () => {
     const newErrors = {};
     if (!formData.review_text.trim()) newErrors.review_text = "لطفاً متن نظر را وارد کنید.";
@@ -74,7 +74,7 @@ const ReviewSubmit = () => {
     return newErrors;
   };
 
-  // ارسال فرم
+// ارسال فرم
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
@@ -90,18 +90,18 @@ const ReviewSubmit = () => {
 
       try {
         const response = await axios.post(
-          "http://127.0.0.1:8000/review_rating/reviews/",
-          {
-            review_text: formData.review_text,
-            rank: formData.rank,
-            business_id: formData.business_id,
-            user: formData.user,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+            "http://127.0.0.1:8000/review_rating/reviews/",
+            {
+              review_text: formData.review_text,
+              rank: formData.rank,
+              business_id: formData.business_id,
+              user: formData.user,
             },
-          }
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
         );
 
         if (response.status === 201) {
@@ -118,51 +118,52 @@ const ReviewSubmit = () => {
   };
 
   return (
-    <div className="container mt-5"dir="rtl">
-      <h3 className="text-center mb-4">ثبت نظر</h3>
-      <div className="card p-3">
-        <h5>شرکت: {businessName}</h5>
-        <h6>کاربر: {localStorage.getItem("username")}</h6>
+      <div className="container mt-5" dir="rtl">
+        <h3 className="text-center mb-4">ثبت نظر</h3>
+        <div className="card p-3">
+          <h5>شرکت: {businessName}</h5>
+          <h6>کاربر: {localStorage.getItem("username")}</h6>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="review_text" className="form-label">متن نظر</label>
-            <textarea
-              className={`form-control ${errors.review_text ? "is-invalid" : ""}`}
-              id="review_text"
-              name="review_text"
-              rows="4"
-              value={formData.review_text}
-              onChange={handleChange}
-            ></textarea>
-            {errors.description && <div className="invalid-feedback">{errors.review_text}</div>}
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label">امتیاز</label>
-            <div>
-              {[1, 2, 3, 4, 5].map((rank) => (
-                <FaStar
-                  key={rank}
-                  size={30}
-                  className="me-2"
-                  color={formData.rank >= rank ? "gold" : "gray"}
-                  onClick={() => handleStarClick(rank)}
-                  style={{ cursor: "pointer" }}
-                />
-              ))}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="review_text" className="form-label">متن نظر</label>
+              <textarea
+                  className={`form-control ${errors.review_text ? "is-invalid" : ""}`}
+                  id="review_text"
+                  name="review_text"
+                  rows="4"
+                  value={formData.review_text}
+                  onChange={handleChange}
+              ></textarea>
+              {errors.review_text && <div className="invalid-feedback">{errors.review_text}</div>}
             </div>
-            {errors.rank && <div className="text-danger mt-2">{errors.rank}</div>}
-          </div>
 
-          {/* فیلدهای مخفی */}
-          <input type="hidden" name="business_id" value={formData.business_id} />
-          <input type="hidden" name="user" value={formData.user} />
+            <div className="mb-3">
+              <label className="form-label">امتیاز</label>
+              <div>
+                {[1, 2, 3, 4, 5].map((rank) => (
+                    <FaStar
+                        key={rank}
+                        size={30}
+                        className="me-2"
+                        color={formData.rank >= rank ? "gold" : "gray"}
+                        onClick={() => handleStarClick(rank)}
+                        style={{ cursor: "pointer" }}
+                        data-testid={`star-${rank}`}
+                    />
+                ))}
+              </div>
+              {errors.rank && <div className="text-danger mt-2">{errors.rank}</div>}
+            </div>
 
-          <button type="submit" className="btn btn-primary w-100">ارسال نظر</button>
-        </form>
+            {/* فیلدهای مخفی */}
+            <input type="hidden" name="business_id" value={formData.business_id} />
+            <input type="hidden" name="user" value={formData.user} />
+
+            <button type="submit" className="btn btn-primary w-100">ارسال نظر</button>
+          </form>
+        </div>
       </div>
-    </div>
   );
 };
 

@@ -33,10 +33,10 @@ const BusinessManager = () => {
     setCurrentBusiness(biz);
     handleShow();
   };
-  const handleGoToCommentPage = () => {
-    const userId = userData.id; // فرض بر این است که شناسه کاربر در داده‌ها وجود دارد
-    navigate(`/submit/${userId}`); // انتقال به صفحه ثبت نظر
-};
+//   const handleGoToCommentPage = () => {
+//     const userId = userData.id; // فرض بر این است که شناسه کاربر در داده‌ها وجود دارد
+//     navigate(`/submit/${userId}`); // انتقال به صفحه ثبت نظر
+// };
   const handleDelete = (id) => {
     if (window.confirm('آیا از حذف این بیزنس اطمینان دارید؟')) {
       setBusinesses(businesses.filter(biz => biz.id !== id));
