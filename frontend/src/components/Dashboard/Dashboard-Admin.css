@@ -1,0 +1,27 @@
+.hoverEffect {
+    background-color:rgb(0, 102, 255);
+    font-size: 18px;
+}
+.hoverEffect:hover {
+    background-color: blue;
+    transition: 0.3s;
+    font-size: 18px;
+  }
+  .hoverEffect1 {
+    background-color:green;
+    font-size: 18px;
+}
+.hoverEffect1:hover {
+    background-color: rgb(0, 128, 79);
+    transition: 0.3s;
+    font-size: 18px;
+  }
+  .hoverEffect2 {
+    background-color:orange;
+    font-size: 18px;
+}
+.hoverEffect2:hover {
+    background-color: rgb(255, 145, 0);
+    transition: 0.3s;
+    font-size: 18px;
+  }
