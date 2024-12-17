@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import img1 from "./M.r amin.jpg";
 import img2 from "./mohammad.png";
+import img3 from "./hamidreza.jpg";
+import img4 from "./Alireza.jpg"
 const leadershipTeam = [
   {
     id: 1,
@@ -14,38 +16,38 @@ const leadershipTeam = [
   },
   {
     id: 2,
-    name: 'Serge Balyuk',
-    title: 'Chief Technology Officer',
-    description: 'Fearlessly leads our engineering team and is responsible for Apptopia’s underlying technology. His focus is on data acquisition, infrastructure, and backend architecture.',
+    name: 'محمد احسان کریمی',
+    title: 'گروه بکند',
+    description: 'زندگی رو باید کرد وگرنه زندگی تو رو میکنه',
     image: 'https://via.placeholder.com/300', // عکس نمایشی
   },
   {
     id: 3,
-    name: 'Steve Swad',
-    title: 'President & COO',
-    description: 'Executes Apptopia’s strategic vision, galvanizes operational approach, and transforms business outcomes. Results-oriented leader, focused on optimization and communication.',
-    image: 'https://via.placeholder.com/300', // عکس نمایشی
+    name: 'حمیدرضا کردی',
+    title: 'گروه بکند',
+    description: ' متولد ۸۰ پسری اهل جنوب و بیزار از سرما و کولر در عین حال عاشق بستنی و کوهنوردی',
+    image: img3, // عکس نمایشی
   },
   {
     id: 3,
-    name: 'Steve Swad',
-    title: 'President & COO',
-    description: 'Executes Apptopia’s strategic vision, galvanizes operational approach, and transforms business outcomes. Results-oriented leader, focused on optimization and communication.',
-    image: 'https://via.placeholder.com/300', // عکس نمایشی
+    name: 'علیرضا باقرزاده',
+    title: 'گروه فرانت اند',
+    description: 'دریغ از یک ارامش خداااااااااااااا',
+    image: img4, // عکس نمایشی
   },
 ];
 
 const AboutUs = () => {
   return (
     <Container className="my-5 text-center">
-      <h2 className="mb-5">Meet Our <span className="text-primary">Leadership</span></h2>
+      <h2 className="mb-5">اعضای گروه  <span className="text-primary">هنگام پایلت</span></h2>
       <div className='d-flex justify-content-center'>
       <Col md={5}>
             <Card className="d-flex justify-content-center  border-1 shadow-sm mb-4">
             <Card.Img variant="top" src={img1} />
             <Card.Body>
             <Card.Title className="fw-bold">Amin Mirlohi</Card.Title>
-            <Card.Subtitle className="text-muted mb-2">لیدر تیم</Card.Subtitle>
+            <Card.Subtitle className="text-muted mb-2">مدیر تیم</Card.Subtitle>
             <Card.Text>زندگی کن تا کامروا باشی پسر من همیشه به تیمم اطمینان دارم</Card.Text>
             </Card.Body>
           </Card>
