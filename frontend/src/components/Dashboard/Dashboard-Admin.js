@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./Dashboard-Admin.css";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -171,7 +172,8 @@ const handlePageChange = (page) => {
           {/* Summary Cards */}
           <div className="row mt-4">
             <div className="col-md-4">
-              <div className="card card-hover text-center p-4 bg-primary text-white "style={{hover:" background-color: yellow" }}
+              <div className="card card-hover text-center text-white p-4 hoverEffect"
+              
                                 onClick={() => handlePageChange("usermanagement")}
 
               >
@@ -180,13 +182,16 @@ const handlePageChange = (page) => {
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card text-center p-4 bg-success text-white">
+              <div className="card text-center p-4 hoverEffect1  text-white"
+                  onClick={() => handlePageChange("Reviewmanagement")}
+
+              >
                 <h5>تعداد نظرات</h5>
                 <h2>320</h2>
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card text-center p-4 bg-warning text-dark">
+              <div className="card text-center p-4 hoverEffect2 text-dark">
                 <h5>گزارش‌های جدید</h5>
                 <h2>12</h2>
               </div>
