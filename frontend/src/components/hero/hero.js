@@ -1,43 +1,33 @@
-import React from 'react';
-import './hero.css';
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import adam from "./adam niga(1).png"
+import React from "react";
+import "./hero.css"; // Custom styles
+import thinkerImage from "./Untitled_Export_V1.jpeg"; // Replace with your thinker guy image
 
-const PilotHeader = () => {
+const HeroSection = ({ subjectText }) => {
     return (
-        <div className="pilot-header">
-            <img src={adam} className="icon-man" alt="Icon" />
-
-            <h1 className="pilot-title">HENGAM</h1>
-            <span className="pilot-subtitle">PILOT</span>
-
-            <div className="speech-bubble">
-                <ul className="info-list">
-                    <li>
-                        با “هنگام پایلت” <span className="highlight">مقایسه کنید </span> تصمیم بگیرید و با خیال
-                        راحت <span className="highlight">خرید کنید</span>
-                    </li>
-                    <li>
-                        تجربه خرید خود را بنویسید و <span className="highlight">الهام بخش</span> دیگر کاربران
-                        برای رسیدن به تجربه خریدی <span className="highlight">با اعتماد به نفس</span> شوید
-                    </li>
-                </ul>
+        <div className="hero-section">
+            {/* Thinker Section */}
+            <div className="thinker-container">
+                <img src={thinkerImage} alt="Thinker Guy" className="thinker-image" />
             </div>
 
-            <div className="search-container">
+            {/* Search Input */}
+            {/* Hero Title */}
+            <div className="title-container">
+                <h1 className="hero-title">HENGAM</h1>
+                <p className="hero-subtitle">Explore, Compare, and Decide</p>
                 <div className="search-bar">
-                    <a className="search-icon" href="/">
-                        <i className="fa fa-search"></i>
-                    </a>
                     <input
                         type="text"
                         className="search-input"
-                        placeholder="جستجوی شرکت ها"
+                        placeholder="جستجوی شرکت‌ها"
                     />
                 </div>
+            </div>
+            <div className="search-container">
+
             </div>
         </div>
     );
 };
 
-export default PilotHeader;
+export default HeroSection;
