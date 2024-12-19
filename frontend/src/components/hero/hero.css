@@ -7,16 +7,20 @@
     /*box-sizing: border-box; /* Include padding and border in height/width */
     background: ghostwhite;
 }
-
+.bb{
+    font-size: 18px;
+}
+.bb:hover{
+background-color: white;}
 .thinker-container {
     flex: 1; /* Image container takes up 1 part of the space */
     display: flex;
     justify-content: left; /* Center image horizontally */
     align-items: end; /* Center image vertically */
     margin-left: 15%;
-}
-
-.thinker-image {
+  }
+  
+  .thinker-image {
     max-width: 75%; /* Ensure the image scales properly */
     height: auto; /* Maintain aspect ratio */
     border-radius: 50px; /* Optional: rounded corners */
@@ -25,20 +29,24 @@
 .title-container {
     margin-right: 15%;
     margin-top: -15%;
-}
-
-.hero-title {
+  }
+  
+  .hero-title {
     font-size: 3rem; /* Adjust font size for title */
     font-weight: bold;
-}
-
-.hero-subtitle {
+    margin-top: 46%;
+    margin-left: 15%;
+  }
+  
+  .hero-subtitle {
     font-size: 1.5rem;
     color: #555; /* Subtle color for subtitle */
     margin-bottom: 20px;
     font-weight: bold;
-}
+    margin-left: 13%;
 
+}
+  
 .right-container {
     flex: 1; /* Text and input container takes up 2 parts of the space */
     display: flex;
@@ -49,28 +57,34 @@
 
 .search-container {
     margin-top: 20px;
-}
+  }
 
 
-
-.search-input {
+  
+  .search-input {
     flex: 1;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
     width: 350px;
 
-}
-
-.search-button {
+  }
+  
+  .search-button {
     padding: 10px 20px;
     background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
-}
-
+  }
+  
 .search-button:hover {
     background-color: #0056b3;
-}
+  }
+  .search-bar{
+    display: flex; /* برای قرار دادن دکمه و کادر جستجو در یک خط */
+    align-items: center; /* تراز عمودی آیتم‌ها */
+    /* فعلا چیزی نیست فاصله بین دکمه و کادر جستجو */
+    margin-left:12%;
+  }
