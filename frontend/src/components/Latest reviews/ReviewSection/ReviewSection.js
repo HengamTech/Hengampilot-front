@@ -6,7 +6,7 @@ import img from './noon.png';
 
 // تعداد کارت‌ها در صفحه اصلی
 const ITEMS_PER_PAGE = 4;
-const COMMENT_MAX_LENGTH = 100;
+const COMMENT_MAX_LENGTH = 50;
 
 const ReviewSection = () => {
   const [reviews, setReviews] = useState([]);
@@ -32,11 +32,17 @@ const ReviewSection = () => {
                 Authorization: `Bearer ${token}`,
               },
             });
+            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             return {
               ...review,
               name: userResponse.data.username,
               userImage: userResponse.data.profile_picture || img,
-              
+              businessName:businessResponse.data.business_name,
+              businessUrl:businessResponse.data.website_url
             };
           })
         );
@@ -93,7 +99,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
   };
 
   return (
-    <div className="card p-1 h-100">
+    <div className="card p-1 h-100 cardselect" onClick={() => handleReadMore(review.id)}>
       <img src={review.userImage || img} alt={review.name} className="user-image mb-0 mx-auto d-block" style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
       <div className="card-body d-flex flex-column">
         <h5 className="card-title">{review.name}</h5>
@@ -103,20 +109,27 @@ const ReviewCard = ({ review, handleReadMore }) => {
             <span key={index} className={index < review.rank ? "star filled" : "star"}>★</span>
           ))}
         </div>
-        <p className="card-text">
+        <p className="card-text aa">
           {review.review_text
             ? (review.review_text.length > COMMENT_MAX_LENGTH
               ? `${review.review_text.substring(0, COMMENT_MAX_LENGTH)}...`
               : review.review_text)
             : "نظر ناموجود است"}
         </p>
-        {review.review_text && review.review_text.length > COMMENT_MAX_LENGTH && (
+        {/* {review.review_text && review.review_text.length > COMMENT_MAX_LENGTH && (
           <button className="btn btn-link p-0 read-more-button" onClick={() => handleReadMore(review.id)}>مشاهده بیشتر</button>
-        )}
-        <div className="d-flex justify-content-between mt-3">
+        )} */}
+                <div className='brand'>
+                <img src={img} alt={review.name} style={{width:"55px",height:"55px",marginRight:"8px"}}></img>
+                <div className='brand2'>
+                <h5 className="card-text">{review.businessName}</h5>
+                <p className='card-text'>{review.businessUrl}</p>
+                </div>
+                </div>
+        {/* <div className="d-flex justify-content-center mt-3">
           <button className="btn btn-light" onClick={handleLike}>👍 {likes}</button>
           <button className="btn btn-light" onClick={handleDislike}>👎 {dislikes}</button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

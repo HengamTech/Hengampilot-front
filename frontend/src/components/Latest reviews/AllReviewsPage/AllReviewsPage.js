@@ -39,11 +39,18 @@ const AllReviewsPage = () => {
                 Authorization: `Bearer ${token}`,
               },
             });
+            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
             return {
               ...review,
               name: userResponse.data.username,
               userImage: userResponse.data.profile_picture || img,
-              
+              businessName:businessResponse.data.business_name,
+              businessUrl:businessResponse.data.website_url
             };
           })
         );
@@ -66,6 +73,7 @@ const AllReviewsPage = () => {
             <div className="review-info1">
               <h4>{review.name}</h4>
               <p className="date">{review.created_at}</p>
+              <h5 className="comment">{review.businessName}</h5>
               <div className="stars">
                 {[...Array(5)].map((_, index) => (
                   <span key={index} className={index < review.rank ? "star filled" : "star"}>★</span>

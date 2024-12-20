@@ -39,10 +39,17 @@ const ReviewDetailPage = () => {
                 Authorization: `Bearer ${token}`,
               },
             });
+            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${data.business_id}/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             setReview({
               ...data,
               name: userResponse.data.username,
               userImage: userResponse.data.profile_picture || img,
+              businessName:businessResponse.data.business_name,
+              businessUrl:businessResponse.data.website_url
             });
           } catch (error) {
             console.error('Error fetching review:', error);
@@ -73,6 +80,7 @@ const ReviewDetailPage = () => {
           />
           <h4 className="card-title">{review.name}</h4>
           <p className="text-muted">{review.created_at}</p>
+          <p className="text-muted">{review.businessName}</p>
           <div className="mb-3">
             {[...Array(5)].map((_, index) => (
               <span
