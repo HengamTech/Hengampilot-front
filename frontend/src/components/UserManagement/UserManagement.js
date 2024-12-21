@@ -66,7 +66,7 @@ const handlePageChange = (page) => {
     <div className="container-fluid" style={{ direction: "rtl" }}>
       <div className="row min-vh-100">
         {/* Sidebar */}
-        <aside className="col-12 col-md-3 bg-dark text-white p-3">
+        {/* <aside className="col-12 col-md-3 bg-dark text-white p-3">
           <div className="text-center mb-4">
             <h4>مدیر سیستم</h4>
             <p>نقش: مدیر</p>
@@ -75,7 +75,7 @@ const handlePageChange = (page) => {
             <ul className="nav flex-column">
               <li className="nav-item mb-3">
                 {/* اصلاح اینجا: onClick باید درون تگ a باشد */}
-                <a href="#" className="nav-link text-white d-flex align-items-center gap-2" onClick={handleDashboardAdmin}>
+                {/* <a href="#" className="nav-link text-white d-flex align-items-center gap-2" onClick={handleDashboardAdmin}>
                   <FontAwesomeIcon icon={faChartBar} />
                   داشبورد
                 </a>
@@ -95,7 +95,8 @@ const handlePageChange = (page) => {
                   <FontAwesomeIcon icon={faCommentDots} />
                   مدیریت نظرات
                 </a>
-              </li>
+              </li> */}
+               
              {/* <li className="nav-item mb-3">
                 <a
                   href="#"
@@ -108,7 +109,7 @@ const handlePageChange = (page) => {
               </li>
              */}
  
-              <li className="nav-item mb-3">
+              {/* <li className="nav-item mb-3">
                 <a href="#" className="nav-link text-white d-flex align-items-center gap-2"
                  onClick={() => handlePageChange("settings")}
 
@@ -125,11 +126,11 @@ const handlePageChange = (page) => {
               </li>
             </ul>
           </nav>
-        </aside>
+        </aside> */}
 
         {/* Main Content */}
-        <main className="col-12 col-md-9 bg-light p-4">
-          <h3 className="my-4">مدیریت کاربران</h3>
+        <main className="col-12 col-md-9 bg-light p-0">
+          <h3 >مدیریت کاربران</h3>
 
           {/* Search Bar */}
           <div className="mb-4">

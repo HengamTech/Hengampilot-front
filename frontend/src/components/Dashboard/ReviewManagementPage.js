@@ -166,7 +166,7 @@ const ReviewManagementPage = () => {
     <div className="container-fluid"dir="rtl">
       <div className="row">
         {/* Sidebar */}
-        <aside className="col-12 col-md-3 bg-dark text-white p-3">
+        {/* <aside className="col-12 col-md-3 bg-dark text-white p-3">
           <div className="text-center mb-4">
           <h4>مدیر سیستم</h4>
             <p>نقش: مدیر</p>
@@ -203,7 +203,7 @@ const ReviewManagementPage = () => {
                   <FontAwesomeIcon icon={faCommentDots} />
                   مدیریت نظرات
                 </a>
-              </li>
+              </li> */}
              {/* <li className="nav-item mb-3">
                 <a
                   href="#"
@@ -215,7 +215,7 @@ const ReviewManagementPage = () => {
                 </a>
               </li>
               */}
-              <li className="nav-item mb-3">
+              {/* <li className="nav-item mb-3">
                 <a
                   href="#"
                   className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "settings" ? "bg-primary" : ""}`}
@@ -237,10 +237,10 @@ const ReviewManagementPage = () => {
               </li>
             </ul>
           </nav>
-        </aside>
+        </aside> */}
 
         {/* Main Content */}
-        <main className="col-12 col-md-9 my-5" >
+        <main className="col-12 col-md-9" >
           <h2 className="mb-4">مدیریت نظرات</h2>
 
           {/* بخش فیلتر کردن نظرات */}

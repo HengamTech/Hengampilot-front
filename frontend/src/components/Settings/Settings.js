@@ -88,7 +88,7 @@ const SettingsPage = () => {
     <Container fluid className="mt-4" dir="rtl">
       <Row className="min-vh-100">
         {/* Sidebar */}
-        <Col md={3} className="bg-dark text-white p-3">
+        {/* <Col md={3} className="bg-dark text-white p-3">
           <div className="text-center mb-4">
             <h4>مدیر سیستم</h4>
             <p>نقش: مدیر</p>
@@ -157,10 +157,10 @@ const SettingsPage = () => {
               </li>
             </ul>
           </nav>
-        </Col>
+        </Col> */}
 
         {/* Main Content */}
-        <Col md={9} className="bg-light p-4">
+        <Col md={9} className="bg-light ">
           <h2 className="text-center mb-4">صفحه تنظیمات</h2>
           <Tab.Container activeKey={activeTab}>
             <Tab.Content>

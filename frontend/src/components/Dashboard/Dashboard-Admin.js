@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Container, Row, Col, Tab, Form, Button, Table, Modal } from "react-bootstrap";
 import "./Dashboard-Admin.css";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UserManagement from "../UserManagement/UserManagement";
+import ReviewManagementPage from "./ReviewManagementPage";
+import SettingsPage from "../Settings/Settings";
+import BusinessManager from "./WebsiteManagement/BusinessManager";
 import {
   faUsers,
   faCommentDots,
@@ -41,8 +46,9 @@ const AdminDashboard = () => {
 
   const [startDate, setStartDate] = useState(""); // تاریخ شروع
   const [endDate, setEndDate] = useState(""); // تاریخ پایان
-  const [activePage, setActivePage] = useState("dashboard"); // اضافه کردن state برای پیگیری صفحه فعال
-
+  const [activePage, setActivePage] = useState(""); // اضافه کردن state برای پیگیری صفحه فعال
+  const [activeTab, setActiveTab] = useState("AdminDashboard");
+  
   // داده‌های نمودار با تاریخ‌های میلادی
   const chartData = {
     labels: ["2023/11/01", "2023/11/02", "2023/11/03", "2023/11/04", "2023/11/05"], // تاریخ‌های میلادی
@@ -107,8 +113,8 @@ const handlePageChange = (page) => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "dashboard" ? "bg-primary" : ""}`}
-                  onClick={() => handlePageChange("dashboard")}
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "AdminDashboard" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("AdminDashboard")}
                 >
                   <FontAwesomeIcon icon={faChartBar} />
                   داشبورد
@@ -117,8 +123,8 @@ const handlePageChange = (page) => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageUsers" ? "bg-primary" : ""}`}
-                  onClick={handleUserManagement}
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "usermanagement" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("usermanagement")}
                 >
                   <FontAwesomeIcon icon={faUsers} />
                   مدیریت کاربران
@@ -127,8 +133,8 @@ const handlePageChange = (page) => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageComments" ? "bg-primary" : ""}`}
-                  onClick={() => handlePageChange("Reviewmanagement")}
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "reviewmanagementpage" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("reviewmanagementpage")}
                 >
                   <FontAwesomeIcon icon={faCommentDots} />
                   مدیریت نظرات
@@ -137,8 +143,8 @@ const handlePageChange = (page) => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "manageUsers" ? "bg-primary" : ""}`}
-                  onClick={handleUserManagement}
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "BusinessManager" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("BusinessManager")}
                 >
                   <FontAwesomeIcon icon={faUsers } />
                   مدیریت سایت
@@ -148,8 +154,8 @@ const handlePageChange = (page) => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${activePage === "settings" ? "bg-primary" : ""}`}
-                  onClick={() => handlePageChange("settings")}
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "settings" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("settings")}
                 >
                   <FontAwesomeIcon icon={faCog} />
                   تنظیمات
@@ -171,8 +177,11 @@ const handlePageChange = (page) => {
 
         {/* Main Content */}
         <main className="col-12 col-md-9 bg-light p-4">
-          <h3>پنل مدیریت</h3>
+          <Tab.Container activeKey={activeTab}>
+          <Tab.Content>
 
+            <Tab.Pane eventKey="AdminDashboard">
+            <h3>پنل مدیریت</h3>
           {/* Summary Cards */}
           <div className="row mt-4">
             <div className="col-md-4">
@@ -264,6 +273,23 @@ const handlePageChange = (page) => {
             <h5>نمودار نظرات</h5>
             <Line data={filteredData} />
           </div>
+          </Tab.Pane>
+          <Tab.Pane eventKey="usermanagement">
+            <UserManagement/>
+          
+          </Tab.Pane>
+          <Tab.Pane eventKey="reviewmanagementpage">
+          <ReviewManagementPage/>
+          </Tab.Pane>
+          <Tab.Pane eventKey="settings">
+            <SettingsPage/>
+
+          </Tab.Pane>
+          <Tab.Pane eventKey="BusinessManager">
+            <BusinessManager/>
+          </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
         </main>
       </div>
     </div>
