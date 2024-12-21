@@ -92,7 +92,11 @@ const handlePageChange = (page) => {
     <div className="container-fluid" style={{ direction: "rtl" }}>
       <div className="row min-vh-100">
         {/* Sidebar */}
-        <aside className="col-12 col-md-3 bg-dark text-white p-3">
+        <aside className="col-12 col-md-3 bg-dark text-white p-3"style={{     position: "sticky",
+    top: 0,
+    maxHeight: "60vh",
+    overflowY: "auto"
+}}>
           <div className="text-center mb-4">
           <h4>مدیر سیستم</h4>
             <p>نقش: مدیر</p>
