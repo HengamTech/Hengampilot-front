@@ -187,7 +187,7 @@ const handlePageChange = (page) => {
             <div className="col-md-4">
               <div className="card card-hover text-center text-white p-4 hoverEffect"
               
-                                onClick={() => handlePageChange("usermanagement")}
+                                onClick={() => setActiveTab("usermanagement")}
 
               >
                 <h5>تعداد کاربران</h5>
@@ -196,7 +196,7 @@ const handlePageChange = (page) => {
             </div>
             <div className="col-md-4">
               <div className="card text-center p-4 hoverEffect1  text-white"
-                  onClick={() => handlePageChange("Reviewmanagement")}
+                  onClick={() => setActiveTab("reviewmanagementpage")}
 
               >
                 <h5>تعداد نظرات</h5>
