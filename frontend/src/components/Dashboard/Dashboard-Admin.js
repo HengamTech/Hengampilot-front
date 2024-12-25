@@ -8,10 +8,12 @@ import UserManagement from "../UserManagement/UserManagement";
 import ReviewManagementPage from "./ReviewManagementPage";
 import SettingsPage from "../Settings/Settings";
 import BusinessManager from "./WebsiteManagement/BusinessManager";
+import ReportManagement from "./ReportManagement";
 import {
   faUsers,
   faCommentDots,
   faChartBar,
+  faFileAlt,
   faCog,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
@@ -147,10 +149,19 @@ const handlePageChange = (page) => {
                   onClick={() => setActiveTab("BusinessManager")}
                 >
                   <FontAwesomeIcon icon={faUsers } />
-                  مدیریت سایت
+                  مدیریت بیزنس
                 </a>
               </li>
-              
+              <li className="nav-item mb-3">
+                <a
+                  href="#"
+                  className={`nav-link text-white d-flex align-items-center gap-2 ${activeTab === "ReportsManager" ? "bg-primary" : ""}`}
+                  onClick={() => setActiveTab("ReportsManager")}
+                >
+                  <FontAwesomeIcon icon={faFileAlt} />
+                  مدیریت گزارش ها
+                </a>
+              </li>
               <li className="nav-item mb-3">
                 <a
                   href="#"
@@ -287,6 +298,9 @@ const handlePageChange = (page) => {
           </Tab.Pane>
           <Tab.Pane eventKey="BusinessManager">
             <BusinessManager/>
+          </Tab.Pane >
+          <Tab.Pane eventKey="ReportsManager">
+            <ReportManagement/>
           </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
