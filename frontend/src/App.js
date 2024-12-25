@@ -123,13 +123,6 @@ function App() {
             } />
                <Route path="/edit-profile/:userId" element={<EditUserForm />} />
 
-<Route path="/UserManagement" element={
-  <>
-  <Navbar/>
-  <UserManagement/>
-  <Footer/>
-  </>
-} />
 
 <Route path="/user-comments/:userId" element={
   <>          <Navbar/>
@@ -146,30 +139,6 @@ function App() {
   </>
 } />
 
-<Route path='/ReviewManagement' element={
-  <>
-  <Navbar/>
-  <ReviewManagementPage/>
-  <Footer/>
-  </>
-} />
-
-<Route path='/Settings' element={
-  <>
-  <Navbar/>
-  <SettingsPage/>
-  <Footer/>
-  </>
-} />
-
-
-       <Route path='WebsiteManagement'
-        element={
-          <>
-          <BusinessManager/>
-          </>
-        }
-       />
 
 
         {/* سایر صفحات شامل نوبار و فوتر به همراه محتوای مخصوص همان صفحه */}
