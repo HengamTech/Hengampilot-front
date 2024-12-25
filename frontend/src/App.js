@@ -12,9 +12,9 @@ import ReviewDetailPage from './components/Latest reviews/ReviewDetailPage/Revie
 import PilotHeader from './components/hero/hero';
 import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
-import UserDashboard from './components/Dashboard/Dashboard'
+import UserDashboard from './components/Dashboard/Dashboard';
 
-import HomeAndGardenPage from './components/Home/Home'
+import Companylistbycategory from './components/companylistbycategory/companylistbycategory';
 import CompanyDetailPage from './components/CompaniesData/CompanyDetailPage';
 
 import AdminDashboard from './components/Dashboard/Dashboard-Admin';
@@ -56,7 +56,6 @@ function App() {
           element={
             <>
             <Navbar/>
-            <HomeAndGardenPage/>
             <Footer/>
             </>
             }
@@ -79,7 +78,15 @@ function App() {
             </>
           }
           />
+          <Route path="/categories/:id"element={
+            <>
+            <Navbar/>
+            <Companylistbycategory/>  
+            <Footer/>
+            </>
+          }
           
+          />
            <Route path="/companies/:id" element={
                     <>
                     <Navbar/>
