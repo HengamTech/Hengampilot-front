@@ -103,7 +103,6 @@ const handlePageChange = (page) => {
         <aside className="col-12 col-md-3 bg-dark text-white p-3"style={{     position: "sticky",
     top: 0,
     maxHeight: "60vh",
-    overflowY: "auto"
 }}>
           <div className="text-center mb-4">
           <h4>مدیر سیستم</h4>
