@@ -71,5 +71,6 @@
     ],
     "testEnvironment": "jsdom",
     "testTimeout": 10000
-  }
+  },
+  "setupFilesAfterEnv": ["@testing-library/jest-dom/extend-expect"]
 }

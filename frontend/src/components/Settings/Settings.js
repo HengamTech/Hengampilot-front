@@ -308,9 +308,10 @@ const SettingsPage = () => {
         <Button variant="secondary" onClick={() => setEditModalShow(false)}>
           لغو
         </Button>
-        <Button variant="primary" onClick={handleSaveEdit}>
+        <Button variant="primary" onClick={handleSaveEdit} data-testid="save-changes-button">
           ذخیره تغییرات
         </Button>
+
       </Modal.Footer>
     </Modal>
   </Container>
