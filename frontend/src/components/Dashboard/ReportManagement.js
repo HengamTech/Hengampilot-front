@@ -6,116 +6,152 @@ import {
   Col,
   Button,
   Table,
+  Form,
   Modal,
-  Tab
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserSlash, faTrash, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserSlash,
+  faTrash,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ReportManagement = () => {
-  // استیت‌های مربوط به نمایش مودال
+  const [searchText, setSearchText] = useState("");
+  const [reportType, setReportType] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [singleDate, setSingleDate] = useState("");
   const [showUserReportsModal, setShowUserReportsModal] = useState(false);
   const [showCommentReportsModal, setShowCommentReportsModal] = useState(false);
+  const [fullCommentText, setFullCommentText] = useState("");
 
-  // تب فعال
-  const [activeTab, setActiveTab] = useState("reports");
+  // داده‌های نمونه برای جدول
+  const [reports] = useState([
+    { id: 1, type: "کامنت", description: "محتوای نامناسب", status: "بررسی‌شده", date: "2024-06-01" },
+    { id: 2, type: "کاربر", description: "حساب مشکوک", status: "در حال بررسی", date: "2024-06-02" },
+    { id: 3, type: "محتوا", description: "لینک غیرمجاز", status: "رد شده", date: "2024-06-03" },
+  ]);
 
-  // مثالی از متن کامنت کامل (برای نمایش در مودال گزارش کامنت)
-  const fullCommentText =
-    "متن طولانی کامنت ... (اینجا توضیحات کامل کامنت را قرار دهید) ...";
+  // فیلتر کردن داده‌ها
+  const filteredReports = reports.filter((report) => {
+    return (
+      (reportType === "all" || report.type === reportType) &&
+      (status === "all" || report.status === status) &&
+      (searchText === "" || report.description.includes(searchText)) &&
+      (singleDate === "" || report.date === singleDate)
+    );
+  });
 
-  // تابعی برای جابه‌جایی تب
-  const handleTabSelect = (key) => {
-    setActiveTab(key);
-  };
-
-  // در صورت نیاز به هدایت (مثلاً به صفحه‌ای دیگر) می‌توانید از useNavigate استفاده کنید
-  const handlePageChange = (url) => {
-    console.log("navigate to:", url);
-    // navigate(url);
+  // باز کردن مودال‌ها
+  const handleShowDetails = (type) => {
+    if (type === "کاربر") {
+      setShowUserReportsModal(true);
+    } else if (type === "کامنت") {
+      setFullCommentText("این یک متن کامل برای نمایش کامنت است که بیش از 100 کاراکتر دارد...");
+      setShowCommentReportsModal(true);
+    }
   };
 
   return (
     <Container fluid className="mt-4" dir="rtl">
-      <Row className="min-vh-100">
-        <Col md={9} className="bg-light">
-          <h3 className="my-3">مدیریت گزارش‌ها  </h3>
-
-          {/* شروع Tab.Container */}
-          <Tab.Container activeKey={activeTab} onSelect={handleTabSelect}>
-            {/* می‌توانید اینجا Nav هم قرار دهید */}
-            {/* 
-               <Nav variant="tabs">
-                 <Nav.Item>
-                   <Nav.Link eventKey="reports">گزارش‌ها</Nav.Link>
-                 </Nav.Item>
-                 <Nav.Item>
-                   <Nav.Link eventKey="otherTab">تب دیگر</Nav.Link>
-                 </Nav.Item>
-               </Nav>
-            */}
-
-            <Tab.Content>
-              {/* Tab اصلی مدیریت گزارش */}
-              <Tab.Pane eventKey="reports">
-                <h4 className="mt-4">لیست گزارش‌ها</h4>
-                <p>لیست گزارش‌های ارسال شده توسط کاربران:</p>
-
-                <Table striped bordered hover className="text-center">
-                  <thead>
-                    <tr>
-                      <th>ردیف</th>
-                      <th>نوع گزارش</th>
-                      <th>توضیحات</th>
-                      <th>اقدام</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>کامنت</td>
-                      <td>محتوای نامناسب</td>
-                      <td>
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => setShowCommentReportsModal(true)}
-                        >
-                          جزییات
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>کاربر</td>
-                      <td>حساب مشکوک</td>
-                      <td>
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => setShowUserReportsModal(true)}
-                        >
-                          جزییات
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Tab.Pane>
-
-              {/* اگر تب دیگری دارید */}
-              <Tab.Pane eventKey="otherTab">
-                <h4>محتوای تب دیگر</h4>
-                <p>متن دلخواه اینجا قرار می‌گیرد...</p>
-              </Tab.Pane>
-            </Tab.Content>
-          </Tab.Container>
-          {/* پایان Tab.Container */}
+      <Row className="align-items-end">
+        <Col md={12}>
+        <div className="bg-white p-3 border rounded">
+          <h5>فیلترها</h5>
+          {/* فیلترها */}
+          
+                    {/* وضعیت */}
+               <Row>
+                <Col md={4}>
+              <Form.Group className="mb-2">
+            <Form.Label>وضعیت</Form.Label>
+            <Form.Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="all">همه</option>
+              <option value="بررسی‌شده">بررسی‌شده</option>
+              <option value="در حال بررسی">در حال بررسی</option>
+              <option value="رد شده">رد شده</option>
+            </Form.Select>
+          </Form.Group>
+          </Col>
+              {/* بازه زمانی */}
+            <Col md={4}>          
+            <Form.Group className="mb-2">
+         <Form.Label>تاریخ گزارش</Form.Label>
+        <Form.Control
+         type="date"
+        value={singleDate}
+        onChange={(e) => setSingleDate(e.target.value)}
+         />
+        </Form.Group>
+        </Col>
+        
+{/* دکمه بازنشانی فیلترها */}
+            {/* <Button
+            variant="secondary"
+            className="md-2 mt-2"
+            onClick={() => {
+              setSearchText("");
+              setReportType("all");
+              setStatus("all");
+              setStartDate("");
+              setEndDate("");
+            }}
+          >
+            بازنشانی فیلترها
+          </Button> */}
+          </Row>
+</div>
+</Col>
+        <Col md={9} className="bg-light p-3">
+          <h3>لیست گزارش‌ها</h3>
+          <Table striped bordered hover responsive className="text-center mt-3">
+            <thead>
+              <tr>
+                <th>ردیف</th>
+                <th>نوع گزارش</th>
+                <th>توضیحات</th>
+                <th>وضعیت</th>
+                <th>تاریخ</th>
+                <th>جزئیات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReports.length > 0 ? (
+                filteredReports.map((report, index) => (
+                  <tr key={report.id}>
+                    <td>{index + 1}</td>
+                    <td>{report.type}</td>
+                    <td>{report.description}</td>
+                    <td>{report.status}</td>
+                    <td>{report.date}</td>
+                    <td>
+                      <Button
+                        variant="info"
+                        size="sm"
+                        onClick={() => handleShowDetails(report.type)}
+                      >
+                        جزئیات
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">گزارشی یافت نشد</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
         </Col>
       </Row>
 
-      {/* مودال گزارش کاربران */}
-      <Modal
+    {/* مودال گزارش کاربران */}
+    <Modal
         show={showUserReportsModal}
         onHide={() => setShowUserReportsModal(false)}
         dir="rtl"
