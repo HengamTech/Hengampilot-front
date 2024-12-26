@@ -7,12 +7,37 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 const CompanyDetailPage = () => {
   const { id } = useParams(); // دریافت شناسه شرکت از URL
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("token");
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]); // نظرات کاربران
-
+//   const fetchcomment = async () =>{
+//     setLoading(true);
+//     setError(null);
+//     try{
+//       const response = await axios.get(
+//         `http://localhost:8000/business_management/category/{id}/${id}/`,
+//         {
+//           headers:{
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+//       setComments(response.data);
+//       console.log("sakam");
+//     }
+   
+//     catch (err) {
+//       setError("خطا در دریافت اطلاعات شرکت.");
+    
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   useEffect(() =>{
+// fetchcomment()
+//   },[id]);
   const fetchCompany = async () => {
     setLoading(true);
     setError(null);
