@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Tab, Form, Button, Table, Modal } from "react-bootstrap";
 import "./Dashboard-Admin.css";
@@ -41,10 +41,10 @@ ChartJS.register(
 );
 
 const AdminDashboard = () => {
-  const adminData = {
-    name: "ادمین ",
-    role: "مدیر سیستم",
-  };
+  // const adminData = {
+  //   name: "ادمین؛",
+  //   role: "مدیر سیستم",
+  // };
 
   const [startDate, setStartDate] = useState(""); // تاریخ شروع
   const [endDate, setEndDate] = useState(""); // تاریخ پایان
@@ -94,7 +94,16 @@ const handlePageChange = (page) => {
   const handleUserManagement = () => {
     navigate('/UserManagement');
   };
-
+  const token =localStorage.getItem('token');
+  const username = localStorage.getItem('username');
+  // const [error, setError] = useState(null);
+       useEffect(() => {
+    
+   if (!token) {
+    navigate("/login");
+    return;  
+  }
+ },[navigate]);
 
   return (
     <div className="container-fluid" style={{ direction: "rtl" }}>
@@ -105,8 +114,8 @@ const handlePageChange = (page) => {
     maxHeight: "60vh",
 }}>
           <div className="text-center mb-4">
-          <h4>مدیر سیستم</h4>
-            <p>نقش: مدیر</p>
+          <h4>{username}</h4>
+            <p>مدیر</p>
 
           </div>
           <nav>
@@ -214,7 +223,9 @@ const handlePageChange = (page) => {
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card text-center p-4 hoverEffect2 text-dark">
+              <div className="card text-center p-4 hoverEffect2 text-dark"
+              onClick={() =>setActiveTab("ReportsManager")}
+              >
                 <h5>گزارش‌های جدید</h5>
                 <h2>12</h2>
               </div>

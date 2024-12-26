@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import './loginForm.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import {jwtDecode} from 'jwt-decode';
+console.log('jwtDecode:', jwtDecode);
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -38,12 +39,31 @@ function LoginPage() {
                 localStorage.setItem('userId', user_id); // ذخیره userId
 
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                
+                const decodedToken = jwtDecode(token);
+                console.log('Decoded Token:', decodedToken);
+                console.log('hey:',decodedToken.is_superuser);
+                const response1 = await axios.get(
+                    `http://127.0.0.1:8000/user_management/users/fetch-by-username/?username=${username}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                console.log(response1.data);
+                console.log(Boolean(response1.data.is_admin));
+                    if(Boolean(response1.data.is_admin)==false){
+                        console.log("کاربرعادی است");
+                        navigate('/dashboard');
+                    }else {
+                        console.log('کاربر ادمین است');
+                        navigate('/AdminDashboard');
+                    }
                 // ارسال رویداد سفارشی login
                 const loginEvent = new CustomEvent('login', { detail: { username } });
                 window.dispatchEvent(loginEvent);
 
-                navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
+                //navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
             }
         } catch (error) {
             setErrors({ login: 'ورود ناموفق بود، لطفاً دوباره تلاش کنید!' });
