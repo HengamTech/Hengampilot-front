@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -11,18 +10,15 @@ function Navbar() {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // بررسی وضعیت لاگین در هنگام بارگذاری اولیه
+    // بررسی وضعیت لاگین در بارگذاری اولیه
     const token = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
     if (token && storedUsername) {
       setIsLoggedIn(true);
       setUsername(storedUsername);
-    } else {
-      setIsLoggedIn(false);
-      setUsername('');
     }
 
-    // تعریف توابع هندلر برای رویدادهای سفارشی
+    // مدیریت رویدادهای ورود و خروج
     const handleLoginEvent = (e) => {
       setIsLoggedIn(true);
       setUsername(e.detail.username);
@@ -44,13 +40,9 @@ function Navbar() {
     };
   }, []);
 
-  const handleLogin = () => {
-    navigate('/login');
-  };
-
-  const handleSignUp = () => {
-    navigate('/signup');
-  };
+  const handleLogin = () => navigate('/login');
+  const handleSignUp = () => navigate('/signup');
+  const handleDashboard = () => navigate('/dashboard');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -60,11 +52,8 @@ function Navbar() {
     // ارسال رویداد سفارشی خروج
     const logoutEvent = new Event('logout');
     window.dispatchEvent(logoutEvent);
-    navigate('/');
-  };
 
-  const handleDashboard = () => {
-    navigate('/dashboard');
+    navigate('/');
   };
 
   return (
@@ -90,7 +79,7 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0"style={{marginLeft:"540px"}}>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0" style={{ marginLeft: "540px" }}>
             <li className="nav-item">
               <a className="nav-link" href="#categories">دسته بندی</a>
             </li>
@@ -116,7 +105,7 @@ function Navbar() {
             <div className="d-flex">
               <button
                 className="btn btn-outline-success me-2"
-                style={{marginLeft:"10px"}}
+                style={{ marginLeft: "10px" }}
                 onClick={handleLogin}
               >
                 ورود
@@ -129,7 +118,7 @@ function Navbar() {
               </button>
             </div>
           ) : (
-            <div className="dropdown">
+            <div className="dropdown" key={username}>
               <button
                 className="btn btn-secondary dropdown-toggle"
                 style={{ marginRight: "35px" }}
