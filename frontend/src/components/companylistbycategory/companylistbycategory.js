@@ -110,11 +110,11 @@ const companylistbycategory = () => {
     try {
       const res = await axios.get(
         `http://localhost:8000/business_management/category/${categoryId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }
       );
       setCategories(res.data);
       console.log(res.data);
