@@ -14,7 +14,7 @@ import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
 import UserDashboard from './components/Dashboard/Dashboard';
 
-import Companylistbycategory from './components/Companylistbycategory/Companylistbycategory';
+import Companylistbycategory from './components/Companylistbycategory/CompanylistbyCategory1';
 import CompanyDetailPage from './components/CompaniesData/CompanyDetailPage';
 
 import AdminDashboard from './components/Dashboard/Dashboard-Admin';
