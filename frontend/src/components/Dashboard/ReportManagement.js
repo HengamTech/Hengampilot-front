@@ -233,7 +233,7 @@ const ReportManagement = () => {
                                 cursor: "pointer",
                                 textDecoration: "underline",
                               }}
-                              onClick={() => handlePageChange("review/4")}
+                              // onClick={() => handlePageChange("review/4")}
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.textDecoration = "none")
                               }
