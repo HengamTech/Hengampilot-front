@@ -18,7 +18,7 @@ const leadershipTeam = [
     id: 2,
     name: 'محمد احسان کریمی',
     title: 'گروه بکند',
-    description: 'زندگی رو باید کرد وگرنه زندگی تو رو میکنه',
+    description: 'زندگی رو باید کرد وگرنه زندگی تو رو',
     image: 'https://via.placeholder.com/300', // عکس نمایشی
   },
   {
