@@ -128,7 +128,7 @@ const ReviewForm = () => {
 
         if (response.status === 201) {
           alert('کسب‌وکار با موفقیت ثبت شد!');
-          navigate("/dashboard");
+          navigate("/AdminDashboard");
           // ریست فرم
           setFormData({
             business_name: '',

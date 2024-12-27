@@ -1,63 +1,185 @@
-// src/components/BusinessManager.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
+import axios from 'axios';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserEdit,
+  faTrash,
+  faPlus,
+  faUsers,
+  faCog,
+  faSignOutAlt,
+  faChartBar,
+  faCommentDots,
+  faLevelUpAlt, // از FontAwesome
+} from "@fortawesome/free-solid-svg-icons";
 
 const BusinessManager = () => {
   const [businesses, setBusinesses] = useState([]);
+  const [categories, setCategories] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [currentBusiness, setCurrentBusiness] = useState({ id: null, name: '', description: '' });
+  const [currentBusiness, setCurrentBusiness] = useState({
+    id: null,
+    business_name: '',
+    description: '',
+    website_url: '',
+    category_id: '',
+  });
 
+  const token = localStorage.getItem('token');
+
+  // -------------------------------
+  // تابع دریافت لیست بیزنس‌ها
+  // -------------------------------
+  const fetchBusinesses = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/business_management/businesses/',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const fetchedBusinesses = response.data || [];
+      setBusinesses(fetchedBusinesses);
+
+      // گرفتن دسته‌بندی‌ها
+      const categoryIds = [
+        ...new Set(fetchedBusinesses.map((b) => b.business_category)),
+      ].filter(Boolean);
+
+      if (categoryIds.length > 0) {
+        const categoryPromises = categoryIds.map((catId) =>
+          axios
+            .get(`http://localhost:8000/business_management/category/${catId}/`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => ({
+              catId,
+              catName: res.data.category_name,
+            }))
+            .catch(() => ({ catId, catName: 'دسته‌بندی نامشخص' }))
+        );
+
+        const categoriesData = await Promise.all(categoryPromises);
+        const catMap = {};
+        categoriesData.forEach((c) => {
+          catMap[c.catId] = c.catName;
+        });
+        setCategories(catMap);
+      }
+    } catch (error) {
+      console.error('خطا در دریافت بیزنس‌ها:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusinesses();
+  }, [token]);
+
+  // -------------------------------
+  // مدیریت باز و بسته شدن مودال
+  // -------------------------------
   const handleClose = () => {
     setShowModal(false);
-    setCurrentBusiness({ id: null, name: '', description: '' });
+    setCurrentBusiness({
+      id: null,
+      business_name: '',
+      description: '',
+      website_url: '',
+      category_id: '',
+    });
   };
-  const handleShow = () => setShowModal(true);
 
+  const handleShow = (biz) => {
+    setCurrentBusiness(biz);
+    setShowModal(true);
+  };
+
+  // -------------------------------
+  // هندل تغییرات فیلدهای فرم مودال
+  // -------------------------------
   const handleChange = (e) => {
     setCurrentBusiness({ ...currentBusiness, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  // -------------------------------
+  // ثبت فرم (ویرایش بیزنس)
+  // -------------------------------
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (currentBusiness.id) {
-      // ویرایش بیزنس
-      setBusinesses(businesses.map(biz => biz.id === currentBusiness.id ? currentBusiness : biz));
-    } else {
-      // اضافه کردن بیزنس جدید
-      setBusinesses([...businesses, { ...currentBusiness, id: Date.now() }]);
+    try {
+      if (currentBusiness.id) {
+        // ارسال درخواست به API برای به‌روزرسانی
+        await axios.put(
+          `http://localhost:8000/business_management/businesses/${currentBusiness.id}/`,
+          currentBusiness,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // بازخوانی لیست بیزنس‌ها
+        await fetchBusinesses();
+      }
+      handleClose();
+    } catch (error) {
+      console.error('خطا در ویرایش بیزنس:', error);
     }
-    handleClose();
   };
 
-  const handleEdit = (biz) => {
-    setCurrentBusiness(biz);
-    handleShow();
-  };
-//   const handleGoToCommentPage = () => {
-//     const userId = userData.id; // فرض بر این است که شناسه کاربر در داده‌ها وجود دارد
-//     navigate(`/submit/${userId}`); // انتقال به صفحه ثبت نظر
-// };
-  const handleDelete = (id) => {
+  // -------------------------------
+  // حذف بیزنس
+  // -------------------------------
+  const handleDelete = async (id) => {
     if (window.confirm('آیا از حذف این بیزنس اطمینان دارید؟')) {
-      setBusinesses(businesses.filter(biz => biz.id !== id));
+      try {
+        await axios.delete(
+          `http://localhost:8000/business_management/businesses/${id}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // بازخوانی لیست بیزنس‌ها
+        await fetchBusinesses();
+      } catch (error) {
+        console.error('خطا در حذف بیزنس:', error);
+      }
     }
   };
 
+  // -------------------------------
+  // رندر
+  // -------------------------------
   return (
-    <div className="container mt-4">
+    <div className="container col-md-9 mt-3">
       <h2 className="mb-4">مدیریت بیزنس‌ها</h2>
-      <Button variant="primary" onClick={handleShow} className="mb-4">
-        اضافه کردن بیزنس ها
-      </Button>
 
       {businesses.length > 0 ? (
         <Table striped bordered hover className="text-center">
+          <colgroup>
+      <col style={{ width: "40px" }} />    {/* ردیف */}
+      <col style={{ width: "60px" }} />   {/* نام */}
+      <col style={{ width: "10px" }} />   {/* نام خانوادگی */}
+      <col style={{ width: "120px" }} />   {/* یوزرنیم */}
+      <col style={{ width: "100px" }} />   {/* ایمیل */}
+      <col style={{ width: "100px" }} />   {/* نقش */}
+    </colgroup>
+
           <thead>
             <tr>
-              <th>شناسه</th>
-              <th>نوع دسته بندی</th>
+              <th>ردیف</th>
+              <th>دسته‌بندی</th>
               <th>نام بیزنس</th>
               <th>توضیحات</th>
+              <th>آدرس وب‌سایت</th>
               <th>عملیات</th>
             </tr>
           </thead>
@@ -65,15 +187,34 @@ const BusinessManager = () => {
             {businesses.map((biz, index) => (
               <tr key={biz.id}>
                 <td>{index + 1}</td>
-                <td>{biz.catagory}</td>
-                <td>{biz.name}</td>
-                <td>{biz.description}</td>
                 <td>
-                  <Button variant="warning" size="sm" className="me-2" onClick={() => handleEdit(biz)}>
-                    ویرایش
+                  {categories[biz.business_category] || 'دسته‌بندی نامشخص'}
+                </td>
+                <td>{biz.business_name}</td>
+                <td>                <div style={{
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    maxHeight: '4.5em',
+    overflow: 'auto'
+  }}>{biz.description}</div>          </td>
+                <td>{biz.website_url}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => handleShow(biz)}
+                  >
+                                  <FontAwesomeIcon icon={faUserEdit} />
+                    
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => handleDelete(biz.id)}>
-                    حذف
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(biz.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                    
                   </Button>
                 </td>
               </tr>
@@ -84,9 +225,10 @@ const BusinessManager = () => {
         <p>هیچ بیزنسی ثبت نشده است.</p>
       )}
 
-      <Modal show={showModal} onHide={handleClose}>
+      {/* مودال ویرایش */}
+      <Modal dir="rtl" show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{currentBusiness.id ? 'ویرایش بیزنس' : 'اضافه کردن بیزنس'}</Modal.Title>
+          <Modal.Title>ویرایش بیزنس</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
@@ -95,14 +237,14 @@ const BusinessManager = () => {
               <Form.Control
                 type="text"
                 placeholder="نام بیزنس را وارد کنید"
-                name="name"
-                value={currentBusiness.name}
+                name="business_name"
+                value={currentBusiness.business_name}
                 onChange={handleChange}
                 required
               />
             </Form.Group>
 
-            <Form.Group controlId="formBusinessDescription">
+            <Form.Group controlId="formBusinessDescription" className="mb-3">
               <Form.Label>توضیحات</Form.Label>
               <Form.Control
                 as="textarea"
@@ -114,13 +256,24 @@ const BusinessManager = () => {
                 required
               />
             </Form.Group>
+
+            <Form.Group controlId="formBusinessWebsite" className="mb-3">
+              <Form.Label>آدرس وب‌سایت</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="آدرس وب‌سایت را وارد کنید"
+                name="website_url"
+                value={currentBusiness.website_url}
+                onChange={handleChange}
+              />
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               بستن
             </Button>
             <Button variant="primary" type="submit">
-              {currentBusiness.id ? 'ذخیره تغییرات' : 'اضافه کردن'}
+              ذخیره تغییرات
             </Button>
           </Modal.Footer>
         </Form>
