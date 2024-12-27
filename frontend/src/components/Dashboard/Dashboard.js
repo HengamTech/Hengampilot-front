@@ -68,7 +68,7 @@ const UserDashboard = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("userId"); // حذف userId
-
+        
         // ارسال رویداد سفارشی logout
         const logoutEvent = new Event('logout');
         window.dispatchEvent(logoutEvent);
@@ -86,7 +86,9 @@ const UserDashboard = () => {
     const handleEditProfile = () => {
         navigate(`/edit-profile/${userData.id}`); // انتقال به صفحه ویرایش پروفایل با userId
     };
-
+    const handleGoToUserReviews = () => {
+        navigate(`/UserReview/${userData.id}`);
+    };
     // نمایش وضعیت بارگذاری، خطا یا محتوای اصلی داشبورد
     if (loading) return <p>در حال بارگذاری...</p>;
     if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -137,13 +139,17 @@ const UserDashboard = () => {
                                         ثبت نظر
                                     </button>
                                 </li>
-                                <li className="nav-item">
-                                    <a href="#" className="nav-link text-white d-flex align-items-center gap-2">
+                                
+                                    <li className="nav-item">
+                                    <button  className="nav-link text-white d-flex align-items-center gap-2"
+                                     onClick={handleGoToUserReviews}>
+
+                                     
                                         <FontAwesomeIcon icon={faListUl} />
                                         لیست نظرات
-                                    </a>
-                                </li>
-                                <li className="nav-item">
+                                    </button>
+                                     </li>
+                                    <li className="nav-item">
                                     <button
                                         onClick={handleLogout}
                                         className="nav-link text-white d-flex align-items-center gap-2 bg-transparent border-0"
