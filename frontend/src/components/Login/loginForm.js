@@ -55,13 +55,20 @@ function LoginPage() {
                     if(Boolean(response1.data.is_admin)==false){
                         console.log("کاربرعادی است");
                         navigate('/dashboard');
+                        const loginEvent = new CustomEvent('login', { detail: { username } });
+                        window.dispatchEvent(loginEvent);
+        
                     }else {
                         console.log('کاربر ادمین است');
+                        localStorage.setItem('user_admin',response1.data.is_admin);
                         navigate('/AdminDashboard');
+                        const loginEvent = new CustomEvent('login', { detail: { username } });
+                        window.dispatchEvent(loginEvent);
+
                     }
                 // ارسال رویداد سفارشی login
-                const loginEvent = new CustomEvent('login', { detail: { username } });
-                window.dispatchEvent(loginEvent);
+                // const loginEvent = new CustomEvent('login', { detail: { username } });
+                // window.dispatchEvent(loginEvent);
 
                 //navigate('/dashboard'); // هدایت به داشبورد بدون ارسال state
             }

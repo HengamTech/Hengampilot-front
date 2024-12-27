@@ -2,6 +2,7 @@ import React, { useEffect,useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Tab, Form, Button, Table, Modal } from "react-bootstrap";
 import "./Dashboard-Admin.css";
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserManagement from "../UserManagement/UserManagement";
@@ -96,14 +97,78 @@ const handlePageChange = (page) => {
   };
   const token =localStorage.getItem('token');
   const username = localStorage.getItem('username');
-  // const [error, setError] = useState(null);
-       useEffect(() => {
-    
-   if (!token) {
+  const [totalUsers, setTotalUsers] = useState(null);
+  const [TotalReviews,setTotalReviews] =useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId"); // حذف userId
+    localStorage.removeItem("user_admin");
+    // ارسال رویداد سفارشی logout
+    const logoutEvent = new Event('logout');
+    window.dispatchEvent(logoutEvent);
+
     navigate("/login");
-    return;  
-  }
- },[navigate]);
+};
+
+useEffect(() => {
+  const user_admin  = localStorage.getItem('user_admin');
+   console.log(Boolean(user_admin));
+if (!token || Boolean(user_admin)===false) {
+navigate("/login");
+return;  
+}
+},[navigate]);
+useEffect(() => {
+  const fetchTotalUsers = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/user_management/users/total-users/',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log('data:',response.data);
+      // فرض می‌کنیم سرور در پاسخ فیلد 'total_users' را برمی‌گرداند
+      setTotalUsers(response.data.total_users);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'خطا در دریافت اطلاعات');
+      setLoading(false);
+    }
+  };
+
+  fetchTotalUsers();
+}, [token]);  
+useEffect(() => {
+  const fetchTotalReviews = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:8000/review_rating/reviews/count-all-reviews/',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+       console.log('data:',response.data);
+      // فرض می‌کنیم سرور در پاسخ فیلد 'total_users' را برمی‌گرداند
+      setTotalReviews(response.data.count);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'خطا در دریافت اطلاعات');
+      setLoading(false);
+    }
+  };
+
+  fetchTotalReviews();
+}, [token]);  
+
+
 
   return (
     <div className="container-fluid" style={{ direction: "rtl" }}>
@@ -111,7 +176,7 @@ const handlePageChange = (page) => {
         {/* Sidebar */}
         <aside className="col-12 col-md-3 bg-dark text-white p-3"style={{     position: "sticky",
     top: 0,
-    maxHeight: "60vh",
+    maxHeight: "68vh",
 }}>
           <div className="text-center mb-4">
           <h4>{username}</h4>
@@ -180,11 +245,12 @@ const handlePageChange = (page) => {
                   تنظیمات
                 </a>
               </li>
+              
               <li className="nav-item">
                 <a
                   href="#"
                   className="nav-link text-white d-flex align-items-center gap-2"
-                  onClick={() => handlePageChange("logout")}
+                  onClick={() => handleLogout()}
                 >
                   <FontAwesomeIcon icon={faSignOutAlt} />
                   خروج
@@ -210,7 +276,7 @@ const handlePageChange = (page) => {
 
               >
                 <h5>تعداد کاربران</h5>
-                <h2>150</h2>
+                <h2>{totalUsers}</h2>
               </div>
             </div>
             <div className="col-md-4">
@@ -219,7 +285,7 @@ const handlePageChange = (page) => {
 
               >
                 <h5>تعداد نظرات</h5>
-                <h2>320</h2>
+                <h2>{TotalReviews}</h2>
               </div>
             </div>
             <div className="col-md-4">
