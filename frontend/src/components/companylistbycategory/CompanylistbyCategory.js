@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
-const companylistbycategory = () => {
+const Companylistbycategory = () => {
   // گرفتن categoryId از پارامترهای آدرس
   // مثال: اگر مسیر شما "/category/5" باشد، categoryId = "5"
   const { id: categoryId } = useParams();
@@ -304,4 +304,4 @@ const companylistbycategory = () => {
   );
 };
 
-export default companylistbycategory;
+export default Companylistbycategory;
