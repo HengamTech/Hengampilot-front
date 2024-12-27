@@ -14,7 +14,7 @@ import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
 import UserDashboard from './components/Dashboard/Dashboard';
 
-import Companylistbycategory from './components/companylistbycategory/companylistbycategory';
+import Companylistbycategory from './components/Companylistbycategory/Companylistbycategory';
 import CompanyDetailPage from './components/CompaniesData/CompanyDetailPage';
 
 import AdminDashboard from './components/Dashboard/Dashboard-Admin';
@@ -32,7 +32,7 @@ import NotFoundPage from './components/404 page/404'
 import ReviewSubmit1 from './components/reviewsubmit/reviewsubmit'
 import BusinessManager from './components/Dashboard/WebsiteManagement/BusinessManager';
 import AboutUs from './components/AboutUs/AboutUs';
-
+import UserReviews from './components/Dashboard/UserReviews/UserReviews';
 function App() {
   return (
     <Router>
@@ -52,10 +52,11 @@ function App() {
           }
         />
         <Route
-          path="Home"
+          path='/UserReview/:id'
           element={
             <>
             <Navbar/>
+            <UserReviews/>
             <Footer/>
             </>
             }
