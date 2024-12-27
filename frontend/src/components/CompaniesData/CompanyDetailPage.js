@@ -170,7 +170,11 @@ const CompanyDetailPage = () => {
             <ul className="list-group">
               {comments.map((comment) => (
                 <li key={comment.id} className="list-group-item">
-                  <strong>
+              <img   src="https://via.placeholder.com/80"
+                            alt="User"
+                            className="rounded-circle mb-2"
+ />
+                    <strong>
                     {userDetails[comment.user] || "در حال بارگذاری..."}
                   </strong>
                   <div>{renderStars(comment.rank)}</div>
