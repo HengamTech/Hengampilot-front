@@ -16,27 +16,33 @@ const ReviewSection = () => {
     const fetchReviews = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get('http://localhost:8000/review_rating/reviews/', {
+        const { data } = await axios.get('http://localhost:8000/review_rating/reviews/', 
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-        console.log(data);
+        console.log('data:',data);
       const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             console.log(review.user);
 
-            const userResponse = await axios.get(`http://localhost:8000/user_management/users/${review.user}/`, {
+            const userResponse = await axios.get(`http://localhost:8000/user_management/users/${review.user}/`, 
+            {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            });
-            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
+            }
+          );
+          console.log('userResponse:',userResponse);
+            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`,
+             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            });
+            }
+          );
             return {
               ...review,
               name: userResponse.data.username,
