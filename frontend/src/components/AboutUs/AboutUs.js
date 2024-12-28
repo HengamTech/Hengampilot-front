@@ -1,11 +1,13 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import img1 from "./M.r amin.jpg";
 import img2 from "./mohammad.png";
 import img3 from "./hamidreza.jpg";
-import img4 from "./Alireza.jpg"
+import img4 from "./Alireza.jpg";
+import img5 from "./ehsan.jpg";
 const leadershipTeam = [
   {
     id: 1,
@@ -18,8 +20,8 @@ const leadershipTeam = [
     id: 2,
     name: 'محمد احسان کریمی',
     title: 'گروه بکند',
-    description: 'زندگی رو باید کرد وگرنه زندگی تو رو',
-    image: 'https://via.placeholder.com/300', // عکس نمایشی
+    description: 'خنک آن قماربازی که هیچش نماند الا هوس قمار دیگر',
+    image: img5, // عکس نمایشی
   },
   {
     id: 3,
@@ -48,7 +50,7 @@ const AboutUs = () => {
             <Card.Body>
             <Card.Title className="fw-bold">Amin Mirlohi</Card.Title>
             <Card.Subtitle className="text-muted mb-2">مدیر تیم</Card.Subtitle>
-            <Card.Text>زندگی کن تا کامروا باشی پسر من همیشه به تیمم اطمینان دارم</Card.Text>
+            <Card.Text> پسر من همیشه به تیمم اطمینان دارم</Card.Text>
             </Card.Body>
           </Card>
           </Col>
@@ -80,7 +82,7 @@ const AboutUs = () => {
             </div>
             <div className='col-lg-2'>
             <div className="shadow p-3 mb-5 bg-body rounded d-flex flex-column align-items-center">
-            <i class="bi bi-telephone-fill "style={{fontSize:"58px",padding:"20px",borderStyle:"dotted",borderRadius:"30%",borderColor:"green"}}></i>
+            <i class="bi bi-telephone-fill "style={{fontSize:"52px",padding:"20px",borderStyle:"dotted",borderRadius:"30%",borderColor:"green"}}></i>
                 <h2>تلفن</h2>
                 <p>021-11111</p>
                 </div>
