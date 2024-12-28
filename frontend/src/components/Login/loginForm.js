@@ -60,7 +60,9 @@ function LoginPage() {
         
                     }else {
                         console.log('کاربر ادمین است');
+                        console.log('response1.data:',response1.data);
                         localStorage.setItem('user_admin',response1.data.is_admin);
+                        localStorage.setItem('userId', user_id);
                         navigate('/AdminDashboard');
                         const loginEvent = new CustomEvent('login', { detail: { username } });
                         window.dispatchEvent(loginEvent);
