@@ -54,15 +54,17 @@ function LoginPage() {
                 console.log(Boolean(response1.data.is_admin));
                     if(Boolean(response1.data.is_admin)==false){
                         console.log("کاربرعادی است");
-                        navigate('/dashboard');
+                         navigate('/dashboard');
                         const loginEvent = new CustomEvent('login', { detail: { username } });
                         window.dispatchEvent(loginEvent);
         
                     }else {
                         console.log('کاربر ادمین است');
                         console.log('response1.data:',response1.data);
+                        // localStorage.setItem('userId', user_id); // ذخیره userId
+                        // const ae =localStorage.getItem('userId');
+                        // console.log('ae',ae);
                         localStorage.setItem('user_admin',response1.data.is_admin);
-                        localStorage.setItem('userId', user_id);
                         navigate('/AdminDashboard');
                         const loginEvent = new CustomEvent('login', { detail: { username } });
                         window.dispatchEvent(loginEvent);
