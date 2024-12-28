@@ -167,10 +167,10 @@ const BusinessManager = () => {
   return (
     <div className="container col-md-12 mt-3">
       <h2 className="mb-4">مدیریت بیزنس‌ها</h2>
-      {/* <button type="button" class="btn btn-secondary mb-4"
+      <button type="button" class="btn btn-secondary mb-4"
                         onClick={() => handlegotobuisness()}
 
-      >افزودن بیزنس</button>     */}
+      >افزودن بیزنس</button>    
         {businesses.length > 0 ? (
         <Table striped bordered hover className="text-center">
           <colgroup>

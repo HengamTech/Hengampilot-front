@@ -173,13 +173,14 @@ useEffect(() => {
    const username =localStorage.getItem('username');
     try {
       const response = await axios.get(
-        `http://localhost:8000//user_management/users/fetch-by-username/?username=${username}`,
+        `http://localhost:8000/user_management/users/fetch-by-username/?username=${username}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
+      localStorage.setItem('userId',response.data.id)
        console.log('data1:',response.data);
       // فرض می‌کنیم سرور در پاسخ فیلد 'total_users' را برمی‌گرداند
       setUserIds(response.data);
@@ -193,7 +194,6 @@ useEffect(() => {
   fetchuserid();
 }, [token]);  
 
-localStorage.setItem('userId',userids.id)
 
 
   return (
