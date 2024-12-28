@@ -136,7 +136,7 @@ const UserDashboard = () => {
                                         className="nav-link text-white d-flex align-items-center gap-2 bg-transparent border-0"
                                     >
                                         <FontAwesomeIcon icon={faCommentDots} />
-                                        ثبت نظر
+                                        ثبت شرکت
                                     </button>
                                 </li>
                                 
@@ -169,10 +169,22 @@ const UserDashboard = () => {
                     <div className="card mb-4 p-3">
                         <h5 className="card-title">مشخصات کاربر</h5>
                         <div className="card-body">
-                            {/* <p><strong>نام:</strong> {userData.first_name}</p>
-                            <p><strong>نام خانوادگی:</strong> {userData.last_name}</p> */}
-                            <p><strong>یوزرنیم:</strong> {userData.username}</p>
-                            <p><strong>ایمیل:</strong> {userData.email}</p>
+                        {userData.first_name && userData.last_name && (
+  <p>
+    <strong>نام:</strong> {userData.first_name}
+  </p>
+)}
+{userData.first_name && userData.last_name && (
+  <p>
+    <strong>نام خانوادگی:</strong> {userData.last_name}
+  </p>
+)}
+<p>
+  <strong>یوزرنیم:</strong> {userData.username}
+</p>
+<p>
+  <strong>ایمیل:</strong> {userData.email}
+</p>
                         </div>
                     </div>
                 </main>
