@@ -13,11 +13,14 @@ import {
   faCommentDots,
   faLevelUpAlt, // از FontAwesome
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const BusinessManager = () => {
   const [businesses, setBusinesses] = useState([]);
   const [categories, setCategories] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
   const [currentBusiness, setCurrentBusiness] = useState({
     id: null,
     business_name: '',
@@ -154,15 +157,21 @@ const BusinessManager = () => {
       }
     }
   };
-
+  const userId = localStorage.getItem('userId');
+  const handlegotobuisness = () =>{
+    navigate(`/submit/${userId}`);
+  }
   // -------------------------------
   // رندر
   // -------------------------------
   return (
-    <div className="container col-md-9 mt-3">
+    <div className="container col-md-12 mt-3">
       <h2 className="mb-4">مدیریت بیزنس‌ها</h2>
+      {/* <button type="button" class="btn btn-secondary mb-4"
+                        onClick={() => handlegotobuisness()}
 
-      {businesses.length > 0 ? (
+      >افزودن بیزنس</button>     */}
+        {businesses.length > 0 ? (
         <Table striped bordered hover className="text-center">
           <colgroup>
       <col style={{ width: "40px" }} />    {/* ردیف */}
