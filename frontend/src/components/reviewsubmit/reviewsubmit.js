@@ -23,7 +23,7 @@ const ReviewSubmit = () => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
     const user = localStorage.getItem("userId");
-
+    console.log(user);
     if (!token) {
       alert("لطفاً وارد شوید.");
       navigate("/login");
@@ -97,12 +97,15 @@ const ReviewSubmit = () => {
               business_id: formData.business_id,
               user: formData.user,
             },
+
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
+
         );
+        console.log('response',response)
 
         if (response.status === 201) {
           alert("نظر شما با موفقیت ثبت شد!");
