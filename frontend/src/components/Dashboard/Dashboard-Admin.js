@@ -101,6 +101,7 @@ const handlePageChange = (page) => {
   const [TotalReviews,setTotalReviews] =useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userids,setUserIds] =useState(null);
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -115,7 +116,7 @@ const handlePageChange = (page) => {
 
 useEffect(() => {
   const user_admin  = localStorage.getItem('user_admin');
-   console.log(Boolean(user_admin));
+  //  console.log(Boolean(user_id));
 if (!token || Boolean(user_admin)===false) {
 navigate("/login");
 return;  
@@ -167,7 +168,32 @@ useEffect(() => {
 
   fetchTotalReviews();
 }, [token]);  
+useEffect(() => {
+  const fetchuserid = async () => {
+   const username =localStorage.getItem('username');
+    try {
+      const response = await axios.get(
+        `http://localhost:8000//user_management/users/fetch-by-username/?username=${username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+       console.log('data1:',response.data);
+      // فرض می‌کنیم سرور در پاسخ فیلد 'total_users' را برمی‌گرداند
+      setUserIds(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'خطا در دریافت اطلاعات');
+      setLoading(false);
+    }
+  };
 
+  fetchuserid();
+}, [token]);  
+
+localStorage.setItem('userId',userids.id)
 
 
   return (
