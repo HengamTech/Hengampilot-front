@@ -1,56 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import { Modal, Button } from 'react-bootstrap'; // اضافه کردن Modal و Button
 import './AllReviewsPage.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import img from './noon.png';
-// const reviews = [
-//   { id: 2, name: "محمد احمدی", date: "1403/08/08", rating: 3, comment: " Inception is undoubtedly one of my all-time favorite films. Directed by Christopher Nolan, it offers a remarkable fusion of mind-bending storytelling, outstanding performances, and visually stunning scenes that have left a lasting impression on me. From the very first viewing, I was captivated by its intricate plot and the way it compels the audience to reflect on the nature of reality and dreams.The performances are equally impressive. Leonardo DiCaprio shines as Dom Cobb, a man haunted by his past while navigating the dangerous realm of dream-sharing. The supporting cast—Joseph Gordon-Levitt, Ellen Page, and Tom Hardy—deliver authentic portrayals that draw you into their emotional journeys. Their chemistry adds a level of authenticity that makes the characters' relationships feel real.Visually, Inception is nothing short of a masterpiece. The special effects, especially the folding cityscape and zero-gravity fight scene, are groundbreaking and essential to the film. These visuals don't just serve as spectacle—they immerse the audience in the dream world, blurring the line between reality and imagination. Hans Zimmer’s score complements the visuals perfectly, amplifying the intensity and emotional impact of crucial scenes.Despite its complexity, Inception rewards repeated viewings. Each time, I discover new details and connections I missed before. The film encourages deep analysis, making it a timeless piece that continues to intrigue and inspire.In summary, Inception is a unique cinematic experience. Its innovative plot, brilliant performances, and breathtaking visuals ensure it remains a film I hold in high regard. Whether you love science fiction, thrillers, or simply great storytelling, Inception is a must-watch that will leave you pondering the nature of reality long after it ends.", productImage: img, userImage: img },
-//   { id: 3, name: "سارا رضایی", date: "1403/08/08", rating: 5, comment: "توضیحات", productImage: img, userImage: img },
-//   { id: 4, name: "احمد موسوی", date: "1403/08/08", rating: 4, comment: "Inception is, without a doubt, one of my favourite movies of all time. Directed by Christopher Nolan, this film delivers a unique blend of mind-bending storytelling, impeccable performances, and stunning visuals that have left a lasting impression on me. From the moment I first watched it, I was captivated by its intricate plot and the way it challenges the audience to think deeply about the nature of reality and dreams.", productImage: img, userImage: img },
-//   { id: 5, name: "کاوه رضایی", date: "1403/08/08", rating: 5, comment: "توضیحات", productImage: img, userImage: img },
-//   { id: 6, name: "رضا رضایی", date: "1403/08/08", rating: 5, comment: "توضیحات", productImage: img, userImage: img },
-//   { id: 7, name: "آرام جعفری", date: "1403/08/08", rating: 5, comment: "توضیحات", productImage: img, userImage: img },
-
-//   // سایر نظرات
-// ];
-
 
 const AllReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
-  const navigate = useNavigate();
+  const [votes, setVotes] = useState({});
+  const userId = localStorage.getItem('userId'); // گرفتن یوزر آیدی از لوکال استوریج
+  const token = localStorage.getItem('token'); // گرفتن توکن از لوکال استوریج
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const token = localStorage.getItem('token');
         const { data } = await axios.get('http://localhost:8000/review_rating/reviews/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-        console.log(data);
-      const enrichedReviews = await Promise.all(
-          data.map(async (review) => {
-            console.log(review.user);
+        });
 
-            const userResponse = await axios.get(`http://localhost:8000/user_management/users/${review.user}/`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+        const enrichedReviews = await Promise.all(
+          data.map(async (review) => {
+            const [businessResponse, userResponse] = await Promise.all([
+              axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }),
+              axios.get(`http://localhost:8000/user_management/users/${review.user}/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }),
+            ]);
 
             return {
               ...review,
-              name: userResponse.data.username,
-              userImage: userResponse.data.profile_picture || img,
-              businessName:businessResponse.data.business_name,
-              businessUrl:businessResponse.data.website_url
+              businessName: businessResponse.data.business_name,
+              businessUrl: businessResponse.data.website_url,
+              username: userResponse.data.username, // اضافه کردن نام کاربری
             };
           })
         );
@@ -60,27 +48,98 @@ const AllReviewsPage = () => {
       }
     };
 
+    const fetchVotes = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:8000/review_rating/votes/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const votesMap = {};
+
+        // ساختن نگاشت برای رأی‌ها
+        data.forEach((vote) => {
+          if (!votesMap[vote.review]) {
+            votesMap[vote.review] = [];
+          }
+          votesMap[vote.review].push(vote.user);
+        });
+
+        setVotes(votesMap);
+      } catch (error) {
+        console.error('Error fetching votes:', error);
+      }
+    };
+
     fetchReviews();
-  }, []);
+    fetchVotes();
+  }, [token]);
+
+  const handleLike = async (reviewId) => {
+    // بررسی اگر کاربر قبلاً رأی داده است
+    if (votes[reviewId]?.includes(userId)) {
+      alert('شما قبلاً به این نظر رأی داده‌اید.');
+      return;
+    }
+
+    try {
+      // ارسال درخواست رأی
+      await axios.post(
+        'http://localhost:8000/review_rating/votes/',
+        {
+          user: userId,
+          review: reviewId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // به‌روزرسانی رأی‌ها
+      setVotes((prevVotes) => ({
+        ...prevVotes,
+        [reviewId]: [...(prevVotes[reviewId] || []), userId],
+      }));
+    } catch (error) {
+      console.error('Error liking review:', error);
+    }
+  };
 
   return (
     <div className="review-section1">
       <h2>همه نظرات</h2>
       <div className="review-grid1">
-        {reviews.map(review => (
+        {reviews.map((review) => (
           <div key={review.id} className="review-card1">
-            <img src={review.userImage} alt={review.name} className="user-image1" />
+            <img src={img} alt={review.businessName} className="user-image1" />
             <div className="review-info1">
-              <h4>{review.name}</h4>
+              <h6 className="username">{review.username}</h6> {/* نمایش نام کاربری */}
+              <p>{review.businessName}</p>
               <p className="date">{review.created_at}</p>
-              <h5 className="comment">{review.businessName}</h5>
               <div className="stars">
                 {[...Array(5)].map((_, index) => (
-                  <span key={index} className={index < review.rank ? "star filled" : "star"}>★</span>
+                  <span
+                    key={index}
+                    className={index < review.rank ? 'star filled' : 'star'}
+                  >
+                    ★
+                  </span>
                 ))}
               </div>
               <p className="comment">{review.review_text}</p>
-              <LikeDislikeButtons />
+              <LikeButton
+                reviewId={review.id}
+                handleLike={handleLike}
+                votes={votes[review.id]?.length || 0}
+              />
+              {/* <ReportButton
+                reviewId={review.id}
+                reviewUserId={review.user}
+                token={token}
+              /> */}
             </div>
           </div>
         ))}
@@ -89,19 +148,101 @@ const AllReviewsPage = () => {
   );
 };
 
-const LikeDislikeButtons = () => {
-  const [likes, setLikes] = useState(0);
-  const [dislikes, setDislikes] = useState(0);
-
+const LikeButton = ({ reviewId, handleLike, votes }) => {
   return (
     <div className="like-dislike-buttons">
-      <button onClick={() => setLikes(likes + 1)} className="like-button">
-        👍 {likes}
-      </button>
-      <button onClick={() => setDislikes(dislikes + 1)} className="dislike-button">
-        👎 {dislikes}
+      <button onClick={() => handleLike(reviewId)} className="like-button">
+        👍 {votes}
       </button>
     </div>
+  );
+};
+
+const ReportButton = ({ reviewId, reviewUserId, token }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [reasonSelect, setReasonSelect] = useState('');
+  const [resultReport, setResultReport] = useState('Unchecked'); // مقدار پیش‌فرض
+  const [reason, setReason] = useState('');
+
+  const handleReport = async () => {
+    if (!reasonSelect || !reason) {
+      alert('لطفاً تمام فیلدها را پر کنید.');
+      return;
+    }
+
+    try {
+      await axios.post(
+        'http://localhost:8000/review_rating/reports/',
+        {
+          reason_select: reasonSelect,
+          result_report: resultReport,
+          reason,
+          review_id: reviewId,
+          review_user_id: reviewUserId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('گزارش شما با موفقیت ارسال شد.');
+      setShowModal(false); // بستن مودال پس از ارسال
+    } catch (error) {
+      console.error('Error reporting review:', error);
+    }
+  };
+
+  return (
+    <>
+      <button onClick={() => setShowModal(true)} className="btn btn-warning mt-2">
+        گزارش نظر
+      </button>
+
+      {/* مودال */}
+      <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>گزارش نظر</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <select
+            value={reasonSelect}
+            onChange={(e) => setReasonSelect(e.target.value)}
+            className="form-select"
+          >
+            <option value="">انتخاب دلیل</option>
+            <option value="terrorism">تروریسم</option>
+            <option value="violence">خشونت</option>
+            <option value="accusations">اتهامات</option>
+            <option value="sexual">جنسی</option>
+          </select>
+          <textarea
+            placeholder="توضیح دلیل"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="form-control mt-2"
+          />
+          <select
+            value={resultReport}
+            onChange={(e) => setResultReport(e.target.value)}
+            className="form-select mt-2"
+          >
+            <option value="Unchecked">بررسی نشده</option>
+            <option value="ignore">نادیده گرفته شود</option>
+            <option value="Remove">حذف شود</option>
+            <option value="UserBan">مسدود کردن کاربر</option>
+          </select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            انصراف
+          </Button>
+          <Button variant="danger" onClick={handleReport}>
+            ارسال گزارش
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 
