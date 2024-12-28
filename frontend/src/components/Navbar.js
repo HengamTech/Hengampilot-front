@@ -55,6 +55,9 @@ function Navbar() {
 
     navigate('/');
   };
+  const handleaboutus = () =>{
+    navigate('/aboutus');
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -81,7 +84,8 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0" style={{ marginLeft: "540px" }}>
             <li className="nav-item">
-              <a className="nav-link" href="#categories">دسته بندی</a>
+              <a className="nav-link" href="#categories"
+              >دسته بندی</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#blog">وبلاگ</a>
@@ -90,7 +94,9 @@ function Navbar() {
               <a className="nav-link" href="#feedback">ثبت انتقادات</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#aboutus">درباره ما</a>
+              <a className="nav-link" onClick={handleaboutus}
+
+              >درباره ما</a>
             </li>
           </ul>
           <form className="d-flex me-3 mb-2 mb-lg-0">
