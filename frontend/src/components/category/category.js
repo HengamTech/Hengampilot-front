@@ -20,9 +20,10 @@ const Categories = () => {
       //   headers: { Authorization: `Bearer ${token}` }
       // });
 
-      const res = await axios.get("http://127.0.0.1:8000/business_management/category/",{
-        headers:{Authorization: `Bearer ${token}`}
-      }
+      const res = await axios.get("http://127.0.0.1:8000/business_management/category/",
+      // {
+      //   headers:{Authorization: `Bearer ${token}`}
+      // }
 
       );
       // فرض می‌کنیم سرور آرایه‌ای از آبجکت‌ها برمی‌گرداند
