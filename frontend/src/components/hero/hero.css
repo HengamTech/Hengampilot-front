@@ -1,90 +1,55 @@
 .hero-section {
-    display: flex; /* Create a row layout */
-    /*justify-content: space-between; /* Space between image and text/input */
-    align-items: center; /* Vertically align items */
-    height: 100vh; /* Full viewport height */
-    padding: 0; /* Add some padding around */
-    /*box-sizing: border-box; /* Include padding and border in height/width */
     background: ghostwhite;
-}
-.bb{
-    font-size: 18px;
-}
-.bb:hover{
-background-color: white;}
-.thinker-container {
-    flex: 1; /* Image container takes up 1 part of the space */
-    display: flex;
-    justify-content: left; /* Center image horizontally */
-    align-items: end; /* Center image vertically */
-    margin-left: 15%;
-  }
-  
-  .thinker-image {
-    max-width: 75%; /* Ensure the image scales properly */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 50px; /* Optional: rounded corners */
+    min-height: 90vh;
 }
 
-.title-container {
-    margin-right: 15%;
-    margin-top: -15%;
-  }
-  
-  .hero-title {
-    font-size: 3rem; /* Adjust font size for title */
+.thinker-image {
+    max-width: 90%;
+    height: auto;
+    border-radius: 50px; /* Optional: Rounded corners */
+}
+
+.hero-title {
+    font-size: 3rem;
     font-weight: bold;
-    margin-top: 46%;
-    margin-left: 15%;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.5rem;
-    color: #555; /* Subtle color for subtitle */
     margin-bottom: 20px;
-    font-weight: bold;
-    margin-left: 13%;
-
-}
-  
-.right-container {
-    flex: 1; /* Text and input container takes up 2 parts of the space */
-    display: flex;
-    flex-direction: column; /* Stack text and input vertically */
-    justify-content: space-between; /* Push search input to the bottom */
-    height: 50%; /* Adjust as needed for spacing */
 }
 
-.search-container {
-    margin-top: 20px;
-  }
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 20px;
+}
 
+.search-bar {
+    max-width: 400px;
+}
 
-  
-  .search-input {
-    flex: 1;
-    padding: 10px;
-    font-size: 1rem;
+.bb {
+    padding: 20px;
+    border-radius: 4px;
+    background-color: transparent;
+    margin: 10px 0;
+}
+
+.bb .icon {
+    font-size: 35px;
+    color: #007BFF;
+}
+
+.search-dropdown {
+    max-width: 500px;
+    margin-top: 10px;
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
     border: 1px solid #ccc;
-    width: 350px;
+    border-radius: 5px;
+}
 
-  }
-  
-  .search-button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-  }
-  
-.search-button:hover {
-    background-color: #0056b3;
-  }
-  .search-bar{
-    display: flex; /* برای قرار دادن دکمه و کادر جستجو در یک خط */
-    align-items: center; /* تراز عمودی آیتم‌ها */
-    /* فعلا چیزی نیست فاصله بین دکمه و کادر جستجو */
-    margin-left:12%;
-  }
+.text-filed{
+    display: block;
+    margin-left: 25%;
+    background: transparent;
+}
+

@@ -67,7 +67,7 @@ function Navbar() {
           href="/"
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
-          <img src={Logo} alt="Logo" width="60" height="60" />
+          <img src={Logo} alt="Logo" width="60" height="60" className="logo"/>
           HengamPilot
         </a>
         <button
@@ -96,7 +96,7 @@ function Navbar() {
               <a className="nav-link" href="#feedback">ثبت انتقادات</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" onClick={handleaboutus}
+              <a className="nav-link" onClick={handleaboutus} href="/aboutus"
 
               >درباره ما</a>
             </li>
