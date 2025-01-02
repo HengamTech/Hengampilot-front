@@ -98,10 +98,16 @@
   align-items: center;
   margin-left: 20px;
   color:black;
+
 }
 
 .navbar__logo img {
   width: 36px;
   height: 33px;
   margin-left: 5px;
+}
+
+
+.navbar-brand{
+  font-weight: bold;
 }

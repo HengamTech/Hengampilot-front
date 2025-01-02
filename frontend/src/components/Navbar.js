@@ -67,7 +67,7 @@ function Navbar() {
           href="/"
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
-          <img src={Logo} alt="Logo" width="60" height="60" />
+          <img src={Logo} alt="Logo" width="60" height="60" className="logo"/>
           HengamPilot
         </a>
         <button
