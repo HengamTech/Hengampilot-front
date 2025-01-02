@@ -1,6 +1,20 @@
+.a:hover{
+  padding: 12px;
+  color:red ;  
+  transition:0.3s;
+}
+.a{
+  font-size: 20px;
+  padding:12px;
+  border:none;
+   color: grey;
+}
 .review-section1 {
   text-align: center;
   padding: 20px;
+}
+.bb:hover{
+  background-color: red;
 }
 
 .review-grid1 {
@@ -18,7 +32,10 @@
   text-align: right;
   width: 100%; /* کارت‌ها تمام عرض سطر را می‌گیرند */
 }
-
+.review-card1:hover{
+  background-color: grey;
+  transition: 0.3s;
+}
 .user-image1 {
   width: 40px;
   height: 40px;

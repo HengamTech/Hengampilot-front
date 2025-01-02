@@ -72,7 +72,7 @@ const Companylistbycategory1 = () => {
       // حالا فیلتر کردن بر اساس ستاره، لوکیشن و تایید شده بودن
       let finalFiltered = filteredByCategory.filter((company) => {
         // شرط ستاره
-        let matchRating = company.average_rank >= minRating;
+        let matchRating = company.average_rating >= minRating;
         // شرط کشور
         let matchCountry =
             country === "" ||
@@ -91,9 +91,9 @@ const Companylistbycategory1 = () => {
 
       // مرتب‌سازی
       if (sortOption === "highestRating") {
-        finalFiltered.sort((a, b) => b.average_rank - a.average_rank);
+        finalFiltered.sort((a, b) => b.average_rating - a.average_rating);
       } else if (sortOption === "lowestRating") {
-        finalFiltered.sort((a, b) => a.average_rank - b.average_rank);
+        finalFiltered.sort((a, b) => a.average_rating - b.average_rating);
       } else if (sortOption === "mostReviews") {
         finalFiltered.sort((a, b) => b.total_reviews - a.total_reviews);
       }
@@ -164,6 +164,7 @@ const Companylistbycategory1 = () => {
   const handleDetails = (id) => {
     navigate(`/companies/${id}`);
   };
+
   return (
       <div>
         <section className="bg-light py-4">
@@ -276,10 +277,10 @@ const Companylistbycategory1 = () => {
                               <div>
                                 <h5 className="mb-1">{company.business_name}</h5>
                                 <div className="mb-1">
-                                  {renderStars(company.average_rank)}
+                                  {renderStars(company.average_rating)}
                                 </div>
                                 <small className="text-muted">
-                                  {company.average_rank.toFixed(1)} میانگین امتیاز |{" "}
+                                  {company.average_rating.toFixed(1)} میانگین امتیاز |{" "}
                                   {company.total_reviews} نظر
                                   <br />
                                   {company.website_url}

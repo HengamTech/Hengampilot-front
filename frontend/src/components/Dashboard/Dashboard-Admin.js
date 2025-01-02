@@ -202,7 +202,7 @@ useEffect(() => {
         {/* Sidebar */}
         <aside className="col-12 col-md-3 bg-dark text-white p-3"style={{     position: "sticky",
     top: 0,
-    maxHeight: "68vh",
+    maxHeight: "72vh",
 }}>
           <div className="text-center mb-4">
           <h4>{username}</h4>
