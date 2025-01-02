@@ -82,19 +82,19 @@ function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0" style={{ marginLeft: "540px" }}>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0 text-nowrap" style={{ marginLeft: "540px" }}>
             <li className="nav-item">
-              <a className="nav-link" href="#categories"
+              <a className="nav-link" href="/#category"
               >دسته بندی</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#blog">وبلاگ</a>
+              <a className="nav-link" href="#blog"> نظرات</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#feedback">ثبت انتقادات</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" onClick={handleaboutus}
+              <a className="nav-link" onClick={handleaboutus} href="/aboutus"
 
               >درباره ما</a>
             </li>

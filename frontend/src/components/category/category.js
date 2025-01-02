@@ -61,7 +61,7 @@ const Categories = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-5">دسته‌بندی‌ها</h2>
+      <h2 className="text-center mb-5" id="category">دسته‌بندی‌ها</h2>
 
       {/* ردیف اول */}
       <div className="row text-center">
