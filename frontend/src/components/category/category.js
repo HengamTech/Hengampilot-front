@@ -69,7 +69,7 @@ const Categories = () => {
           <div
             className="category-card col-5 col-lg-2 justify-content-center"
             key={index}
-            onClick={() => handleClick(category.id)}
+            onClick={() => handleClick(category.category_name)}
           > 
             <div className="category-card-inner shadow p-3 mb-3 bg-white rounded h-100 hover-scale">
               <span className="fs-1 mb-2" role="img" aria-label={category.category_name}>

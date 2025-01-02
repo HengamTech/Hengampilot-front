@@ -5,91 +5,71 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Companylistbycategory1 = () => {
-  // گرفتن categoryId از پارامترهای آدرس
-  // مثال: اگر مسیر شما "/category/5" باشد، categoryId = "5"
-  const { id: categoryId } = useParams();
-
+  const navigate = useNavigate();
+  // از آدرس URL پارامتر category_name را می‌گیریم
+  const { id:category_name}  = useParams();
+  console.log("Salam",category_name)
+  // مقادیر مربوط به فیلترها
   const [minRating, setMinRating] = useState(0);
-  const [country, setCountry] = useState("");
-  const [province, setProvince] = useState("");
   const [verified, setVerified] = useState(false);
   const [sortOption, setSortOption] = useState("highestRating");
 
-  const token = localStorage.getItem("token");
-  const [categories, setCategories] = useState([]);
-
-  // فیلدهای موقت فیلتر
+  // برای کنترل فیلترها در لحظه (پیش از اعمال نهایی)
   const [tempMinRating, setTempMinRating] = useState(1);
-  const [tempCountry, setTempCountry] = useState("");
-  const [tempProvince, setTempProvince] = useState("");
   const [tempVerified, setTempVerified] = useState(false);
 
+  // آرایه‌ی نهایی کسب‌وکارها
   const [companies, setCompanies] = useState([]);
+  // حالت‌های لودینگ و خطا
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
+  // اگر نیاز به توکن برای احراز هویت دارید
+  const token = localStorage.getItem("token");
 
+  // آبجکت‌های مرتب‌سازی
   const sortOptions = [
     { value: "highestRating", label: "بالاترین امتیاز" },
     { value: "lowestRating", label: "پایین ترین امتیاز" },
     { value: "mostReviews", label: "بیشترین نظرات" },
   ];
 
-  // تابعی برای گرفتن همه بیزنس‌ها و سپس فیلتر بر اساس دسته‌بندی
+  // تابع گرفتن لیست شرکت‌ها از سرور (فقط از یک اندپوینت)
   const fetchAllBusinesses = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // اگر به توکن نیاز دارید، در هدر اضافه کنید:
-      // headers: { Authorization: `Bearer ${token}` }
-      const response = await axios.get("http://127.0.0.1:8000/business_management/businesses/", {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await axios.get(
+        "http://127.0.0.1:8000/business_management/businesses/category-businesses/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params:{
+            // سرور طبق کد شما انتظار category_name را به‌صورت کوئری دریافت می‌کند
+            category_name: category_name,
+          },
         }
-      });
-      // پاسخ باید آرایه‌ای از بیزنس‌ها برگرداند
-      // [{
-      //   id: 10,
-      //   business_name: "شرکت A",
-      //   business_category: 5,
-      //   average_rank: 4.2,
-      //   ...
-      // }, ...]
+      );
 
-      let fetchedCompanies = response.data || [];
-      // console.log(response.data);
-      // اول فقط آن بیزنس‌هایی را برمی‌داریم که business_category === categoryId
-      // دقت کنید categoryId از useParams رشته است؛ پس باید تبدیل به عدد شود
-      // const catId = parseInt(categoryId, 10);
-      // console.log(catId);
-      let filteredByCategory = fetchedCompanies.filter((company) => {
-        console.log(company.business_category);
-        return company.business_category === categoryId;
+      // حالا businesses را دریافت کردید
+      const fetchedCompanies = response.data || [];
+
+      // اینجا می‌توانید لاگ کنید که چه چیزی از سرور آمده
+      console.log("fetchedCompanies:", fetchedCompanies);
+
+      // بعداً در همین تابع، فیلترهای سمت کلاینت را اعمال می‌کنیم
+      let finalFiltered = fetchedCompanies.filter((company) => {
+        // بررسی میانگین امتیاز
+        const matchRating = company.average_rating >= minRating;
+        // بررسی وضعیت تاییدشده
+        const matchVerified = !verified || (verified && company.is_verified);
+
+        return matchRating && matchVerified;
       });
 
-      // حالا فیلتر کردن بر اساس ستاره، لوکیشن و تایید شده بودن
-      let finalFiltered = filteredByCategory.filter((company) => {
-        // شرط ستاره
-        let matchRating = company.average_rating >= minRating;
-        // شرط کشور
-        let matchCountry =
-            country === "" ||
-            (company.location &&
-                company.location.toLowerCase().includes(country.toLowerCase()));
-        // شرط استان
-        let matchProvince =
-            province === "" ||
-            (company.location &&
-                company.location.toLowerCase().includes(province.toLowerCase()));
-        // شرط تایید
-        let matchVerified = !verified || (verified && company.is_verified);
-
-        return matchRating && matchCountry && matchProvince && matchVerified;
-      });
-
-      // مرتب‌سازی
+      // مرتب‌سازی بر اساس selectBox
       if (sortOption === "highestRating") {
         finalFiltered.sort((a, b) => b.average_rating - a.average_rating);
       } else if (sortOption === "lowestRating") {
@@ -98,6 +78,7 @@ const Companylistbycategory1 = () => {
         finalFiltered.sort((a, b) => b.total_reviews - a.total_reviews);
       }
 
+      // حالا نهایی را در state می‌گذاریم
       setCompanies(finalFiltered);
     } catch (err) {
       setError("خطا در دریافت داده‌ها. لطفاً دوباره تلاش کنید.");
@@ -106,41 +87,23 @@ const Companylistbycategory1 = () => {
       setLoading(false);
     }
   };
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get(
-          `http://localhost:8000/business_management/category/${categoryId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-      );
-      setCategories(res.data);
-      console.log(res.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
 
-  // هروقت یکی از فیلترها (یا categoryId) تغییر کرد، دوباره اطلاعات را بگیر
+  // هر بار که category_name یا فیلترها عوض شدند، دوباره داده را بگیر
   useEffect(() => {
-    if (categoryId) {
+    // اگر category_name به‌درستی در آدرس هست، fetchAllBusinesses را صدا بزن
+    if (category_name) {
       fetchAllBusinesses();
-      fetchCategories();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId, minRating, country, province, verified, sortOption]);
+  }, [category_name, minRating, verified, sortOption]);
 
-  // اعمال فیلتر
+  // تابع اعمال فیلترها از مقادیر temp به state اصلی
   const applyFilters = () => {
     setMinRating(tempMinRating);
-    setCountry(tempCountry);
-    setProvince(tempProvince);
     setVerified(tempVerified);
   };
 
-  // رندر ستاره‌ها
+  // تابع رندر ستاره‌ها
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -160,148 +123,151 @@ const Companylistbycategory1 = () => {
     return stars;
   };
 
-  // دکمه جزئیات بیشتر
+  // دکمه جزئیات
   const handleDetails = (id) => {
     navigate(`/companies/${id}`);
   };
 
   return (
-      <div>
-        <section className="bg-light py-4">
-          <div className="container text-center">
-            <h2>دسته بندی {categories.category_name}</h2>
-            <p className="text-muted">
-              شرکت‌های مرتبط با {categories.category_name} را مشاهده کنید
-            </p>
-          </div>
-        </section>
+    <div>
+      {/* هدر بالای صفحه */}
+      <section className="bg-light py-4">
+        <div className="container text-center">
+          <h2>دسته بندی {category_name}</h2>
+          <p className="text-muted">
+            شرکت‌های مرتبط با {category_name} را مشاهده کنید
+          </p>
+        </div>
+      </section>
 
-        <div dir="rtl" className="container my-4">
-          <div className="row">
-            {/* Sidebar فیلتر */}
-            <aside
-                className="col-md-3 shadow p-3 mb-3 bg-white rounded h-100"
-                style={{
-                  padding: "10px",
-                  boxShadow:
-                      "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                  backgroundColor: "#FFFDF5",
-                }}
-            >
-              <h1 style={{ marginBottom: "20px" }}>فیلتر ها</h1>
-              <div className="mb-3">
-                <label className="form-label">ستاره</label>
-                <div className="d-flex">
-                  {[1, 2, 3, 4, 5].map((rating) => (
-                      <span
-                          key={rating}
-                          onClick={() => setTempMinRating(rating)}
-                          style={{
-                            cursor: "pointer",
-                            color: rating <= tempMinRating ? "#FFD700" : "#ddd",
-                            fontSize: "1.5rem",
-                          }}
-                      >
+      <div dir="rtl" className="container my-4">
+        <div className="row">
+          {/* ستون سایدبار فیلترها */}
+          <aside
+            className="col-md-3 shadow p-3 mb-3 bg-white rounded h-100"
+            style={{
+              padding: "10px",
+              boxShadow:
+                "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+              backgroundColor: "#FFFDF5",
+            }}
+          >
+            <h1 style={{ marginBottom: "20px" }}>فیلتر ها</h1>
+            <div className="mb-3">
+              <label className="form-label">ستاره</label>
+              <div className="d-flex">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <span
+                    key={rating}
+                    onClick={() => setTempMinRating(rating)}
+                    style={{
+                      cursor: "pointer",
+                      color: rating <= tempMinRating ? "#FFD700" : "#ddd",
+                      fontSize: "1.5rem",
+                    }}
+                  >
                     {rating <= tempMinRating ? <FaStar /> : <FaRegStar />}
                   </span>
-                  ))}
-                </div>
+                ))}
               </div>
+            </div>
 
-              <div className="mb-3">
-                <label className="form-label">وضعیت شرکت</label>
-                <div className="form-check">
-                  <input
-                      className="form-check-input"
-                      type="checkbox"
-                      id="verified"
-                      checked={tempVerified}
-                      onChange={() => setTempVerified(!tempVerified)}
-                  />
-                  <label className="form-check-label" htmlFor="verified">
-                    تایید شده
-                  </label>
-                </div>
+            <div className="mb-3">
+              <label className="form-label">وضعیت شرکت</label>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="verified"
+                  checked={tempVerified}
+                  onChange={() => setTempVerified(!tempVerified)}
+                />
+                <label className="form-check-label" htmlFor="verified">
+                  تایید شده
+                </label>
               </div>
+            </div>
 
-              <button className="btn btn-success w-100" onClick={applyFilters}>
-                اعمال فیلتر
-              </button>
-            </aside>
+            <button className="btn btn-success w-100" onClick={applyFilters}>
+              اعمال فیلتر
+            </button>
+          </aside>
 
-            <main className="col-md-9">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <span>{companies.length} شرکت یافت شد</span>
-                <select
-                    className="form-select w-auto"
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                >
-                  {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                  ))}
-                </select>
-              </div>
+          {/* ستون محتوای اصلی (لیست شرکت‌ها) */}
+          <main className="col-md-9">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <span>{companies.length} شرکت یافت شد</span>
+              <select
+                className="form-select w-auto"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              {loading ? (
-                  <p>در حال بارگذاری...</p>
-              ) : error ? (
-                  <p className="text-danger">{error}</p>
-              ) : companies.length === 0 ? (
-                  <p>هیچ شرکتی با این فیلترها یافت نشد.</p>
-              ) : (
-                  <div className="list-group">
-                    {companies.map((company) => {
-                      const imageSrc =
-                          company.profileImage || "https://via.placeholder.com/80";
-                      return (
-                          <div
-                              key={company.id}
-                              className="list-group-item d-flex justify-content-between align-items-center"
-                          >
-                            <div className="d-flex align-items-center">
-                              <img
-                                  src={imageSrc}
-                                  alt={company.business_name}
-                                  className="rounded me-3"
-                                  style={{
-                                    width: "80px",
-                                    height: "80px",
-                                    marginLeft: "20px",
-                                    marginBottom: "10px",
-                                    objectFit: "cover",
-                                  }}
-                              />
-                              <div>
-                                <h5 className="mb-1">{company.business_name}</h5>
-                                <div className="mb-1">
-                                  {renderStars(company.average_rating)}
-                                </div>
-                                <small className="text-muted">
-                                  {company.average_rating.toFixed(1)} میانگین امتیاز |{" "}
-                                  {company.total_reviews} نظر
-                                  <br />
-                                  {company.website_url}
-                                </small>
-                              </div>
-                            </div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={() => handleDetails(company.id)}
-                            >
-                              جزئیات بیشتر
-                            </button>
+            {/* وضعیت‌ها */}
+            {loading ? (
+              <p>در حال بارگذاری...</p>
+            ) : error ? (
+              <p className="text-danger">{error}</p>
+            ) : companies.length === 0 ? (
+              <p>هیچ شرکتی با این فیلترها یافت نشد.</p>
+            ) : (
+              <div className="list-group">
+                {companies.map((company) => {
+                  const imageSrc =
+                    company.profileImage || "https://via.placeholder.com/80";
+                  return (
+                    <div
+                      key={company.id}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <div className="d-flex align-items-center">
+                        <img
+                          src={imageSrc}
+                          alt={company.business_name}
+                          className="rounded me-3"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            marginLeft: "20px",
+                            marginBottom: "10px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <div>
+                          <h5 className="mb-1">{company.business_name}</h5>
+                          <div className="mb-1">
+                            {renderStars(company.average_rating)}
                           </div>
-                      );
-                    })}
-                  </div>
-              )}
-            </main>
-          </div>
+                          <small className="text-muted">
+                            {company.average_rating.toFixed(1)} میانگین امتیاز |{" "}
+                            {company.total_reviews} نظر
+                            <br/>
+                            {company.website_url}
+                          </small>
+                        </div>
+                      </div>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleDetails(company.id)}
+                      >
+                        جزئیات بیشتر
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </main>
         </div>
       </div>
+    </div>
   );
 };
 
