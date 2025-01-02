@@ -60,10 +60,10 @@ function Navbar() {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light ">
       <div className="container-fluid">
         <a
-          className="navbar-brand d-flex align-items-center me-0"
+          className="navbar-brand d-flex align-items-center me-0 "
           href="/"
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
@@ -81,16 +81,18 @@ function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 text-nowrap" style={{ marginLeft: "540px" }}>
-            <li className="nav-item">
-              <a className="nav-link" href="/#category"
+        <div className="collapse navbar-collapse " id="navbarNav">
+        {/* <ul className="navbar-nav ms-30 mb-3 mb-lg-0 text-nowrap" style={{ marginRight: "20px" }}> */}
+
+          <ul className="navbar-nav d-flex justify-content-between w-20 " style={{ marginRight: "20px" }}>
+            <li className="nav-item" >
+              <a className="nav-link" href="#categories"
               >دسته بندی</a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#blog"> نظرات</a>
+            <li className="nav-item" >
+              <a className="nav-link" href="#blog">وبلاگ</a>
             </li>
-            <li className="nav-item">
+            <li className="nav-item text-nowrap">
               <a className="nav-link" href="#feedback">ثبت انتقادات</a>
             </li>
             <li className="nav-item">
@@ -99,25 +101,26 @@ function Navbar() {
               >درباره ما</a>
             </li>
           </ul>
-          <form className="d-flex me-3 mb-2 mb-lg-0">
+          <form className="flex-grow-1 mx-3">
             <input
-              className="form-control"
+              className="form-control rounded"
               type="search"
-              placeholder="جستجو شرکت ها"
+              placeholder="جستجوی شرکت ها"
               aria-label="Search"
             />
           </form>
+          
           {!isLoggedIn ? (
             <div className="d-flex">
               <button
-                className="btn btn-outline-success me-2"
+                className="btn btn-primary flex-fill me-2 "
                 style={{ marginLeft: "10px" }}
                 onClick={handleLogin}
               >
                 ورود
               </button>
               <button
-                className="btn btn-success"
+                className="btn btn-outline-primary flex-fill"
                 onClick={handleSignUp}
               >
                 ثبت نام
@@ -135,14 +138,14 @@ function Navbar() {
               >
                 <i className="fas fa-user me-2"></i> {username}
               </button>
-              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+              <ul className="dropdown-menu dropdown-menu-end right-to-left" aria-labelledby="dropdownMenuButton">
                 <li>
-                  <button className="dropdown-item" onClick={handleDashboard}>
+                  <button className="dropdown-item right-to-left" onClick={handleDashboard}>
                     داشبورد
                   </button>
                 </li>
                 <li>
-                  <button className="dropdown-item" onClick={handleLogout}>
+                  <button className="dropdown-item right-to-left" onClick={handleLogout}>
                     خروج
                   </button>
                 </li>
