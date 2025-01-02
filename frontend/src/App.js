@@ -9,7 +9,7 @@ import SignUpPage from './components/Signup/SignUpForm';
 import ReviewSection from './components/Latest reviews/ReviewSection/ReviewSection';
 import AllReviewsPage from './components/Latest reviews/AllReviewsPage/AllReviewsPage';
 import ReviewDetailPage from './components/Latest reviews/ReviewDetailPage/ReviewDetailPage';
-import PilotHeader from './components/hero/hero';
+import HeroSection from './components/hero/hero';
 import Categories from './components/category/category';
 import ReviewForm from './components/ReviewForm/ReviewForm';
 import UserDashboard from './components/Dashboard/Dashboard';
@@ -43,7 +43,7 @@ function App() {
           element={
             <>
               <Navbar />
-              <PilotHeader/>
+              <HeroSection/>
           
                     <Categories/>                  
               <ReviewSection/>
