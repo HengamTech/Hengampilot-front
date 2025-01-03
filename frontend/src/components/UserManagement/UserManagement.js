@@ -53,14 +53,37 @@ console.log("users",users);
     }
   };
 
-  const handleBlockUser = (id) => {
-    setUsers(
-      users.map((user) =>
-        user.id === id ? { ...user, isBlocked: !user.isBlocked } : user
-      )
-    );
+  const handleToggleBlockUser = async (id, isActive) => {
+    const confirmationMessage = isActive
+      ? "آیا از رفع مسدودی این کاربر مطمئن هستید؟"
+      : "آیا از مسدود کردن این کاربر مطمئن هستید؟";
+  
+    if (window.confirm(confirmationMessage)) {
+      try {
+        const token = localStorage.getItem("token");
+        const updatedUser = {
+          is_active: !isActive, // تغییر وضعیت is_active
+        };
+  
+        await axios.patch(
+          `http://localhost:8000/user_management/users/${id}/`,
+          updatedUser,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+  
+        // به‌روزرسانی وضعیت در لیست محلی
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === id ? { ...user, is_active: !isActive } : user
+          )
+        );
+  
+        alert(isActive ? "کاربر با موفقیت رفع مسدودی شد." : "کاربر با موفقیت مسدود شد.");
+      } catch (error) {
+        console.error("خطا در تغییر وضعیت کاربر:", error.response?.data || error.message);
+      }
+    }
   };
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -136,13 +159,11 @@ console.log("users",users);
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                       <button
-                        className={`btn btn-sm ${
-                          user.isBlocked ? "btn-secondary" : "btn-info"
-                        } mx-1`}
-                        onClick={() => handleBlockUser(user.id)}
-                      >
-                        {user.isBlocked ? "رفع مسدودی" : "مسدود کردن"}
-                      </button>
+  className={`btn btn-sm ${user.is_active ? "btn-danger" : "btn-secondary"} mx-1`}
+  onClick={() => handleToggleBlockUser(user.id, user.is_active)}
+>
+  {user.is_active ? "مسدود کردن" : "رفع مسدودی"}
+</button>
                       <Link
                         to={`/UserReview/${user.id}`}
                         className="btn btn-sm btn-primary mx-1"
