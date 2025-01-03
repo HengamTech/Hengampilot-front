@@ -337,7 +337,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
   const [reasonSelect, setReasonSelect] = useState('');
   const [resultReport, setResultReport] = useState('Unchecked');
   const [reason, setReason] = useState('');
-
+  const userId = localStorage.getItem('userId')
   const handleReport = async () => {
     if (!reasonSelect || !reason) {
       alert('لطفاً تمام فیلدها را پر کنید.');
@@ -352,7 +352,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
           result_report: resultReport,
           reason,
           review_id: reviewId,
-          review_user_id: reviewUserId,
+          review_user_id: userId,
         },
         {
           headers: {
