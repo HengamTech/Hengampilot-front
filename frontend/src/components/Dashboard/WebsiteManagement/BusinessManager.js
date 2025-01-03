@@ -7,11 +7,6 @@ import {
   faTrash,
   faPlus,
   faUsers,
-  faCog,
-  faSignOutAlt,
-  faChartBar,
-  faCommentDots,
-  faLevelUpAlt, // از FontAwesome
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
@@ -20,20 +15,21 @@ const BusinessManager = () => {
   const [categories, setCategories] = useState({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+  const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش تصویر
+  const [selectedFile, setSelectedFile] = useState(null); // فایل انتخاب‌شده
+  const id = localStorage.getItem('userId');
+  console.log('id:',id);
   const [currentBusiness, setCurrentBusiness] = useState({
-    id: null,
+    business_owner: id,
     business_name: '',
     description: '',
     website_url: '',
     category_id: '',
+    business_image: '', // آدرس یا لینک عکس موجود
   });
 
   const token = localStorage.getItem('token');
 
-  // -------------------------------
-  // تابع دریافت لیست بیزنس‌ها
-  // -------------------------------
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get(
@@ -48,7 +44,6 @@ const BusinessManager = () => {
       const fetchedBusinesses = response.data || [];
       setBusinesses(fetchedBusinesses);
 
-      // گرفتن دسته‌بندی‌ها
       const categoryIds = [
         ...new Set(fetchedBusinesses.map((b) => b.business_category)),
       ].filter(Boolean);
@@ -82,51 +77,63 @@ const BusinessManager = () => {
     fetchBusinesses();
   }, [token]);
 
-  // -------------------------------
-  // مدیریت باز و بسته شدن مودال
-  // -------------------------------
   const handleClose = () => {
     setShowModal(false);
     setCurrentBusiness({
-      id: null,
+      business_owner: id,
       business_name: '',
       description: '',
       website_url: '',
       category_id: '',
+      business_image: '',
     });
+    setPreviewImage(null); // پاک کردن پیش‌نمایش
+    setSelectedFile(null); // پاک کردن فایل انتخاب‌شده
   };
 
   const handleShow = (biz) => {
     setCurrentBusiness(biz);
+    setPreviewImage(biz.business_image || null); // نمایش تصویر قبلی
     setShowModal(true);
   };
 
-  // -------------------------------
-  // هندل تغییرات فیلدهای فرم مودال
-  // -------------------------------
   const handleChange = (e) => {
-    setCurrentBusiness({ ...currentBusiness, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setCurrentBusiness({ ...currentBusiness, [name]: value });
   };
 
-  // -------------------------------
-  // ثبت فرم (ویرایش بیزنس)
-  // -------------------------------
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewImage(URL.createObjectURL(file)); // نمایش پیش‌نمایش
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append('business_owner',id)
+      formData.append('business_name', currentBusiness.business_name);
+      formData.append('description', currentBusiness.description);
+      formData.append('website_url', currentBusiness.website_url);
+      formData.append('category_id', currentBusiness.category_id);
+      if (selectedFile) {
+        formData.append('business_image', selectedFile); // افزودن فایل جدید
+      }
+
       if (currentBusiness.id) {
-        // ارسال درخواست به API برای به‌روزرسانی
         await axios.put(
           `http://localhost:8000/business_management/businesses/${currentBusiness.id}/`,
-          currentBusiness,
+          formData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data', // نوع داده
             },
           }
         );
-
-        // بازخوانی لیست بیزنس‌ها
         await fetchBusinesses();
       }
       handleClose();
@@ -135,9 +142,6 @@ const BusinessManager = () => {
     }
   };
 
-  // -------------------------------
-  // حذف بیزنس
-  // -------------------------------
   const handleDelete = async (id) => {
     if (window.confirm('آیا از حذف این بیزنس اطمینان دارید؟')) {
       try {
@@ -150,7 +154,6 @@ const BusinessManager = () => {
           }
         );
 
-        // بازخوانی لیست بیزنس‌ها
         await fetchBusinesses();
       } catch (error) {
         console.error('خطا در حذف بیزنس:', error);
@@ -171,17 +174,8 @@ const BusinessManager = () => {
                         onClick={() => handlegotobuisness()}
 
       >افزودن بیزنس</button>    
-        {businesses.length > 0 ? (
+      {businesses.length > 0 ? (
         <Table striped bordered hover className="text-center">
-          <colgroup>
-      <col style={{ width: "40px" }} />    {/* ردیف */}
-      <col style={{ width: "60px" }} />   {/* نام */}
-      <col style={{ width: "10px" }} />   {/* نام خانوادگی */}
-      <col style={{ width: "120px" }} />   {/* یوزرنیم */}
-      <col style={{ width: "100px" }} />   {/* ایمیل */}
-      <col style={{ width: "100px" }} />   {/* نقش */}
-    </colgroup>
-
           <thead>
             <tr>
               <th>ردیف</th>
@@ -196,16 +190,9 @@ const BusinessManager = () => {
             {businesses.map((biz, index) => (
               <tr key={biz.id}>
                 <td>{index + 1}</td>
-                <td>
-                  {categories[biz.business_category] || 'دسته‌بندی نامشخص'}
-                </td>
+                <td>{categories[biz.business_category] || 'دسته‌بندی نامشخص'}</td>
                 <td>{biz.business_name}</td>
-                <td>                <div style={{
-    whiteSpace: 'pre-wrap',
-    wordWrap: 'break-word',
-    maxHeight: '4.5em',
-    overflow: 'auto'
-  }}>{biz.description}</div>          </td>
+                <td>{biz.description}</td>
                 <td>{biz.website_url}</td>
                 <td>
                   <Button
@@ -214,8 +201,7 @@ const BusinessManager = () => {
                     className="me-2"
                     onClick={() => handleShow(biz)}
                   >
-                                  <FontAwesomeIcon icon={faUserEdit} />
-                    
+                    <FontAwesomeIcon icon={faUserEdit} />
                   </Button>
                   <Button
                     variant="danger"
@@ -223,7 +209,6 @@ const BusinessManager = () => {
                     onClick={() => handleDelete(biz.id)}
                   >
                     <FontAwesomeIcon icon={faTrash} />
-                    
                   </Button>
                 </td>
               </tr>
@@ -234,7 +219,6 @@ const BusinessManager = () => {
         <p>هیچ بیزنسی ثبت نشده است.</p>
       )}
 
-      {/* مودال ویرایش */}
       <Modal dir="rtl" show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>ویرایش بیزنس</Modal.Title>
@@ -274,6 +258,25 @@ const BusinessManager = () => {
                 name="website_url"
                 value={currentBusiness.website_url}
                 onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formBusinessImage" className="mb-3">
+              <Form.Label>عکس بیزنس</Form.Label>
+              {previewImage && (
+                <div className="mb-2">
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="img-fluid rounded"
+                    style={{ maxWidth: '100px', height: 'auto' }}
+                  />
+                </div>
+              )}
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
               />
             </Form.Group>
           </Modal.Body>

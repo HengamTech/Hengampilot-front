@@ -36,9 +36,10 @@ const ReviewSection = () => {
             return {
               ...review,
               name: userResponse.data.username,
-              userImage: userResponse.data.profile_picture || img,
+              userImage: userResponse.data.user_image || img,
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
+              business_img:businessResponse.data.business_image,
             };
           })
         );
@@ -174,7 +175,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
             : 'نظر ناموجود است'}
         </p>
         <div className="brand">
-          <img src={img} alt={review.name} style={{ width: '55px', height: '55px', marginRight: '8px' }} />
+          <img src={review.business_img} alt={review.name} style={{ width: '55px', height: '55px', marginRight: '8px' }} />
           <div className="brand2">
             <h5 className="card-text">{review.businessName}</h5>
             <p className="card-text">{review.businessUrl}</p>

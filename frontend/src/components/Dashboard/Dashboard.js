@@ -100,8 +100,9 @@ const UserDashboard = () => {
                 <aside className="col-12 col-md-3 bg-dark text-white p-3">
                     <div className="text-center mb-4">
                         <img
-                            src="https://via.placeholder.com/80"
+                            src={`http://127.0.0.1:8000${userData.user_image}`}
                             alt="User"
+                            width="70px"
                             className="rounded-circle mb-2"
                         />
                         <h5>{userData.username}</h5>

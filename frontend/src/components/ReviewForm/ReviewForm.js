@@ -6,43 +6,32 @@ import { useNavigate } from 'react-router-dom';
 const ReviewForm = () => {
   const navigate = useNavigate();
 
-  // state داده‌های فرم
   const [formData, setFormData] = useState({
     business_name: '',
-    business_category: '', // مقدار آیدی دسته‌بندی را در این فیلد نگه می‌داریم
+    business_category: '',
     description: '',
     website_url: '',
-    business_owner: ''
+    business_owner: '',
+    business_image: null, // فایل عکس
   });
 
-  // state مربوط به لیست دسته‌بندی‌ها
   const [categories, setCategories] = useState([]);
-
   const [errors, setErrors] = useState({});
+  const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش تصویر
 
-  // اگر مالک کسب‌وکار (ID کاربر) در localStorage است:
-  const ownerId = localStorage.getItem('userId') || ''; 
+  const ownerId = localStorage.getItem('userId') || '';
 
-  // بعد از بارگذاری کامپوننت:
   useEffect(() => {
-    // ست کردن ownerId در فرم (اگر موجود باشد)
     if (ownerId) {
       setFormData((prev) => ({ ...prev, business_owner: ownerId }));
-    } else {
-      // اگر نیاز دارید کاربر را به لاگین هدایت کنید:
-      // navigate("/login");
     }
-
-    // گرفتن لیست دسته‌بندی‌ها از سرور
     fetchCategories();
-  }, [ownerId]); // یا بسته به شرایط [ ]
+  }, [ownerId]);
 
-  // تابع گرفتن لیست دسته‌بندی‌ها از سرور
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        // اگر توکن ندارید
         alert("ابتدا لاگین کنید.");
         navigate("/login");
         return;
@@ -51,34 +40,34 @@ const ReviewForm = () => {
       const response = await axios.get(
         'http://127.0.0.1:8000/business_management/category/',
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      // فرض بر این است که سرور آرایه‌ای از آبجکت‌ها برمی‌گرداند
-      // [{ id: 1, category_name: "غذایی" }, { id: 2, category_name: "ورزشی" }, ...]
       setCategories(response.data);
-      console.log(response.data)
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
-  // مدیریت تغییر مقدار فیلدهای فرم
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: '' }); 
+    setErrors({ ...errors, [name]: '' });
   };
 
-  // اعتبارسنجی ساده فرم
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, business_image: file });
+      setPreviewImage(URL.createObjectURL(file)); // ایجاد پیش‌نمایش
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.business_name.trim()) {
       newErrors.business_name = 'لطفاً نام شرکت را وارد کنید.';
     }
-    // بررسی انتخاب دسته‌بندی
     if (!formData.business_category) {
       newErrors.business_category = 'لطفاً یک دسته‌بندی را انتخاب کنید.';
     }
@@ -91,10 +80,12 @@ const ReviewForm = () => {
     if (!formData.business_owner.trim()) {
       newErrors.business_owner = 'مالک کسب‌وکار مشخص نیست.';
     }
+    if (!formData.business_image) {
+      newErrors.business_image = 'لطفاً یک عکس برای شرکت آپلود کنید.';
+    }
     return newErrors;
   };
 
-  // سابمیت فرم
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
@@ -109,34 +100,36 @@ const ReviewForm = () => {
       }
 
       try {
-        // درخواست POST به سرور
+        const formDataToSend = new FormData();
+        formDataToSend.append('business_name', formData.business_name);
+        formDataToSend.append('business_category', formData.business_category);
+        formDataToSend.append('description', formData.description);
+        formDataToSend.append('website_url', formData.website_url);
+        formDataToSend.append('business_owner', formData.business_owner);
+        if (formData.business_image) {
+          formDataToSend.append('business_image', formData.business_image);
+        }
+
         const response = await axios.post(
           'http://127.0.0.1:8000/business_management/businesses/',
+          formDataToSend,
           {
-            business_name: formData.business_name,
-            business_category: formData.business_category, // آیدی دسته‌بندی انتخاب‌شده
-            description: formData.description,
-            website_url: formData.website_url,
-            business_owner: formData.business_owner
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         if (response.status === 201) {
           alert('کسب‌وکار با موفقیت ثبت شد!');
           navigate("/AdminDashboard");
-          // ریست فرم
           setFormData({
             business_name: '',
             business_category: '',
             description: '',
             website_url: '',
-            business_owner: ownerId
+            business_owner: ownerId,
+            business_image: null,
           });
+          setPreviewImage(null);
         } else {
           alert('خطا در ثبت کسب‌وکار!');
         }
@@ -151,17 +144,18 @@ const ReviewForm = () => {
     <div className="container mt-5">
       <div className="row align-items-center">
         <div className="col-md-5 d-flex align-items-center justify-content-center">
-          <img
-            src="https://img.freepik.com/free-photo/3d-rendering-pen-ai-generated_23-2150695409.jpg"
-            alt="Business Form"
-            className="img-fluid rounded"
-            style={{
-              width: '100%',
-              height: 'auto',
-              maxHeight: '500px',
-              objectFit: 'cover'
-            }}
-          />
+            <img
+              src="https://img.freepik.com/free-photo/3d-rendering-pen-ai-generated_23-2150695409.jpg"
+              alt="Business Form"
+              className="img-fluid rounded"
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxHeight: '500px',
+                objectFit: 'cover',
+              }}
+            />
+          
         </div>
         <div className="col-md-7">
           <form
@@ -186,7 +180,6 @@ const ReviewForm = () => {
               )}
             </div>
 
-            {/* انتخاب دسته‌بندی به صورت کشویی */}
             <div className="mb-3">
               <label htmlFor="business_category" className="form-label">
                 دسته‌بندی شرکت
@@ -245,8 +238,33 @@ const ReviewForm = () => {
                 <div className="invalid-feedback">{errors.website_url}</div>
               )}
             </div>
+            {previewImage && (
+                <div className="mb-2">
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="img-fluid rounded"
+                    style={{ maxWidth: '100px', height: 'auto' }}
+                  />
+                </div>
+              )}
+            <div className="mb-3">
+              <label htmlFor="business_image" className="form-label">
+                آپلود عکس
+              </label>
+              <input
+                type="file"
+                className={`form-control ${errors.business_image ? 'is-invalid' : ''}`}
+                id="business_image"
+                name="business_image"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              {errors.business_image && (
+                <div className="invalid-feedback">{errors.business_image}</div>
+              )}
+            </div>
 
-            {/* فیلد مخفی برای مالک کسب‌وکار */}
             <input
               type="hidden"
               name="business_owner"

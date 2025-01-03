@@ -49,6 +49,7 @@ const AllReviewsPage = () => {
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
               username: userResponse.data.username,
+              userimage:userResponse.data.user_image,
             };
           })
         );
@@ -273,7 +274,7 @@ const AllReviewsPage = () => {
             <div className="card p-2 shadow-sm">
             <div className='row'>
             <div className='d-flex justify-content-end' >
-            <img src={img} alt={review.businessName} className=" img-fluid mb-2"style={{height:"70px",width:"70px",marginLeft:"80%"}} />
+            <img src={review.userimage} alt={review.businessName} className=" img-fluid mb-2"style={{height:"70px",width:"70px",marginLeft:"80%"}} />
               <ReportButton style={{width:"120px"}}
                   reviewId={review.id}
                   reviewUserId={review.user}

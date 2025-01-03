@@ -93,7 +93,7 @@ const ReviewDetailPage = () => {
             setReview({
               ...data,
               name: userResponse.data.username,
-              userImage: userResponse.data.profile_picture || img,
+              userImage: userResponse.data.user_image || img,
               businessName:businessResponse.data.business_name,
               businessUrl:businessResponse.data.website_url
             });

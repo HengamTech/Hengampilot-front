@@ -8,7 +8,7 @@ const UserReviews = () => {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const[user,setUser] =useState(null);
   const token = localStorage.getItem('token');
   const { id } = useParams();
 
@@ -39,7 +39,7 @@ const UserReviews = () => {
         );
         const userData = userResponse.data;
         setUsername(userData.username || `${userData.first_name} ${userData.last_name}`);
-
+        setUser(userData);
         // 3) استخراج شناسه‌های بیزنس:
         //   فرض بر این است هر review فیلدی به نام business_id دارد
         const businessIds = [...new Set(reviewsData.map(r => r.business_id))].filter(Boolean);
@@ -102,10 +102,10 @@ const UserReviews = () => {
               <div className="card h-100">
                 <div className="d-flex align-items-center p-2">
                   <img
-                    src={review.userImage || "https://via.placeholder.com/80"}
+                    src={user.user_image || "https://via.placeholder.com/80"}
                     alt={username}
                     className="rounded-circle"
-                    style={{ height: "80px", width: "80px", objectFit: "cover" }}
+                    style={{ height: "80px", width: "60px", objectFit: "cover" }}
                   />
                 </div>
 

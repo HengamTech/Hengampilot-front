@@ -221,7 +221,8 @@ const Companylistbycategory1 = () => {
               <div className="list-group">
                 {companies.map((company) => {
                   const imageSrc =
-                    company.profileImage || "https://via.placeholder.com/80";
+                    `http://127.0.0.1:8000${company.business_image}` || "https://via.placeholder.com/80";
+                    console.log("salam",company.business_image);
                   return (
                     <div
                       key={company.id}
@@ -230,7 +231,7 @@ const Companylistbycategory1 = () => {
                       <div className="d-flex align-items-center">
                         <img
                           src={imageSrc}
-                          alt={company.business_name}
+                          // alt={company.business_name}
                           className="rounded me-3"
                           style={{
                             width: "80px",

@@ -27,6 +27,7 @@ const CompanyDetailPage = () => {
           params: { id, ordering, search },
         }
       );
+      // console.log('response.data2',response.data)
       setComments(response.data);
       const uniqueUserIds = [...new Set(response.data.map(comment => comment.user))];
       const userFetchPromises = uniqueUserIds
@@ -68,12 +69,15 @@ const CompanyDetailPage = () => {
       );
       setUserDetails(prevDetails => ({
         ...prevDetails,
-        [userId]: response.data.username,
-      }));
+        [userId]: {
+        userId: response.data.username,
+        userimage:response.data.user_image
+      }  }));
     } catch (err) {
       console.error(`خطا در دریافت اطلاعات کاربر با آیدی ${userId}`);
     }
   };
+  // console.log('response.data.user_image2',userDetails);
 
   useEffect(() => {
     fetchCompany();
@@ -121,7 +125,7 @@ const CompanyDetailPage = () => {
     );
   }
 
-  const imageSrc = company.profileImage || "https://via.placeholder.com/80";
+  const imageSrc = company.business_image || "https://via.placeholder.com/80";
 
   return (
     <div className="container my-5" dir="rtl">
@@ -158,14 +162,23 @@ const CompanyDetailPage = () => {
                 <div key={comment.id} className="border-bottom py-3">
                   <div className="d-flex align-items-center">
                     <img
-                      src="https://via.placeholder.com/50"
+                      src={
+                        userDetails[comment.user]?.userimage ||
+                        "https://via.placeholder.com/50"
+                      }
                       alt="User"
+                      width="40px"
                       className="rounded-circle me-2"
                     />
-                   
+                       {/* <button
+      onClick={() => console.log("Comment Data:", comment)}
+      className="btn btn-sm btn-secondary"
+    >
+      Log Comment
+    </button> */}
                   </div>
                   <div className="col">
-                    <strong>{userDetails[comment.user] || "در حال بارگذاری..."}</strong>
+                    <strong>{userDetails[comment.user]?.userId || "در حال بارگذاری..."}</strong>
                     </div>
                   <div>{renderStars(comment.rank)}</div>
                   <small className="text-muted">{comment.created_at}</small>
