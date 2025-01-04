@@ -131,15 +131,6 @@ const UserDashboard = () => {
                                         ویرایش پروفایل
                                     </button>
                                 </li>
-                                <li className="nav-item">
-                                    <button
-                                        onClick={handleGoToCommentPage} // هدایت به صفحه ثبت نظر
-                                        className="nav-link text-white d-flex align-items-center gap-2 bg-transparent border-0"
-                                    >
-                                        <FontAwesomeIcon icon={faCommentDots} />
-                                        ثبت شرکت
-                                    </button>
-                                </li>
                                 
                                     <li className="nav-item">
                                     <button  className="nav-link text-white d-flex align-items-center gap-2"
