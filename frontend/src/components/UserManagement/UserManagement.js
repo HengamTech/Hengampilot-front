@@ -155,6 +155,7 @@ console.log("users",users);
                       <button
                         className="btn btn-sm btn-danger mx-1"
                         onClick={() => handleDeleteUser(user.id)}
+                        data-testid="test"
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>

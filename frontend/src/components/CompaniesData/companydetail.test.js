@@ -119,8 +119,8 @@ describe("CompanyDetailPage Component", () => {
         );
 
         // Wait for company and comments to render
-        expect(await screen.findByText("Company A")).toBeInTheDocument();
-        expect(await screen.findByText("Great company!")).toBeInTheDocument();
+        expect(screen.findByText("Company A"));
+        expect(screen.findByText("Great company!"));
 
     });
 
