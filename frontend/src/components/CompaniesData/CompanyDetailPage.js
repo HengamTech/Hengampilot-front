@@ -4,6 +4,11 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
+/* --- افزوده‌های جدید برای Like, Report, AdminReply --- */
+import { Button, Modal } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlag } from '@fortawesome/free-solid-svg-icons';
+
 const CompanyDetailPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -13,9 +18,57 @@ const CompanyDetailPage = () => {
   const [ordering, setOrdering] = useState('');
   const [search, setSearch] = useState('');
   const { id } = useParams();
+
+  // لیست کامنت‌ها + اطلاعات کاربر هر کامنت
   const [comments, setComments] = useState([]);
   const [userDetails, setUserDetails] = useState({});
 
+  // برای لایک کردن هر کامنت
+  const [votes, setVotes] = useState({});
+  // بررسی نقش ادمین
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // گرفتن اطلاعات votes (برای لایک‌ها)
+  const fetchVotes = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:8000/review_rating/votes/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const votesMap = {};
+      data.forEach((vote) => {
+        if (!votesMap[vote.review]) {
+          votesMap[vote.review] = [];
+        }
+        votesMap[vote.review].push(vote.user);
+      });
+
+      setVotes(votesMap);
+    } catch (error) {
+      console.error('Error fetching votes:', error);
+    }
+  };
+
+  // برای چک کردن نقش ادمین
+  const fetchAdminStatus = async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+    try {
+      const { data } = await axios.get(
+        `http://localhost:8000/user_management/users/${userId}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setIsAdmin(data.is_admin);
+    } catch (err) {
+      console.error('Error checking admin status:', err);
+    }
+  };
+
+  // فراخوانی نظرات
   const fetchComments = async (id, ordering, search) => {
     setLoading(true);
     setError(null);
@@ -27,13 +80,15 @@ const CompanyDetailPage = () => {
           params: { id, ordering, search },
         }
       );
-      // console.log('response.data2',response.data)
       setComments(response.data);
+
+      // گرفتن اطلاعات کاربران هر کامنت
       const uniqueUserIds = [...new Set(response.data.map(comment => comment.user))];
       const userFetchPromises = uniqueUserIds
-        .filter(userId => !userDetails[userId])
-        .map(userId => loadUserDetails(userId));
+        .filter(uid => !userDetails[uid])
+        .map(uid => loadUserDetails(uid));
       await Promise.all(userFetchPromises);
+
     } catch (err) {
       setError("خطا در دریافت اطلاعات نظرات.");
     } finally {
@@ -41,6 +96,7 @@ const CompanyDetailPage = () => {
     }
   };
 
+  // گرفتن اطلاعات شرکت
   const fetchCompany = async () => {
     setLoading(true);
     setError(null);
@@ -49,7 +105,6 @@ const CompanyDetailPage = () => {
         `http://127.0.0.1:8000/business_management/businesses/${id}/`
       );
       setCompany(response.data);
-      console.log('response.data:',response.data);
     } catch (err) {
       setError("خطا در دریافت اطلاعات شرکت.");
     } finally {
@@ -57,6 +112,7 @@ const CompanyDetailPage = () => {
     }
   };
 
+  // گرفتن اطلاعات کاربر برای یک comment
   const loadUserDetails = async (userId) => {
     try {
       const response = await axios.get(
@@ -70,20 +126,24 @@ const CompanyDetailPage = () => {
       setUserDetails(prevDetails => ({
         ...prevDetails,
         [userId]: {
-        userId: response.data.username,
-        userimage:response.data.user_image
-      }  }));
+          userId: response.data.username,
+          userimage: response.data.user_image
+        }
+      }));
     } catch (err) {
       console.error(`خطا در دریافت اطلاعات کاربر با آیدی ${userId}`);
     }
   };
-  // console.log('response.data.user_image2',userDetails);
 
+  // در اولین بار و هر بار id/order/search تغییر کرد
   useEffect(() => {
     fetchCompany();
     fetchComments(id, ordering, search);
+    fetchAdminStatus();
+    fetchVotes();
   }, [id, ordering, search]);
 
+  // کلیک روی دکمه ثبت نظر
   const handleReviewSubmit = () => {
     if (!token) {
       alert("برای ثبت نظر باید وارد شوید.");
@@ -93,6 +153,44 @@ const CompanyDetailPage = () => {
     }
   };
 
+  // لایک کردن یک کامنت (comment)
+  const handleLike = async (reviewId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('ابتدا وارد شوید');
+      return;
+    }
+
+    // اگر قبلا لایک کرده باشد
+    if (votes[reviewId]?.includes(userId)) {
+      alert('شما قبلاً به این نظر رأی داده‌اید.');
+      return;
+    }
+
+    try {
+      await axios.post(
+        'http://localhost:8000/review_rating/votes/',
+        {
+          user: userId,
+          review: reviewId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // بروزرسانی state votes
+      setVotes((prevVotes) => ({
+        ...prevVotes,
+        [reviewId]: [...(prevVotes[reviewId] || []), userId],
+      }));
+    } catch (error) {
+      console.error('Error liking review:', error);
+    }
+  };
+
+  // رندر ستاره‌ها برای نمایش امتیاز
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -145,9 +243,9 @@ const CompanyDetailPage = () => {
             {company.average_rating?.toFixed(1)} میانگین امتیاز | {company.total_reviews} نظر
           </small>
           <div>
-          <button className="btn btn-primary mt-2" onClick={handleReviewSubmit}>
-            ثبت نظر
-          </button>
+            <button className="btn btn-primary mt-2" onClick={handleReviewSubmit}>
+              ثبت نظر
+            </button>
           </div>
         </div>
         <div className="card-body">
@@ -160,7 +258,8 @@ const CompanyDetailPage = () => {
             <div>
               {comments.map((comment) => (
                 <div key={comment.id} className="border-bottom py-3">
-                  <div className="d-flex align-items-center">
+                  {/* تصویر و نام کاربر */}
+                  <div className="d-flex align-items-center mb-2">
                     <img
                       src={
                         userDetails[comment.user]?.userimage ||
@@ -169,26 +268,285 @@ const CompanyDetailPage = () => {
                       alt="User"
                       width="40px"
                       className="rounded-circle me-2"
+                      style={{ objectFit: "cover" }}
                     />
-                       {/* <button
-      onClick={() => console.log("Comment Data:", comment)}
-      className="btn btn-sm btn-secondary"
-    >
-      Log Comment
-    </button> */}
+                    <strong>
+                      {userDetails[comment.user]?.userId || "در حال بارگذاری..."}
+                    </strong>
                   </div>
-                  <div className="col">
-                    <strong>{userDetails[comment.user]?.userId || "در حال بارگذاری..."}</strong>
-                    </div>
+
+                  {/* نمایش امتیاز با ستاره */}
                   <div>{renderStars(comment.rank)}</div>
+
                   <small className="text-muted">{comment.created_at}</small>
                   <p>{comment.review_text}</p>
+
+                  {/* دکمه لایک */}
+                  <div className="d-flex justify-content-start">
+                  <LikeButton
+                    reviewId={comment.id}
+                    handleLike={handleLike}
+                    votes={votes[comment.id]?.length || 0}
+                  />
+
+                  {/* دکمه گزارش */}
+                  <ReportButton
+                    reviewId={comment.id}
+                    reviewUserId={comment.user}
+                    token={token}
+                  />
+</div>
+                  {/* ریپلای ادمین */}
+                  <AdminReplySection
+                    reviewId={comment.id}
+                    token={token}
+                    isAdmin={isAdmin}
+                  />
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+/* --- اجزای کمکی (LikeButton, ReportButton, AdminReplySection) مشابه نمونه دوم --- */
+
+// کامپوننت لایک
+const LikeButton = ({ reviewId, handleLike, votes }) => {
+  return (
+    <div className="like-dislike-buttons mb-2">
+      <button onClick={() => handleLike(reviewId)} className="btn btn-success btn-sm">
+        👍 {votes}
+      </button>
+    </div>
+  );
+};
+
+// کامپوننت گزارش نظر
+const ReportButton = ({ reviewId, reviewUserId, token }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [reasonSelect, setReasonSelect] = useState('');
+  const [resultReport, setResultReport] = useState('Unchecked');
+  const [reason, setReason] = useState('');
+  const userId = localStorage.getItem('userId');
+
+  const handleReport = async () => {
+    if (!reasonSelect || !reason) {
+      alert('لطفاً تمام فیلدها را پر کنید.');
+      return;
+    }
+
+    try {
+      await axios.post(
+        'http://localhost:8000/review_rating/reports/',
+        {
+          reason_select: reasonSelect,
+          result_report: resultReport,
+          reason,
+          review_id: reviewId,
+          review_user_id: userId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('گزارش شما با موفقیت ارسال شد.');
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error reporting review:', error);
+    }
+  };
+
+  return (
+    <>
+      <button
+        className="btn btn-light btn-sm"
+        onClick={() => setShowModal(true)}
+        style={{ marginRight: '8px' }}
+      >
+        <FontAwesomeIcon icon={faFlag} style={{ marginLeft: '5px' }} />
+        
+      </button>
+
+      <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>گزارش نظر</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <select
+            value={reasonSelect}
+            onChange={(e) => setReasonSelect(e.target.value)}
+            className="form-select"
+          >
+            <option value="">انتخاب دلیل</option>
+            <option value="terrorism">تروریسم</option>
+            <option value="violence">خشونت</option>
+            <option value="accusations">اتهامات</option>
+            <option value="sexual">جنسی</option>
+          </select>
+          <textarea
+            placeholder="توضیح دلیل"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="form-control mt-2"
+          />
+          <select
+            value={resultReport}
+            onChange={(e) => setResultReport(e.target.value)}
+            className="form-select mt-2"
+          >
+            <option value="Unchecked">بررسی نشده</option>
+            <option value="ignore">نادیده گرفته شود</option>
+            <option value="Remove">حذف شود</option>
+            <option value="UserBan">مسدود کردن کاربر</option>
+          </select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            انصراف
+          </Button>
+          <Button variant="danger" onClick={handleReport}>
+            ارسال گزارش
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
+// بخش ریپلای ادمین
+const AdminReplySection = ({ reviewId, token, isAdmin }) => {
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [replies, setReplies] = useState([]);
+  const [showAllReplies, setShowAllReplies] = useState(false);
+
+  // گرفتن پاسخ‌های این کامنت (reviewId)
+  useEffect(() => {
+    const fetchReplies = async () => {
+      try {
+        const { data } = await axios.get(
+          'http://localhost:8000/review_rating/review_responses/',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const filtered = data.filter((resp) => resp.review === reviewId);
+        setReplies(filtered);
+      } catch (err) {
+        console.error('Error fetching replies:', err);
+      }
+    };
+    fetchReplies();
+  }, [reviewId, token]);
+
+  const handleReplySubmit = async () => {
+    if (!replyText.trim()) {
+      alert('لطفاً متن پاسخ را وارد کنید.');
+      return;
+    }
+    try {
+      await axios.post(
+        'http://localhost:8000/review_rating/review_responses/',
+        {
+          description: replyText,
+          review: reviewId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert('پاسخ ثبت شد');
+      setShowReplyForm(false);
+      setReplyText('');
+
+      // بروزرسانی لیست پاسخ‌ها
+      const { data } = await axios.get(
+        'http://localhost:8000/review_rating/review_responses/',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const filtered = data.filter((resp) => resp.review === reviewId);
+      setReplies(filtered);
+    } catch (err) {
+      console.error('Error submitting reply:', err);
+      alert('خطا در ارسال پاسخ');
+    }
+  };
+
+  // اگر هیچ پاسخی وجود ندارد و ادمین نیست => دکمه "پاسخ‌های مدیر" هم نشان نده
+  if (replies.length === 0 && !isAdmin) {
+    return null;
+  }
+
+  const toggleAllReplies = () => {
+    setShowAllReplies(!showAllReplies);
+  };
+
+  return (
+    <div className="mt-2">
+      {/* اگر پاسخی وجود دارد یا ادمین است => دکمه "پاسخ‌های مدیر" نشان ده */}
+      {(replies.length > 0 || isAdmin) && (
+        <Button
+          className="btn btn-secondary btn-sm"
+          onClick={toggleAllReplies}
+          style={{ marginRight: '10px' }}
+        >
+          {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ‌های مدیر'}
+        </Button>
+      )}
+
+      {/* نمایش پاسخ‌های مدیر در صورت کلیک */}
+      {showAllReplies && replies.length > 0 && (
+        <div className="mt-2">
+          <strong>پاسخ های مدیر:</strong>
+          {replies.map((resp) => (
+            <div
+              key={resp.id}
+              style={{
+                background: '#f8f9fa',
+                padding: '5px 10px',
+                marginTop: '5px',
+                borderRadius: '4px',
+              }}
+            >
+              <p className="m-0">{resp.description}</p>
+              <small className="text-muted">
+                {new Date(resp.created_at).toLocaleString('fa-IR')}
+              </small>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* فقط ادمین می‌تواند ریپلای جدید بگذارد */}
+      {isAdmin && (
+        <>
+          <Button variant="link" onClick={() => setShowReplyForm(!showReplyForm)}>
+            {showReplyForm ? 'بستن' : 'ریپلای'}
+          </Button>
+
+          {showReplyForm && (
+            <div className="mt-2">
+              <textarea
+                className="form-control"
+                placeholder="پاسخ ادمین را وارد کنید..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+              />
+              <Button variant="primary" className="mt-2" onClick={handleReplySubmit}>
+                ارسال
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
