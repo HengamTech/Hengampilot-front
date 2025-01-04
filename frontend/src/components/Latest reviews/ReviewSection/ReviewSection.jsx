@@ -159,14 +159,15 @@ const ReviewCard = ({ review, handleReadMore }) => {
       />
       <div className="card-body d-flex flex-column">
         <h5 className="card-title">{review.name}</h5>
-        <p>تاریخ: {review.created_at ? toJalali(review.created_at) : 'نامشخص'}</p>
-        <div className="stars mb-1">
+        <div className="stars mb-1"style={{marginTop:"-11px"}}>
           {[...Array(5)].map((_, index) => (
             <span key={index} className={index < review.rank ? 'star filled' : 'star'}>
               ★
             </span>
           ))}
         </div>
+        <p> {review.created_at ? toJalali(review.created_at) : 'نامشخص'}</p>
+        
         <p className="card-text aa">
           {review.review_text
             ? review.review_text.length > COMMENT_MAX_LENGTH
