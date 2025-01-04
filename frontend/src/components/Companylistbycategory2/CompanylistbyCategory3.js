@@ -188,7 +188,7 @@ const Companylistbycategory1 = () => {
               </div>
             </div>
 
-            <button className="btn btn-success w-100" onClick={applyFilters}>
+            <button data-testid="applyF" className="btn btn-success w-100" onClick={applyFilters}>
               اعمال فیلتر
             </button>
           </aside>

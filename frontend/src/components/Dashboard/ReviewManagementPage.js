@@ -192,9 +192,12 @@ const ReviewManagementPage = () => {
               <td>{review.created_at}</td>
               <td>{review.hidden ? "مخفی شده" : "قابل مشاهده"}</td>
               <td>
-                <FaCheck onClick={() => updateReviewHidden(review.id, false)} />
-                <FaTimes onClick={() => updateReviewHidden(review.id, true)} />
-                <FaTrash onClick={() => deleteReview(review.id)} />
+                <td>
+                  <FaCheck data-testid={`hide-review-${review.id}`} onClick={() => updateReviewHidden(review.id, false)} />
+                  <FaTimes data-testid={`show-review-${review.id}`} onClick={() => updateReviewHidden(review.id, true)} />
+                  <FaTrash data-testid={`delete-review-${review.id}`} onClick={() => deleteReview(review.id)}/>
+                </td>
+
               </td>
             </tr>
           ))}

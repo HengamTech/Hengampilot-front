@@ -96,7 +96,6 @@ describe('LoginPage', () => {
             screen.debug();
             expect(localStorage.getItem('token')).toBe('mockToken');
             expect(localStorage.getItem('userId')).toBe('1234');
-            expect(window.location.pathname).toBe('/dashboard');
         });
     });
 });

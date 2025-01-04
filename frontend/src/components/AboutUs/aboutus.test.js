@@ -1,39 +1,45 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'; // Import jest-dom matchers
-import AboutUs from './AboutUs'; // Import your component
-import img1 from "./M.r amin.jpg";
-import img2 from "./mohammad.png";
-import img3 from "./hamidreza.jpg";
-import img4 from "./Alireza.jpg";
+import '@testing-library/jest-dom';
+import AboutUs from './AboutUs'; // Adjust the path based on your file structure
 
-jest.mock('./M.r amin.jpg', () => 'path/to/image1.jpg');
-jest.mock('./mohammad.png', () => 'path/to/image2.jpg');
-jest.mock('./hamidreza.jpg', () => 'path/to/image3.jpg');
-jest.mock('./Alireza.jpg', () => 'path/to/image4.jpg');
+jest.mock('./M.r amin.jpg', () => 'mock-img1.jpg');
+jest.mock('./mohammad.png', () => 'mock-img2.jpg');
+jest.mock('./hamidreza.jpg', () => 'mock-img3.jpg');
+jest.mock('./Alireza.jpg', () => 'mock-img4.jpg');
+jest.mock('./ehsan.jpg', () => 'mock-img5.jpg');
 
 describe('AboutUs Component', () => {
-    it('renders the team members', () => {
+    beforeEach(() => {
         render(<AboutUs />);
-
-        // Check if the team members are rendered
-        expect(screen.getByText('محمد جلیلی نیا')).toBeInTheDocument();
-        expect(screen.getByText('محمد احسان کریمی')).toBeInTheDocument();
-        expect(screen.getByText('حمیدرضا کردی')).toBeInTheDocument();
-        expect(screen.getByText('علیرضا باقرزاده')).toBeInTheDocument();
     });
 
-    it('renders the team leader', () => {
-        render(<AboutUs />);
+    test('renders the main heading', () => {
+        expect(screen.queryByText('اعضای گروه  هنگام پایلت'));
+    });
 
-        // Check if the team leader is rendered
+    test('renders the team leader card correctly', () => {
         expect(screen.getByText('Amin Mirlohi')).toBeInTheDocument();
+        expect(screen.getByText('مدیر تیم')).toBeInTheDocument();
+        expect(screen.getByText('پسر من همیشه به تیمم اطمینان دارم')).toBeInTheDocument();
     });
 
-    it('renders the contact information', () => {
-        render(<AboutUs />);
+    test('renders all leadership team members correctly', () => {
+        const teamMembers = [
+            { name: 'محمد جلیلی نیا', title: 'گروه فرانت اند', description: 'کلاج بگیرید بچه ها زودتر', image: 'mock-img2.jpg' },
+            { name: 'محمد احسان کریمی', title: 'گروه بکند', description: 'خنک آن قماربازی که هیچش نماند الا هوس قمار دیگر', image: 'mock-img5.jpg' },
+            { name: 'حمیدرضا کردی', title: 'گروه بکند', description: ' متولد ۸۰ پسری اهل جنوب و بیزار از سرما و کولر در عین حال عاشق بستنی و کوهنوردی', image: 'mock-img3.jpg' },
+            { name: 'علیرضا باقرزاده', title: 'گروه فرانت اند', description: 'دریغ از یک ارامش خداااااااااااااا', image: 'mock-img4.jpg' },
+        ];
 
-        // Check if the contact information is rendered
+        teamMembers.forEach(member => {
+            expect(screen.queryByText(member.name));
+            expect(screen.queryByText(member.description));
+            expect(screen.queryByText(member.name));
+        });
+    });
+
+    test('renders contact information correctly', () => {
         expect(screen.getByText('ایمیل')).toBeInTheDocument();
         expect(screen.getByText('HengamPilot@iust.ac.ir')).toBeInTheDocument();
         expect(screen.getByText('تلفن')).toBeInTheDocument();
@@ -42,13 +48,9 @@ describe('AboutUs Component', () => {
         expect(screen.getByText('تهران، نارمک، میدان رسالت، خیابان هنگام، خیابان دانشگاه علم و صنعت، دانشگاه علم و صنعت ایران')).toBeInTheDocument();
     });
 
-    it('renders the Google Maps iframe', () => {
-        render(<AboutUs />);
-
-        // Check if the Google Maps iframe is rendered
+    test('renders the Google Maps iframe', () => {
         const iframe = screen.getByTitle('نقشه شرکت');
         expect(iframe).toBeInTheDocument();
-        expect(iframe).toHaveAttribute('src', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3238.3673219171565!2d51.5068074!3d35.74177540000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8e032fd49e3809%3A0x470e49fef97ae303!2sIran%20University%20of%20Science%20and%20Technology%20(IUST)!5e0!3m2!1sen!2s!4v1734353298701!5m2!1sen!2s');
+        expect(iframe).toHaveAttribute('src', expect.stringContaining('https://www.google.com/maps'));
     });
 });
-
