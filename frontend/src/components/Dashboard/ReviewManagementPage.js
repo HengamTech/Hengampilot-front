@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-
 import {
   FaStar,
   FaStarHalfAlt,
@@ -18,7 +17,7 @@ const ReviewManagementPage = () => {
   const [businessesMap, setBusinessesMap] = useState({});
   const [usersMap, setUsersMap] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterHidden, setFilterHidden] = useState("all"); // فیلتر بر اساس `hidden`
+  const [filterHidden, setFilterHidden] = useState("all");
 
   const fetchReviews = async () => {
     try {
@@ -78,18 +77,16 @@ const ReviewManagementPage = () => {
   const updateReviewHidden = async (id, newHiddenStatus) => {
     try {
       const review = reviews.find((r) => r.id === id);
-
       if (!review) {
         console.error("Review not found.");
         return;
       }
-
       const updatedReview = {
         ...review,
         hidden: newHiddenStatus,
       };
 
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:8000/review_rating/reviews/${id}/`,
         updatedReview,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -118,15 +115,18 @@ const ReviewManagementPage = () => {
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
   const filteredReviews = reviews.filter((review) => {
-    const searchMatch =
-      usersMap[review.user]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.review_text?.toLowerCase().includes(searchTerm.toLowerCase());
+    const username = usersMap[review.user]?.toLowerCase() || "";
+    const reviewText = review.review_text?.toLowerCase() || "";
+    const searchLower = searchTerm.toLowerCase();
+
+    const searchMatch = username.includes(searchLower) || reviewText.includes(searchLower);
     const hiddenMatch =
       filterHidden === "all"
         ? true
         : filterHidden === "hidden"
         ? review.hidden
         : !review.hidden;
+
     return searchMatch && hiddenMatch;
   });
 
@@ -147,6 +147,7 @@ const ReviewManagementPage = () => {
   return (
     <div className="container-fluid" style={{ direction: "rtl" }}>
       <h2 className="mb-4">مدیریت نظرات</h2>
+
       <div className="row mb-4">
         <div className="col-md-6">
           <input
@@ -170,7 +171,20 @@ const ReviewManagementPage = () => {
         </div>
       </div>
 
-      <table className="table table-striped text-center">
+      {/* جدول با layout و colgroup برای جلوگیری از بزرگ‌شدن ستون‌ها و شکستن متن */}
+      <table
+        className="table table-striped text-center"
+        style={{ tableLayout: "fixed", width: "100%" }}
+      >
+        <colgroup>
+          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "80px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "250px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "140px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+        </colgroup>
         <thead>
           <tr>
             <th>نام کاربری</th>
@@ -185,19 +199,31 @@ const ReviewManagementPage = () => {
         <tbody>
           {filteredReviews.map((review) => (
             <tr key={review.id}>
-              <td>{usersMap[review.user] || "نامشخص"}</td>
-              <td>{businessesMap[review.business_id] || "نامشخص"}</td>
+              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                {usersMap[review.user] || "نامشخص"}
+              </td>
+              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                {businessesMap[review.business_id] || "نامشخص"}
+              </td>
               <td>{renderStars(review.rank || 0)}</td>
-              <td>{review.review_text}</td>
+              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                {review.review_text}
+              </td>
               <td>{review.created_at}</td>
               <td>{review.hidden ? "مخفی شده" : "قابل مشاهده"}</td>
               <td>
-                <td>
-                  <FaCheck data-testid={`hide-review-${review.id}`} onClick={() => updateReviewHidden(review.id, false)} />
-                  <FaTimes data-testid={`show-review-${review.id}`} onClick={() => updateReviewHidden(review.id, true)} />
-                  <FaTrash data-testid={`delete-review-${review.id}`} onClick={() => deleteReview(review.id)}/>
-                </td>
-
+                <FaCheck
+                  style={{ cursor: "pointer", margin: "0 3px" }}
+                  onClick={() => updateReviewHidden(review.id, false)}
+                />
+                <FaTimes
+                  style={{ cursor: "pointer", margin: "0 3px" }}
+                  onClick={() => updateReviewHidden(review.id, true)}
+                />
+                <FaTrash
+                  style={{ cursor: "pointer", margin: "0 3px" }}
+                  onClick={() => deleteReview(review.id)}
+                />
               </td>
             </tr>
           ))}
