@@ -4,7 +4,7 @@ import './AllReviewsPage.css';
 import axios from 'axios';
 import img from './noon.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const AllReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -13,8 +13,8 @@ const AllReviewsPage = () => {
   const [filters, setFilters] = useState({
     username: '',
     businessName: '',
-    minRank: 0,
-    maxRank: 5,
+    // حذف minRank, maxRank؛ بجای آن starFilter یک فیلد ستاره
+    starFilter: 0,
     reviewText: '',
   });
 
@@ -25,7 +25,7 @@ const AllReviewsPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // اول نقش ادمین را از سرور بگیریم (اگر بخشی از User باشد)
+    // اول نقش ادمین را از سرور بگیریم
     const fetchAdminStatus = async () => {
       try {
         const response = await axios.get(
@@ -36,8 +36,7 @@ const AllReviewsPage = () => {
             },
           }
         );
-        // فرض می‌کنیم در پاسخ، فیلد is_admin وجود دارد
-        setIsAdmin(response.data.is_admin);
+        setIsAdmin(response.data.is_admin); // فرض بر این است که فیلد is_admin برمی‌گردد
       } catch (error) {
         console.error('Error fetching user admin status:', error);
       }
@@ -71,7 +70,7 @@ const AllReviewsPage = () => {
               ...review,
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
-              business_image:businessResponse.data.business_image,
+              business_image: businessResponse.data.business_image,
               username: userResponse.data.username,
               userimage: userResponse.data.user_image,
             };
@@ -140,6 +139,7 @@ const AllReviewsPage = () => {
     }
   };
 
+  // مدیریت تغییر فیلدهای متنی و فیلترها
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
@@ -148,20 +148,32 @@ const AllReviewsPage = () => {
     }));
   };
 
+  // کلیک روی ستاره (یک فیلد واحد) => تنظیم starFilter
+  const handleStarFilterChange = (starValue) => {
+    setFilters((prev) => ({
+      ...prev,
+      starFilter: starValue,
+    }));
+  };
+
   const applyFilters = () => {
     const filtered = reviews.filter((review) => {
       const usernameMatch = filters.username
         ? review.username.toLowerCase().includes(filters.username.toLowerCase())
         : true;
+
       const businessMatch = filters.businessName
         ? review.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
         : true;
-      const rankMatch = review.rank >= filters.minRank && review.rank <= filters.maxRank;
+
+      // فیلتر بر اساس تعداد ستاره (review.rank >= starFilter)
+      const starMatch = review.rank >= filters.starFilter;
+
       const textMatch = filters.reviewText
         ? review.review_text.toLowerCase().includes(filters.reviewText.toLowerCase())
         : true;
 
-      return usernameMatch && businessMatch && rankMatch && textMatch;
+      return usernameMatch && businessMatch && starMatch && textMatch;
     });
 
     setFilteredReviews(filtered);
@@ -181,17 +193,15 @@ const AllReviewsPage = () => {
         Math.floor((gy + 3) / 4) -
         Math.floor((gy + 99) / 100) +
         Math.floor((gy + 399) / 400);
-      for (let i = 0; i < gm; ++i) gDayNo += gDaysInMonth[i];
-      // Leap year
-      if (
-        gm > 1 &&
-        ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)
-      )
+      if (gm > 1 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) {
         ++gDayNo;
+      }
+      for (let i = 0; i < gm; ++i) {
+        gDayNo += gDaysInMonth[i];
+      }
       gDayNo += gd;
 
       let jDayNo = gDayNo - 79;
-
       let jNp = Math.floor(jDayNo / 12053);
       jDayNo %= 12053;
 
@@ -237,6 +247,7 @@ const AllReviewsPage = () => {
         >
           <h5>فیلترها</h5>
           <div className="row">
+            {/* فیلد نام کاربری */}
             <div className="col-md-8 mb-3 d-flex justify-content-center text-center">
               <input
                 type="text"
@@ -247,6 +258,7 @@ const AllReviewsPage = () => {
                 className="form-control"
               />
             </div>
+            {/* فیلد نام کسب‌وکار */}
             <div className="col-md-8 mb-3">
               <input
                 type="text"
@@ -257,27 +269,16 @@ const AllReviewsPage = () => {
                 className="form-control"
               />
             </div>
-            <div className="col-md-8 mb-3">
-              <input
-                type="number"
-                name="minRank"
-                placeholder="حداقل امتیاز"
-                value={filters.minRank}
-                onChange={handleFilterChange}
-                className="form-control"
+            {/* فیلتر تعداد ستاره با شکل ستاره */}
+            <div className="col-md-12 mb-3">
+              <p>تعداد ستاره:</p>
+              <StarFilter
+                currentValue={filters.starFilter}
+                onStarClick={handleStarFilterChange}
               />
             </div>
-            <div className="col-md-8 mb-3">
-              <input
-                type="number"
-                name="maxRank"
-                placeholder="حداکثر امتیاز"
-                value={filters.maxRank}
-                onChange={handleFilterChange}
-                className="form-control"
-              />
-            </div>
-            <div className="col-md-8 mb-3">
+            {/* فیلد متن نظر */}
+            <div className="col-md-12 mb-3">
               <input
                 type="text"
                 name="reviewText"
@@ -296,66 +297,74 @@ const AllReviewsPage = () => {
         </aside>
 
         {/* لیست نظرات */}
-        <div className="col col-md-7">
+        <div className="col col-md-6">
           {filteredReviews.map((review) => (
             <div key={review.id} className="review-card1 col-md-4 mb-4">
               <div className="card p-2 shadow-sm">
                 <div className="row">
-                  <div className="d-flex justify-content-start">
-                    <img
-                      src={review.userimage}
-                      alt={review.businessName}
-                      className="rounded-circle img-fluid"
-                      style={{ height: '70px', width: '70px',marginBottom:"-10px"}}
-                    />
-                    <h6 className="username"style={{marginTop:"25px"}}>{review.username}</h6>
-
-                    
+                  <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-start">
+                      <img
+                        src={review.userimage}
+                        alt={review.businessName}
+                        className="rounded-circle img-fluid"
+                        style={{ height: '70px', width: '70px', marginBottom: '-10px' }}
+                      />
+                      <h6 className="username" style={{ marginTop: '25px' }}>
+                        {review.username}
+                      </h6>
+                    </div>
+                    <div>
+                      <img
+                        src={review.business_image}
+                        width="70px"
+                        height="70px"
+                        className="img-fluid"
+                        alt="Business"
+                      />
+                      <p>{review.businessName}</p>
+                    </div>
+                  </div>
+                  <div className="stars " style={{ marginTop: '-35px' }}>
+                    {[...Array(5)].map((_, index) => (
+                      <span
+                        key={index}
+                        className={index < review.rank ? 'star filled' : 'star'}
+                      >
+                        ★
+                      </span>
+                    ))}
                   </div>
                 </div>
-                <div className='d-flex justify-content-between'>
-                     <div className='stars '>
-                      {[...Array(5)].map((_, index) => (
-                        <span
-                          key={index}
-                          className={index < review.rank ? 'star filled' : 'star'}
-                        >
-                          ★
-                        </span>
-                      ))}
-                      </div>
-                    <p className="date">تاریخ:{toJalali(review.created_at)}</p>
-
-                    </div>
+                <div className="d-flex justify-content-between">
+                  <p className="date">{toJalali(review.created_at)}</p>
+                </div>
                 <div className="review-info1 ">
-                                  <div
+                  <p
+                    className="comment mb-3"
                     style={{
-                      borderTop: '2px solid #e5e5dd',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      backgroundColor: '#fff',
                     }}
-                  > 
-                  
-                    <p className="comment mb-3">{review.review_text}</p>
-                  </div>
+                  >
+                    {review.review_text}
+                  </p>
+
                   <div
                     style={{
                       borderTop: '2px solid #e5e5dd',
                     }}
-                  > 
-                        </div>
-                    
-                     <div className='d-flex justify-content-between'>
-                     <p>{review.businessName}</p>
-                      <img src={review.business_image} width="55px"height="30px"
-                      className='img-fluid'/> 
-                      </div>
-                      <div
+                  ></div>
+                  <div className="d-flex justify-content-between"></div>
+                  <div
                     style={{
                       borderTop: '2px solid #e5e5dd',
                     }}
-                  > 
-                        </div>
-                  
-                  <div className="d-flex justify-content-start">
+                  ></div>
+
+                  <div className="d-flex justify-content-between">
                     <LikeButton
                       reviewId={review.id}
                       handleLike={handleLike}
@@ -381,10 +390,36 @@ const AllReviewsPage = () => {
   );
 };
 
+/** کامپوننت StarFilter: امکان انتخاب تعداد ستاره (1 تا 5) با کلیک روی آن‌ها */
+const StarFilter = ({ currentValue, onStarClick }) => {
+  const handleClick = (starValue) => {
+    onStarClick(starValue);
+  };
+
+  return (
+    <div>
+      {[1, 2, 3, 4, 5].map((starVal) => (
+        <span
+          key={starVal}
+          onClick={() => handleClick(starVal)}
+          style={{
+            cursor: 'pointer',
+            color: starVal <= currentValue ? '#FFD700' : '#aaa',
+            fontSize: '1.5rem',
+            marginLeft: '5px',
+          }}
+        >
+          ★
+        </span>
+      ))}
+          </div>
+  );
+};
+
 const LikeButton = ({ reviewId, handleLike, votes }) => {
   return (
     <div className="like-dislike-buttons">
-      <button onClick={() => handleLike(reviewId)} className="btn btn-success">
+      <button onClick={() => handleLike(reviewId)} className="btn btn-success btn-sm">
         👍 {votes}
       </button>
     </div>
@@ -430,7 +465,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
   return (
     <>
       <a className="a" href="#!" onClick={() => setShowModal(true)}>
-        <FontAwesomeIcon icon={faEllipsisV} />
+        <FontAwesomeIcon icon={faFlag} />
       </a>
 
       <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
@@ -480,22 +515,22 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
 };
 
 /* 
-   این کامپوننت جدید است: 
-   - اگر کاربر ادمین باشد، دکمه "ریپلای" نمایش داده می‌شود
-   - پس از کلیک، فرمی برای ثبت ریپلای نشان داده می‌شود
-   - پاسخ‌های ادمین از /review_rating/review_responses/{reviewId}/ گرفته می‌شود
-   - پس از ارسال پاسخ جدید (POST به /review_rating/review_responses/)،
-     دوباره پاسخ‌ها را می‌گیریم و نمایش می‌دهیم
+   تغییرات در زیر: 
+   - اگر پاسخی وجود نداشته باشد (replies.length === 0)، 
+     دکمه "پاسخ های مدیر" نمایش داده نمی‌شود.
+   - "ریپلای" و فرم آن فقط برای ادمین قابل مشاهده است.
+   - StarFilter جایگزین minRank و maxRank شده است.
 */
 const AdminReplySection = ({ reviewId, token }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [replies, setReplies] = useState([]);
+  const [showAllReplies, setShowAllReplies] = useState(false); // کنترل نمایش لیست پاسخ‌های مدیر
 
   const userId = localStorage.getItem('userId');
 
-  // بررسی نقش ادمین (می‌توانید اگر لازم باشد یک بار در والد انجام دهید)
+  // بررسی نقش ادمین
   useEffect(() => {
     const fetchAdminStatus = async () => {
       try {
@@ -514,15 +549,17 @@ const AdminReplySection = ({ reviewId, token }) => {
     fetchAdminStatus();
   }, [token, userId]);
 
-  // گرفتن پاسخ‌های ادمین
+  // گرفتن پاسخ‌های مدیر
   useEffect(() => {
     const fetchReplies = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:8000/review_rating/review_responses/${reviewId}/`,
+          `http://localhost:8000/review_rating/review_responses/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setReplies(data);
+        // فقط پاسخ‌هایی که مربوط به این reviewId هستند
+        const filtered = data.filter((resp) => resp.review === reviewId);
+        setReplies(filtered);
       } catch (err) {
         console.error('Error fetching replies:', err);
       }
@@ -530,6 +567,7 @@ const AdminReplySection = ({ reviewId, token }) => {
     fetchReplies();
   }, [reviewId, token]);
 
+  // هندل ثبت پاسخ جدید (فقط برای ادمین)
   const handleReplySubmit = async () => {
     if (!replyText.trim()) {
       alert('لطفاً متن پاسخ را وارد کنید.');
@@ -540,7 +578,7 @@ const AdminReplySection = ({ reviewId, token }) => {
         'http://localhost:8000/review_rating/review_responses/',
         {
           description: replyText,
-          review: reviewId, // id این ریویو
+          review: reviewId,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -550,13 +588,11 @@ const AdminReplySection = ({ reviewId, token }) => {
       setShowReplyForm(false);
       setReplyText('');
 
-      // پاسخ‌ها را مجدداً بگیریم
+      // پس از ارسال، مجدداً پاسخ‌ها را بگیریم
       const { data } = await axios.get(
         `http://localhost:8000/review_rating/review_responses/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // حالا فقط آن پاسخ‌هایی را می‌خواهیم که مربوط به همین reviewId باشند:
       const filtered = data.filter((resp) => resp.review === reviewId);
       setReplies(filtered);
     } catch (err) {
@@ -565,34 +601,29 @@ const AdminReplySection = ({ reviewId, token }) => {
     }
   };
 
-  if (!isAdmin) return null; // اگر ادمین نیست، هیچ نمایش نده
+  // نمایش / پنهان کردن لیست پاسخ‌های مدیر
+  const toggleAllReplies = () => {
+    setShowAllReplies(!showAllReplies);
+  };
+
+  // اگر هیچ پاسخی وجود ندارد => دکمه "پاسخ های مدیر" هم نشان داده نشود
+  if (replies.length === 0 && !isAdmin) {
+    return null;
+  }
 
   return (
     <div className="mt-3">
-      {/* دکمه نمایش فرم ریپلای */}
-      <Button variant="link" onClick={() => setShowReplyForm(!showReplyForm)}>
-        ریپلای
-      </Button>
-
-      {/* نمایش فرم ریپلای در صورت کلیک */}
-      {showReplyForm && (
-        <div className="mt-2">
-          <textarea
-            className="form-control"
-            placeholder="پاسخ ادمین را وارد کنید..."
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-          />
-          <Button variant="primary" className="mt-2" onClick={handleReplySubmit}>
-            ارسال
-          </Button>
-        </div>
+      {/* اگر پاسخی وجود دارد یا ادمین است => دکمه را نشان بده */}
+      {(replies.length > 0 || isAdmin) && (
+        <Button className="btn btn-secondary btn-sm" onClick={toggleAllReplies}>
+          {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ های مدیر'}
+        </Button>
       )}
 
-      {/* نمایش لیست پاسخ‌های ثبت شده */}
-      {replies && replies.length > 0 && (
+      {/* اگر showAllReplies true باشد، پاسخ‌های مدیر نمایش داده می‌شوند */}
+      {showAllReplies && replies.length > 0 && (
         <div className="mt-3">
-          <strong>پاسخ های ادمین:</strong>
+          <strong>پاسخ های مدیر:</strong>
           {replies.map((resp) => (
             <div
               key={resp.id}
@@ -610,6 +641,29 @@ const AdminReplySection = ({ reviewId, token }) => {
             </div>
           ))}
         </div>
+      )}
+
+      {/* ریپلای و فرم آن فقط برای ادمین */}
+      {isAdmin && (
+        <>
+          <Button className='btn btn-success btn-sm'  onClick={() => setShowReplyForm(!showReplyForm)}>
+            {showReplyForm ? 'بستن' : 'ریپلای'}
+          </Button>
+
+          {showReplyForm && (
+            <div className="mt-2">
+              <textarea
+                className="form-control"
+                placeholder="پاسخ ادمین را وارد کنید..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+              />
+              <Button variant="primary" className="mt-2" onClick={handleReplySubmit}>
+                ارسال
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
