@@ -39,6 +39,8 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
         console.log("User data fetched:", response.data);
 
         setFormData({
+          first_name:response.data.first_name || "",
+          last_name:response.data.last_name || "",
           email: response.data.email || "",
           username: response.data.username || "",
           password: "", // پسورد خالی برای امنیت
@@ -89,6 +91,8 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
     try {
       const formDataToSend = new FormData();
+      formDataToSend.append("first_name",formData.first_name);
+      formDataToSend.append("last_name",formData.last_name);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("username", formData.username);
       formDataToSend.append("password", formData.password);
@@ -146,6 +150,34 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
         <div className="col-md-6" dir="rtl">
           <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+              <label htmlFor="first_name" className="form-label">
+                نام
+              </label>
+              <input
+                type="first_name"
+                className="form-control"
+                id="first_name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="last_name" className="form-label">
+                نام خانوادگی
+              </label>
+              <input
+                type="last_name"
+                className="form-control"
+                id="last_name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                required
+              />
+            </div>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 ایمیل
