@@ -125,17 +125,22 @@
 
 
 .view-more-button {
-  padding: 10px 40px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 35%;
+  padding: 5px 17px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+  color:  #28a745;
+  border: 2px solid  #28a745;
+  border-radius: 12px;
+  gap:1rem;
   cursor: pointer;
   font-size: 1.8em;
 }
 
 .view-more-button:hover {
   background-color: #218838;
+  color: white;
 }
 .row{
   margin-bottom: 2%;
