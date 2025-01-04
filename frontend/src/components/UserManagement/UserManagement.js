@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserEdit,
   faTrash,
-  faPlus,
   faCommentDots,
-  faLevelUpAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const UserManagement = () => {
@@ -31,11 +28,9 @@ const UserManagement = () => {
         console.error("خطا در دریافت کاربران:", error);
       }
     };
-
     fetchUsers();
   }, []);
-console.log("users",users);
-  // تابع حذف کاربر
+
   const handleDeleteUser = async (id) => {
     if (window.confirm("آیا از حذف این کاربر مطمئن هستید؟")) {
       try {
@@ -45,7 +40,6 @@ console.log("users",users);
             Authorization: `Bearer ${token}`,
           },
         });
-        // حذف کاربر از لیست محلی پس از موفقیت در درخواست
         setUsers(users.filter((user) => user.id !== id));
       } catch (error) {
         console.error("خطا در حذف کاربر:", error);
@@ -57,42 +51,43 @@ console.log("users",users);
     const confirmationMessage = isActive
       ? "آیا از رفع مسدودی این کاربر مطمئن هستید؟"
       : "آیا از مسدود کردن این کاربر مطمئن هستید؟";
-  
+
     if (window.confirm(confirmationMessage)) {
       try {
         const token = localStorage.getItem("token");
         const updatedUser = {
-          is_active: !isActive, // تغییر وضعیت is_active
+          is_active: !isActive,
         };
-  
+
         await axios.patch(
           `http://localhost:8000/user_management/users/${id}/`,
           updatedUser,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-  
-        // به‌روزرسانی وضعیت در لیست محلی
+
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user.id === id ? { ...user, is_active: !isActive } : user
           )
         );
-  
+
         alert(isActive ? "کاربر با موفقیت رفع مسدودی شد." : "کاربر با موفقیت مسدود شد.");
       } catch (error) {
         console.error("خطا در تغییر وضعیت کاربر:", error.response?.data || error.message);
       }
     }
   };
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const filteredUsers = users.filter((user) => {
-    const fullName = `${user.first_name} ${user.lastName}`;
+    const fullName = `${user.first_name} ${user.lastName}`; // توجه کنید lastName یا last_name بسته به مدل
     return (
       fullName.includes(searchTerm) ||
-      user.email.includes(searchTerm)
+      user.email.includes(searchTerm) ||
+      user.username.includes(searchTerm)
     );
   });
 
@@ -114,22 +109,18 @@ console.log("users",users);
             <h5>لیست کاربران</h5>
             <table
               className="table table-bordered table-striped mt-3 text-center"
-              style={{ tableLayout: "fixed" }}
+              style={{ tableLayout: "fixed", width: "100%" }}
             >
               <colgroup>
                 <col style={{ width: "50px" }} />
-                {/* <col style={{ width: "100px" }} /> */}
-                {/* <col style={{ width: "100px" }} /> */}
-                <col style={{ width: "120px" }} />
-                <col style={{ width: "190px" }} />
+                <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+                <col style={{ width: "180px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
                 <col style={{ width: "100px" }} />
                 <col style={{ width: "200px" }} />
               </colgroup>
               <thead>
                 <tr>
                   <th>ردیف</th>
-                  {/* <th>نام</th> */}
-                  {/* <th>نام خانوادگی</th> */}
                   <th>یوزرنیم</th>
                   <th>ایمیل</th>
                   <th>نقش</th>
@@ -138,12 +129,14 @@ console.log("users",users);
               </thead>
               <tbody>
                 {filteredUsers.map((user, index) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} style={{ verticalAlign: "top" }}>
                     <td>{index + 1}</td>
-                    {/* <td>{user.first_name}</td> */}
-                    {/* <td>{user.lastName}</td> */}
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
+                    <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                      {user.username}
+                    </td>
+                    <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                      {user.email}
+                    </td>
                     <td>{user.is_admin ? "مدیر" : "کاربر معمولی"}</td>
                     <td>
                       <Link
@@ -155,16 +148,17 @@ console.log("users",users);
                       <button
                         className="btn btn-sm btn-danger mx-1"
                         onClick={() => handleDeleteUser(user.id)}
-                        data-testid="test"
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                       <button
-  className={`btn btn-sm ${user.is_active ? "btn-danger" : "btn-secondary"} mx-1`}
-  onClick={() => handleToggleBlockUser(user.id, user.is_active)}
->
-  {user.is_active ? "مسدود کردن" : "رفع مسدودی"}
-</button>
+                        className={`btn btn-sm ${
+                          user.is_active ? "btn-danger" : "btn-secondary"
+                        } mx-1`}
+                        onClick={() => handleToggleBlockUser(user.id, user.is_active)}
+                      >
+                        {user.is_active ? "مسدود کردن" : "رفع مسدودی"}
+                      </button>
                       <Link
                         to={`/UserReview/${user.id}`}
                         className="btn btn-sm btn-primary mx-1"
