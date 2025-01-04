@@ -19,18 +19,69 @@ const ReportManagement = () => {
   const [status, setStatus] = useState("all");
   const [singleDate, setSingleDate] = useState("");
 
-  // در اینجا اطلاعات گزارش انتخاب‌شده را در دو بخش جدا نگه می‌داریم
-  // یک بخش اطلاعات خود "گزارش" (reportData)
-  // یک بخش اطلاعات "ریویو" (reviewData)
   const [selectedReport, setSelectedReport] = useState(null);
-
-  // کاربر گزارش‌کننده و کاربر ثبت‌کننده ریویو
   const [reporterInfo, setReporterInfo] = useState(null);
   const [commenterInfo, setCommenterInfo] = useState(null);
-
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const token = localStorage.getItem("token");
+
+  // تابع تبدیل تاریخ میلادی به شمسی
+  const toJalali = (gregorianDate) => {
+    const g2j = (gYear, gMonth, gDay) => {
+      const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const jDaysInMonth = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 29];
+
+      let gy = gYear - 1600;
+      let gm = gMonth - 1;
+      let gd = gDay - 1;
+
+      let gDayNo =
+        365 * gy +
+        Math.floor((gy + 3) / 4) -
+        Math.floor((gy + 99) / 100) +
+        Math.floor((gy + 399) / 400);
+      for (let i = 0; i < gm; ++i) gDayNo += gDaysInMonth[i];
+      if (
+        gm > 1 &&
+        ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)
+      )
+        ++gDayNo;
+      gDayNo += gd;
+
+      let jDayNo = gDayNo - 79;
+
+      let jNp = Math.floor(jDayNo / 12053);
+      jDayNo %= 12053;
+
+      let jy = 979 + 33 * jNp + 4 * Math.floor(jDayNo / 1461);
+      jDayNo %= 1461;
+
+      if (jDayNo >= 366) {
+        jy += Math.floor((jDayNo - 1) / 365);
+        jDayNo = (jDayNo - 1) % 365;
+      }
+
+      let jm = 0;
+      for (let i = 0; i < 11 && jDayNo >= jDaysInMonth[i]; ++i) {
+        jDayNo -= jDaysInMonth[i];
+        jm++;
+      }
+      let jd = jDayNo + 1;
+
+      return { year: jy, month: jm + 1, day: jd };
+    };
+
+    const parts = gregorianDate.split("-");
+    const gYear = parseInt(parts[0], 10);
+    const gMonth = parseInt(parts[1], 10);
+    const gDay = parseInt(parts[2], 10);
+
+    const { year, month, day } = g2j(gYear, gMonth, gDay);
+    return `${year}/${month.toString().padStart(2, "0")}/${day
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   // گرفتن لیست تمام گزارش‌ها
   const fetchReports = async () => {
@@ -52,19 +103,16 @@ const ReportManagement = () => {
   // گرفتن جزئیات گزارش انتخاب‌شده
   const fetchDetails = async (report) => {
     try {
-      // کاربر گزارش‌کننده (کسی که این گزارش را ثبت کرده)
       const reporterResponse = await axios.get(
         `http://localhost:8000/user_management/users/${report.review_user_id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // دریافت اطلاعات مرور (ریویو)
       const reviewResponse = await axios.get(
         `http://localhost:8000/review_rating/reviews/${report.review_id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // کاربر ثبت‌کننده نظر (کسی که آن ریویو را نوشته)
       const commenterResponse = await axios.get(
         `http://localhost:8000/user_management/users/${reviewResponse.data.user}/`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -73,11 +121,9 @@ const ReportManagement = () => {
       setReporterInfo(reporterResponse.data);
       setCommenterInfo(commenterResponse.data);
 
-      // اینجا دیگر از ...report, ...reviewResponse.data استفاده نمی‌کنیم
-      // تا فیلدهایی مثل id و review_id قاطی نشوند
       setSelectedReport({
-        reportData: report,             // اطلاعات گزارش
-        reviewData: reviewResponse.data // اطلاعات ریویو
+        reportData: report,
+        reviewData: reviewResponse.data,
       });
 
       setShowDetailsModal(true);
@@ -89,7 +135,6 @@ const ReportManagement = () => {
   // نادیده گرفتن گزارش
   const ignoreReport = async (reportId) => {
     try {
-      // در آرایه reports می‌گردیم تا گزارش موردنظر را پیدا کنیم
       const report = reports.find((r) => r.id === reportId);
       if (!report) {
         console.error("گزارش یافت نشد.");
@@ -122,7 +167,6 @@ const ReportManagement = () => {
     }
   };
 
-  // حذف کاربر
   const deleteUser = async (userId) => {
     if (window.confirm("آیا از حذف این کاربر مطمئن هستید؟")) {
       try {
@@ -135,28 +179,27 @@ const ReportManagement = () => {
       }
     }
   };
-  // مسدود کردن کاربر
-const banUser = async (userId) => {
-  if (window.confirm("آیا از مسدود کردن این کاربر مطمئن هستید؟")) {
-    try {
-      const updatedUser = {
-        is_active: false, // فرض کنید این پارامتر مشخص می‌کند که کاربر مسدود شده است
-      };
 
-      await axios.patch(
-        `http://localhost:8000/user_management/users/${userId}/`,
-        updatedUser,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  const banUser = async (userId) => {
+    if (window.confirm("آیا از مسدود کردن این کاربر مطمئن هستید؟")) {
+      try {
+        const updatedUser = {
+          is_active: false,
+        };
 
-      alert("کاربر با موفقیت مسدود شد.");
-    } catch (error) {
-      console.error("خطا در مسدود کردن کاربر:", error.response?.data || error.message);
+        await axios.patch(
+          `http://localhost:8000/user_management/users/${userId}/`,
+          updatedUser,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        alert("کاربر با موفقیت مسدود شد.");
+      } catch (error) {
+        console.error("خطا در مسدود کردن کاربر:", error.response?.data || error.message);
+      }
     }
-  }
-};
+  };
 
-  // اعمال فیلترها
   const applyFilters = () => {
     const filtered = reports.filter((report) => {
       const matchesType = reportType === "all" || report.reason_select === reportType;
@@ -177,7 +220,6 @@ const banUser = async (userId) => {
   return (
     <Container fluid className="mt-4" dir="rtl">
       <Row>
-        {/* بخش فیلترها */}
         <Col md={12}>
           <div className="bg-white p-3 border rounded">
             <h5>فیلترها</h5>
@@ -213,20 +255,19 @@ const banUser = async (userId) => {
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-2">
+                {/* <Form.Group className="mb-2">
                   <Form.Label>تاریخ گزارش</Form.Label>
                   <Form.Control
                     type="date"
                     value={singleDate}
                     onChange={(e) => setSingleDate(e.target.value)}
                   />
-                </Form.Group>
+                </Form.Group> */}
               </Col>
             </Row>
           </div>
         </Col>
 
-        {/* جدول لیست گزارش‌ها */}
         <Col md={12} className="bg-light p-3 mt-3">
           <h3>لیست گزارش‌ها</h3>
           <Table striped bordered hover responsive className="text-center mt-3">
@@ -248,7 +289,7 @@ const banUser = async (userId) => {
                     <td>{report.reason_select}</td>
                     <td>{report.reason}</td>
                     <td>{report.result_report}</td>
-                    <td>{report.create_at}</td>
+                    <td>{toJalali(report.create_at)}</td>
                     <td>
                       <Button
                         variant="info"
@@ -270,7 +311,6 @@ const banUser = async (userId) => {
         </Col>
       </Row>
 
-      {/* مودال جزئیات گزارش */}
       <Modal
         show={showDetailsModal}
         onHide={() => setShowDetailsModal(false)}
@@ -282,7 +322,7 @@ const banUser = async (userId) => {
         <Modal.Body>
           {selectedReport && (
             <>
-             <p>
+              <p>
                 <strong>کاربر ثبت‌کننده گزارش :</strong>{" "}
                 {reporterInfo ? reporterInfo.username : "نامشخص"}
               </p>
@@ -290,30 +330,25 @@ const banUser = async (userId) => {
                 <strong>کاربر ثبت‌کننده نظر :</strong>{" "}
                 {commenterInfo ? commenterInfo.username : "نامشخص"}
               </p>
-             
               <p>
                 <strong>متن گزارش:</strong>{" "}
                 {selectedReport.reviewData?.review_text || "نامشخص"}
               </p>
-              
+              <p>
+                <strong>تاریخ:</strong> {toJalali(selectedReport.reportData.create_at)}
+              </p>
             </>
           )}
         </Modal.Body>
         <Modal.Footer>
-          {/* نادیده گرفتن گزارش */}
           {selectedReport && (
             <Button
               variant="secondary"
-              onClick={() => {
-                console.log("Ignoring report with ID:", selectedReport.reportData.id);
-                ignoreReport(selectedReport.reportData.id);
-              }}
+              onClick={() => ignoreReport(selectedReport.reportData.id)}
             >
               نادیده گرفتن گزارش
             </Button>
           )}
-
-          {/* دکمه‌های حذف و مسدود کردن کاربر ثبت‌کننده ریویو */}
           {commenterInfo && (
             <>
               <Button
