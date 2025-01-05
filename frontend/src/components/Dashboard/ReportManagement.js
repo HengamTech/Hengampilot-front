@@ -8,6 +8,7 @@ import {
   Table,
   Form,
   Modal,
+  FormLabel,
 } from "react-bootstrap";
 import axios from "axios";
 
@@ -26,8 +27,25 @@ const ReportManagement = () => {
 
   const token = localStorage.getItem("token");
 
+  // نقشهٔ ترجمه برای reason_select
+  const reasonSelectMap = {
+    violence: "خشونت",
+    terrorism: "تروریسم",
+    accusations: "اتهام",
+    sexual: "جنسی",
+  };
+
+  // نقشهٔ ترجمه برای result_report
+  const resultReportMap = {
+    ignore: "نادیده گرفته شده",
+    Unchecked: "بررسی نشده",
+    UserBan: "مسدود کردن کاربر",
+    Remove: "حذف کردن کاربر",
+  };
+
   // تابع تبدیل تاریخ میلادی به شمسی
   const toJalali = (gregorianDate) => {
+    if (!gregorianDate) return "نامشخص"; // اگر خالی بود یا undefined بود
     const g2j = (gYear, gMonth, gDay) => {
       const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
       const jDaysInMonth = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 29];
@@ -41,16 +59,20 @@ const ReportManagement = () => {
         Math.floor((gy + 3) / 4) -
         Math.floor((gy + 99) / 100) +
         Math.floor((gy + 399) / 400);
-      for (let i = 0; i < gm; ++i) gDayNo += gDaysInMonth[i];
+
+      for (let i = 0; i < gm; ++i) {
+        gDayNo += gDaysInMonth[i];
+      }
+      // سال کبیسه میلادی
       if (
         gm > 1 &&
         ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)
-      )
+      ) {
         ++gDayNo;
+      }
       gDayNo += gd;
 
       let jDayNo = gDayNo - 79;
-
       let jNp = Math.floor(jDayNo / 12053);
       jDayNo %= 12053;
 
@@ -73,14 +95,13 @@ const ReportManagement = () => {
     };
 
     const parts = gregorianDate.split("-");
+    if (parts.length < 3) return "نامشخص";
     const gYear = parseInt(parts[0], 10);
     const gMonth = parseInt(parts[1], 10);
     const gDay = parseInt(parts[2], 10);
 
     const { year, month, day } = g2j(gYear, gMonth, gDay);
-    return `${year}/${month.toString().padStart(2, "0")}/${day
-      .toString()
-      .padStart(2, "0")}`;
+    return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}`;
   };
 
   // گرفتن لیست تمام گزارش‌ها
@@ -202,10 +223,17 @@ const ReportManagement = () => {
 
   const applyFilters = () => {
     const filtered = reports.filter((report) => {
-      const matchesType = reportType === "all" || report.reason_select === reportType;
-      const matchesStatus = status === "all" || report.result_report === status;
+      // نوع گزارش
+      const matchesType =
+        reportType === "all" || report.reason_select === reportType;
+      // وضعیت
+      const matchesStatus =
+        status === "all" || report.result_report === status;
+      // جستجو در توضیحات
       const matchesSearch =
-        searchText === "" || report.reason.toLowerCase().includes(searchText.toLowerCase());
+        searchText === "" ||
+        report.reason.toLowerCase().includes(searchText.toLowerCase());
+      // تاریخ
       const matchesDate = singleDate === "" || report.create_at === singleDate;
 
       return matchesType && matchesStatus && matchesSearch && matchesDate;
@@ -221,6 +249,8 @@ const ReportManagement = () => {
     <Container fluid className="mt-4" dir="rtl">
       <Row>
         <Col md={12}>
+        <h3>لیست گزارش‌ها</h3>
+          
           <div className="bg-white p-3 border rounded">
             <h5>فیلترها</h5>
             <Row>
@@ -233,7 +263,7 @@ const ReportManagement = () => {
                   >
                     <option value="all">همه</option>
                     <option value="violence">خشونت</option>
-                    <option value="terrorism">ترورسیم</option>
+                    <option value="terrorism">تروریسم</option>
                     <option value="accusations">اتهام</option>
                     <option value="sexual">جنسی</option>
                   </Form.Select>
@@ -247,35 +277,51 @@ const ReportManagement = () => {
                     onChange={(e) => setStatus(e.target.value)}
                   >
                     <option value="all">همه</option>
-                    <option value="ignore">پرهیز</option>
-                    <option value="Unchecked">غیرقابل چک</option>
+                    <option value="ignore">نادیده گرفته شده</option>
+                    <option value="Unchecked">بررسی نشده</option>
                     <option value="UserBan">مسدود کردن کاربر</option>
-                    <option value="Remove">حذف کردن یوزر</option>
+                    <option value="Remove">حذف کردن کاربر</option>
                   </Form.Select>
+                  
                 </Form.Group>
               </Col>
               <Col md={4}>
-                {/* <Form.Group className="mb-2">
+              
+                {/* اگر نیاز بود، فیلتر تاریخ را برگردانید */}
+                {/* 
+                <Form.Group className="mb-2">
                   <Form.Label>تاریخ گزارش</Form.Label>
                   <Form.Control
                     type="date"
                     value={singleDate}
                     onChange={(e) => setSingleDate(e.target.value)}
                   />
-                </Form.Group> */}
+                </Form.Group> 
+                */}
               </Col>
+            </Row>
+            <Row>
+            <div className="mb-3">
+            <FormLabel>جستجو در نوع گزارش</FormLabel>
+            <Form.Control
+              type="text"
+              placeholder="جستجو در توضیحات گزارش..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
             </Row>
           </div>
         </Col>
 
         <Col md={12} className="bg-light p-3 mt-3">
-          <h3>لیست گزارش‌ها</h3>
+       
+
           <Table striped bordered hover responsive className="text-center mt-3">
             <thead>
               <tr>
                 <th>ردیف</th>
                 <th>نوع گزارش</th>
-                <th>توضیحات</th>
                 <th>وضعیت</th>
                 <th>تاریخ</th>
                 <th>جزئیات</th>
@@ -286,10 +332,16 @@ const ReportManagement = () => {
                 filteredReports.map((report, index) => (
                   <tr key={report.id}>
                     <td>{index + 1}</td>
-                    <td>{report.reason_select}</td>
-                    <td>{report.reason}</td>
-                    <td>{report.result_report}</td>
+                    {/* ترجمه reason_select به فارسی */}
+                    <td>{reasonSelectMap[report.reason_select] || "نامشخص"}</td>
+
+
+                    {/* ترجمه result_report به فارسی */}
+                    <td>{resultReportMap[report.result_report] || "نامشخص"}</td>
+
+                    {/* تبدیل تاریخ به شمسی */}
                     <td>{toJalali(report.create_at)}</td>
+
                     <td>
                       <Button
                         variant="info"
@@ -311,32 +363,79 @@ const ReportManagement = () => {
         </Col>
       </Row>
 
+      {/* مودال نمایش جزئیات گزارش */}
       <Modal
         show={showDetailsModal}
         onHide={() => setShowDetailsModal(false)}
         dir="rtl"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>جزئیات گزارش</Modal.Title>
+        <Modal.Header closeButton  >
+          <closeButton></closeButton>
+          <Modal.Title style={{marginLeft:"65%"}}>جزئیات گزارش</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedReport && (
             <>
               <p>
-                <strong>کاربر ثبت‌کننده گزارش :</strong>{" "}
+                <strong>کاربر ثبت‌کننده گزارش:</strong>{" "}
                 {reporterInfo ? reporterInfo.username : "نامشخص"}
               </p>
               <p>
-                <strong>کاربر ثبت‌کننده نظر :</strong>{" "}
+                <strong>کاربر ثبت‌کننده کامنت:</strong>{" "}
                 {commenterInfo ? commenterInfo.username : "نامشخص"}
               </p>
               <p>
-                <strong>متن گزارش:</strong>{" "}
-                {selectedReport.reviewData?.review_text || "نامشخص"}
+                <strong>تاریخ گزارش:</strong>{" "}
+                {toJalali(selectedReport.reportData.create_at)}
               </p>
+
+              <hr />
               <p>
-                <strong>تاریخ:</strong> {toJalali(selectedReport.reportData.create_at)}
+                <strong>توضیحات گزارش:</strong>
               </p>
+              <div
+                style={{
+                  maxHeight: "200px",
+                  overflow: "auto",
+                  textAlign: "justify",
+                  lineHeight: "1.8",
+                  padding: "10px",
+                  border: "2px solid #ddd",
+                  borderRadius: "8px",
+                  backgroundColor: "#f9f9f9",
+                  direction: "rtl",
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
+                  fontSize: "14px",
+                  color: "#333",
+                }}
+              >
+                {selectedReport.reportData.reason || "نامشخص"}
+              </div>
+
+              <hr />
+              <p>
+                <strong>متن کامنت کاربر:</strong>
+              </p>
+              <div
+                style={{
+                  maxHeight: "200px",
+                  overflow: "auto",
+                  textAlign: "justify",
+                  lineHeight: "1.8",
+                  padding: "10px",
+                  border: "2px solid #ddd",
+                  borderRadius: "8px",
+                  backgroundColor: "#f9f9f9",
+                  direction: "rtl",
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
+                  fontSize: "14px",
+                  color: "#333",
+                }}
+              >
+                {selectedReport.reviewData?.review_text || "نامشخص"}
+              </div>
             </>
           )}
         </Modal.Body>
@@ -351,16 +450,10 @@ const ReportManagement = () => {
           )}
           {commenterInfo && (
             <>
-              <Button
-                variant="danger"
-                onClick={() => deleteUser(commenterInfo.id)}
-              >
+              <Button variant="danger" onClick={() => deleteUser(commenterInfo.id)}>
                 حذف کاربر
               </Button>
-              <Button
-                variant="warning"
-                onClick={() => banUser(commenterInfo.id)}
-              >
+              <Button variant="warning" onClick={() => banUser(commenterInfo.id)}>
                 مسدود کردن کاربر
               </Button>
             </>

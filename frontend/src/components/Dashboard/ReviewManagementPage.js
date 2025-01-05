@@ -9,6 +9,7 @@ import {
   FaTimes,
   FaTrash,
 } from "react-icons/fa";
+import { Modal, Button } from "react-bootstrap";
 
 const ReviewManagementPage = () => {
   const token = localStorage.getItem("token");
@@ -18,6 +19,70 @@ const ReviewManagementPage = () => {
   const [usersMap, setUsersMap] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [filterHidden, setFilterHidden] = useState("all");
+
+  // برای مودال نمایش جزئیات نظر:
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedReviewDetail, setSelectedReviewDetail] = useState(null);
+
+  // تابع تبدیل تاریخ میلادی به شمسی
+  const toJalali = (gregorianDate) => {
+    if (!gregorianDate) return "نامشخص"; // اگر خالی بود
+    const g2j = (gYear, gMonth, gDay) => {
+      const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const jDaysInMonth = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 29];
+
+      let gy = gYear - 1600;
+      let gm = gMonth - 1;
+      let gd = gDay - 1;
+
+      let gDayNo =
+        365 * gy +
+        Math.floor((gy + 3) / 4) -
+        Math.floor((gy + 99) / 100) +
+        Math.floor((gy + 399) / 400);
+      for (let i = 0; i < gm; ++i) {
+        gDayNo += gDaysInMonth[i];
+      }
+      // سال کبیسه میلادی
+      if (
+        gm > 1 &&
+        ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)
+      ) {
+        ++gDayNo;
+      }
+      gDayNo += gd;
+
+      let jDayNo = gDayNo - 79;
+      let jNp = Math.floor(jDayNo / 12053);
+      jDayNo %= 12053;
+
+      let jy = 979 + 33 * jNp + 4 * Math.floor(jDayNo / 1461);
+      jDayNo %= 1461;
+
+      if (jDayNo >= 366) {
+        jy += Math.floor((jDayNo - 1) / 365);
+        jDayNo = (jDayNo - 1) % 365;
+      }
+
+      let jm = 0;
+      for (let i = 0; i < 11 && jDayNo >= jDaysInMonth[i]; ++i) {
+        jDayNo -= jDaysInMonth[i];
+        jm++;
+      }
+      let jd = jDayNo + 1;
+
+      return { year: jy, month: jm + 1, day: jd };
+    };
+
+    const parts = gregorianDate.split("-");
+    if (parts.length < 3) return "نامشخص";
+    const gYear = parseInt(parts[0], 10);
+    const gMonth = parseInt(parts[1], 10);
+    const gDay = parseInt(parts[2], 10);
+
+    const { year, month, day } = g2j(gYear, gMonth, gDay);
+    return `${year}/${String(month).padStart(2, "0")}/${String(day).padStart(2, "0")}`;
+  };
 
   const fetchReviews = async () => {
     try {
@@ -29,8 +94,12 @@ const ReviewManagementPage = () => {
       const data = response.data || [];
       setReviews(data);
 
-      const businessIds = [...new Set(data.map((item) => item.business_id))].filter(Boolean);
-      const userIds = [...new Set(data.map((item) => item.user))].filter(Boolean);
+      const businessIds = [
+        ...new Set(data.map((item) => item.business_id)),
+      ].filter(Boolean);
+      const userIds = [
+        ...new Set(data.map((item) => item.user)),
+      ].filter(Boolean);
 
       const businessPromises = businessIds.map((bizId) =>
         axios
@@ -81,6 +150,17 @@ const ReviewManagementPage = () => {
         console.error("Review not found.");
         return;
       }
+
+      // نمایش پیام تأیید به کاربر
+      const confirmationMessage = newHiddenStatus
+        ? "آیا مطمئن هستید که می‌خواهید این نظر را تأیید کنید؟"
+        : "آیا مطمئن هستید که می‌خواهید این نظر را رد کنید؟";
+
+      const isConfirmed = window.confirm(confirmationMessage);
+      if (!isConfirmed) {
+        return; // کاربر انصراف داده است
+      }
+
       const updatedReview = {
         ...review,
         hidden: newHiddenStatus,
@@ -94,8 +174,19 @@ const ReviewManagementPage = () => {
       setReviews((prev) =>
         prev.map((r) => (r.id === id ? { ...r, hidden: newHiddenStatus } : r))
       );
+
+      // پیام موفقیت
+      alert(
+        newHiddenStatus
+          ? "نظر با موفقیت تأیید شد."
+          : "نظر با موفقیت رد شد."
+      );
     } catch (error) {
-      console.error("Error updating review:", error.response?.data || error.message);
+      console.error(
+        "Error updating review:",
+        error.response?.data || error.message
+      );
+      alert("خطا در به‌روزرسانی نظر. لطفاً دوباره تلاش کنید.");
     }
   };
 
@@ -144,6 +235,18 @@ const ReviewManagementPage = () => {
     );
   };
 
+  // برای باز و بسته کردن مودال نمایش جزئیات نظر
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = (review) => {
+    setSelectedReviewDetail(review);
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setSelectedReviewDetail(null);
+    setShowModal(false);
+  };
+
   return (
     <div className="container-fluid" style={{ direction: "rtl" }}>
       <h2 className="mb-4">مدیریت نظرات</h2>
@@ -171,7 +274,6 @@ const ReviewManagementPage = () => {
         </div>
       </div>
 
-      {/* جدول با layout و colgroup برای جلوگیری از بزرگ‌شدن ستون‌ها و شکستن متن */}
       <table
         className="table table-striped text-center"
         style={{ tableLayout: "fixed", width: "100%" }}
@@ -180,7 +282,7 @@ const ReviewManagementPage = () => {
           <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "80px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "250px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "140px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
@@ -199,26 +301,32 @@ const ReviewManagementPage = () => {
         <tbody>
           {filteredReviews.map((review) => (
             <tr key={review.id}>
-              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-                {usersMap[review.user] || "نامشخص"}
-              </td>
-              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-                {businessesMap[review.business_id] || "نامشخص"}
-              </td>
+              <td>{usersMap[review.user] || "نامشخص"}</td>
+              <td>{businessesMap[review.business_id] || "نامشخص"}</td>
               <td>{renderStars(review.rank || 0)}</td>
-              <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-                {review.review_text}
+
+              {/* ستون "نظر": به‌جای نمایش مستقیم متن، دکمه‌ی "جزئیات نظر" */}
+              <td>
+                <button
+                  className="btn btn-link p-0"
+                  onClick={() => handleShowModal(review)}
+                >
+                  جزئیات نظر
+                </button>
               </td>
-              <td>{review.created_at}</td>
-              <td>{review.hidden ? "مخفی شده" : "قابل مشاهده"}</td>
+
+              {/* تبدیل تاریخ به شمسی */}
+              <td>{toJalali(review.created_at)}</td>
+
+              <td>{review.hidden ? "تایید شده" : "رد شده"}</td>
               <td>
                 <FaCheck
                   style={{ cursor: "pointer", margin: "0 3px" }}
-                  onClick={() => updateReviewHidden(review.id, false)}
+                  onClick={() => updateReviewHidden(review.id, true)}
                 />
                 <FaTimes
                   style={{ cursor: "pointer", margin: "0 3px" }}
-                  onClick={() => updateReviewHidden(review.id, true)}
+                  onClick={() => updateReviewHidden(review.id, false)}
                 />
                 <FaTrash
                   style={{ cursor: "pointer", margin: "0 3px" }}
@@ -229,6 +337,48 @@ const ReviewManagementPage = () => {
           ))}
         </tbody>
       </table>
+
+      {/* مودال نمایش جزئیات نظر */}
+      <Modal show={showModal} onHide={handleCloseModal} dir="rtl">
+        <Modal.Header closeButton>
+          <Modal.Title>جزئیات نظر</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedReviewDetail ? (
+            <>
+              <p>
+                <strong>تاریخ ثبت نظر: </strong>
+                {toJalali(selectedReviewDetail.created_at)}
+              </p>
+              
+                <strong >متن نظر کاربر:</strong>
+              <div style={{
+                maxHeight: "200px",
+                overflow:"auto",
+                fontSize:"24px",
+                textAlign: "justify",
+                lineHeight:"1.8",
+                padding: "10px",
+                border: "2px solid #ddd",
+                borderRadius: "8px",
+                backgroundColor: "#f9f9f9",
+                direction:"rtl",
+                wordBreak: "break-word",
+                whiteSpace: "pre-wrap",
+              }}>
+              <p>{selectedReviewDetail.review_text}</p>
+              </div>
+            </>
+          ) : (
+            <p>در حال بارگذاری...</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            بستن
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
