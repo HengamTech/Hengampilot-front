@@ -213,15 +213,15 @@ const BusinessManager = () => {
   return (
     <div className="container col-md-12 mt-3">
       <h2 className="mb-4">مدیریت بیزنس‌ها</h2>
-      
-      <button 
-        type="button" 
+
+      <button
+        type="button"
         className="btn btn-secondary mb-4"
         onClick={handlegotobuisness}
       >
         افزودن بیزنس
       </button>
-      
+
       {businesses.length > 0 ? (
         <Table striped bordered hover className="text-center">
           <thead>
@@ -240,9 +240,9 @@ const BusinessManager = () => {
                 <td>{index + 1}</td>
                 <td>{categories[biz.business_category] || 'دسته‌بندی نامشخص'}</td>
                 <td>{biz.business_name}</td>
-                
+
                 {/* توضیحات را به شکل کلیک‌پذیر (جزئیات) در یک سلول نمایش می‌دهیم */}
-                <td 
+                <td
                   onClick={() => handleDescriptionClick(biz)}
                   style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
                 >
@@ -349,9 +349,9 @@ const BusinessManager = () => {
       </Modal>
 
       {/* مودال نمایش توضیحات بیزنس */}
-      <Modal 
-        dir="rtl" 
-        show={showDescriptionModal} 
+      <Modal
+        dir="rtl"
+        show={showDescriptionModal}
         onHide={handleCloseDescription}
       >
         <Modal.Header closeButton>

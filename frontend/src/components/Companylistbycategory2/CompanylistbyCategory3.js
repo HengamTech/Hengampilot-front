@@ -111,13 +111,13 @@ const Companylistbycategory1 = () => {
 
     const stars = [];
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={`full-${i}`} style={{ color: "#FFD700" }} />);
+      stars.push(<FaStar key={`full-${i}`} style={{ color: "#FFD700" }} data-testid={`star-${i}`} />);
     }
     if (halfStar) {
-      stars.push(<FaStarHalfAlt key="half" style={{ color: "#FFD700" }} />);
+      stars.push(<FaStarHalfAlt key="half" style={{ color: "#FFD700" }} data-testid="star-half" />);
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700" }} />);
+      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700" }} data-testid={`star-empty-${i}`} />);
     }
 
     return stars;
