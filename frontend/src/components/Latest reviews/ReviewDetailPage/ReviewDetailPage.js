@@ -72,23 +72,23 @@ const ReviewDetailPage = () => {
       try {
         const token = localStorage.getItem('token');
         const { data } = await axios.get(`http://localhost:8000/review_rating/reviews/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         }
       );
         console.log(data);
             console.log(review.user);
 
             const userResponse = await axios.get(`http://localhost:8000/user_management/users/${data.user}/`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              // headers: {
+              //   Authorization: `Bearer ${token}`,
+              // },
             });
             const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${data.business_id}/`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              // headers: {
+              //   Authorization: `Bearer ${token}`,
+              // },
             });
             setReview({
               ...data,

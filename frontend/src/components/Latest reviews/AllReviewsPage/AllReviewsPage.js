@@ -41,28 +41,29 @@ const AllReviewsPage = () => {
         console.error('Error fetching user admin status:', error);
       }
     };
-
+    
+    
     // گرفتن تمام نظرات
     const fetchReviews = async () => {
       try {
         const { data } = await axios.get('http://localhost:8000/review_rating/reviews/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         });
 
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const [businessResponse, userResponse] = await Promise.all([
               axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+                // headers: {
+                //   Authorization: `Bearer ${token}`,
+                // },
               }),
               axios.get(`http://localhost:8000/user_management/users/${review.user}/`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+                // headers: {
+                //   Authorization: `Bearer ${token}`,
+                // },
               }),
             ]);
 
@@ -76,8 +77,11 @@ const AllReviewsPage = () => {
             };
           })
         );
+      
         setReviews(enrichedReviews);
-        setFilteredReviews(enrichedReviews);
+        const hiddenReviews = enrichedReviews.filter((review) => review.hidden === true);
+        setFilteredReviews(hiddenReviews);
+        // setFilteredReviews(enrichedReviews);
       } catch (error) {
         console.error('Error fetching reviews:', error);
       }
@@ -314,7 +318,7 @@ const AllReviewsPage = () => {
                         {review.username}
                       </h6>
                     </div>
-                    <div>
+                    <div style={{textAlign:"center"}}>
                       <img
                         src={review.business_image}
                         width="70px"
@@ -495,8 +499,6 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
             onChange={(e) => setResultReport(e.target.value)}
             className="form-select mt-2"
           >
-            <option value="Unchecked">بررسی نشده</option>
-            <option value="ignore">نادیده گرفته شود</option>
             <option value="Remove">حذف شود</option>
             <option value="UserBan">مسدود کردن کاربر</option>
           </select>
@@ -612,10 +614,10 @@ const AdminReplySection = ({ reviewId, token }) => {
   }
 
   return (
-    <div className="mt-3">
+    <div className="mt-3" >
       {/* اگر پاسخی وجود دارد یا ادمین است => دکمه را نشان بده */}
       {(replies.length > 0 || isAdmin) && (
-        <Button className="btn btn-secondary btn-sm" onClick={toggleAllReplies}>
+        <Button className="btn btn-secondary btn-sm"style={{marginLeft:"10px"}} onClick={toggleAllReplies}>
           {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ های مدیر'}
         </Button>
       )}
