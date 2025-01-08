@@ -1,128 +1,198 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import '@testing-library/jest-dom'; // Import jest-dom matchers
-import axios from "axios";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import CompanyDetailPage from "./CompanyDetailPage";
+import React from 'react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
+import CompanyDetailPage from './CompanyDetailPage';
 
-// Mock axios
-jest.mock("axios");
+jest.mock('axios');
 
-describe("CompanyDetailPage Component", () => {
-    const mockCompany = {
+const mockCompany = {
+    business_name: "Test Company",
+    business_image: "https://via.placeholder.com/80",
+    description: "A description of Test Company",
+    average_rating: 4.5,
+    total_reviews: 10,
+};
+
+const mockComments = [
+    {
         id: 1,
-        business_name: "Company A",
-        average_rank: 4.5,
-        total_reviews: 10,
-        profileImage: "https://via.placeholder.com/80",
-        description: "This is Company A.",
-    };
-    const mockComments = [
-        {
-            id: 1,
-            user: 1,
-            rank: 4,
-            created_at: "2022-01-01",
-            review_text: "Great company!",
-        },
-        {
-            id: 2,
-            user: 2,
-            rank: 5,
-            created_at: "2022-01-02",
-            review_text: "Excellent service!",
-        },
-    ];
-    const mockUserDetails = {
-        1: "User One",
-        2: "User Two",
-    };
+        review_text: "Great service!",
+        rank: 4,
+        user: 1,
+        created_at: "2025-01-08",
+    },
+];
 
+const mockUserDetails = {
+    1: {
+        userId: "testuser",
+        userimage: "https://via.placeholder.com/50",
+    },
+};
+
+const mockVotes = {
+    1: [1],
+};
+
+describe('CompanyDetailPage', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        axios.get.mockReset();
+        axios.post.mockReset();
     });
 
-    it("renders company information and comments", async () => {
+    test('should render company details correctly', async () => {
         axios.get.mockResolvedValueOnce({ data: mockCompany });
-        axios.get.mockResolvedValueOnce({ data: mockComments });
-        axios.get.mockResolvedValueOnce({ data: { username: mockUserDetails[1] } });
-        axios.get.mockResolvedValueOnce({ data: { username: mockUserDetails[2] } });
 
         render(
-            <MemoryRouter initialEntries={["/company/1"]}>
+            <MemoryRouter initialEntries={['/company/1']}>
                 <Routes>
-                    <Route path="/company/:id" element={<CompanyDetailPage />} />
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
                 </Routes>
             </MemoryRouter>
         );
 
-        // Check loading state
-        expect(screen.getByText("در حال بارگذاری...")).toBeInTheDocument();
+        await waitFor(() => expect(axios.get).toHaveBeenCalledWith("http://127.0.0.1:8000/business_management/businesses/1/"));
 
-        // Wait for the company information to appear
-        expect(await screen.findByText("Company A")).toBeInTheDocument();
-        expect(await screen.findByText("This is Company A.")).toBeInTheDocument();
-
-        // Verify comments are rendered
-        expect(await screen.findByText("Great company!")).toBeInTheDocument();
-        expect(await screen.findByText("Excellent service!")).toBeInTheDocument();
+        expect(screen.getByText(/Test Company/)).toBeInTheDocument();
+        expect(screen.getByText(/A description of Test Company/)).toBeInTheDocument();
+        expect(screen.getByText(/4.5 میانگین امتیاز/)).toBeInTheDocument();
     });
 
-    it("displays loading spinner while fetching data", async () => {
-        axios.get.mockResolvedValueOnce({ data: mockCompany });
-        axios.get.mockResolvedValueOnce(new Promise(resolve => setTimeout(() => resolve({ data: mockComments }), 2000))); // Mock API with delay
+    test('should show loading message while data is being fetched', () => {
+        axios.get.mockResolvedValueOnce({ data: {} });
 
         render(
-            <MemoryRouter initialEntries={["/company/1"]}>
+            <MemoryRouter initialEntries={['/company/1']}>
                 <Routes>
-                    <Route path="/company/:id" element={<CompanyDetailPage />} />
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
                 </Routes>
             </MemoryRouter>
         );
 
-        // Check that the loading spinner appears
-        expect(screen.getByText("در حال بارگذاری...")).toBeInTheDocument();
-
-        // Wait for the company information to be fetched and rendered
-        expect(await screen.findByText("Company A")).toBeInTheDocument();
-        expect(await screen.findByText("This is Company A.")).toBeInTheDocument();
+        expect(screen.getByText(/در حال بارگذاری.../)).toBeInTheDocument();
     });
 
-    it("handles error state correctly", async () => {
-        axios.get.mockRejectedValueOnce(new Error("Network Error"));
+    test('should handle errors during data fetching', async () => {
+        axios.get.mockRejectedValueOnce(new Error("Network error"));
 
         render(
-            <MemoryRouter initialEntries={["/company/1"]}>
+            <MemoryRouter initialEntries={['/company/1']}>
                 <Routes>
-                    <Route path="/company/:id" element={<CompanyDetailPage />} />
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
                 </Routes>
             </MemoryRouter>
         );
 
-        // Check loading state
-        expect(screen.getByText("در حال بارگذاری...")).toBeInTheDocument();
-
-        // Wait for error message
-        expect(await screen.findByText("خطا در دریافت اطلاعات شرکت.")).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText("خطا در دریافت اطلاعات شرکت.")).toBeInTheDocument());
     });
 
-    it("sorts comments correctly", async () => {
-        axios.get.mockResolvedValueOnce({data: mockCompany});
-        axios.get.mockResolvedValueOnce({data: mockComments});
+    test('should render comments and allow liking a review', async () => {
+        axios.get.mockResolvedValueOnce({ data: mockCompany })
+            .mockResolvedValueOnce({ data: mockComments })
+            .mockResolvedValueOnce({ data: mockUserDetails });
+
+        axios.post.mockResolvedValueOnce({});
 
         render(
-            <MemoryRouter initialEntries={["/company/1"]}>
+            <MemoryRouter initialEntries={['/company/1']}>
                 <Routes>
-                    <Route path="/company/:id" element={<CompanyDetailPage/>}/>
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
                 </Routes>
             </MemoryRouter>
         );
 
-        // Wait for company and comments to render
-        expect(screen.findByText("Company A"));
-        expect(screen.findByText("Great company!"));
+        await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(3)); // Ensure all API calls were made
 
+        expect(screen.getByText(/Great service!/)).toBeInTheDocument();
+
+        const likeButton = screen.getByText('👍 1');
+        fireEvent.click(likeButton);
+
+        await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
+            'http://localhost:8000/review_rating/votes/',
+            expect.objectContaining({
+                review: 1,
+                user: expect.any(String),
+            })
+        ));
     });
 
+    test('should handle report submission correctly', async () => {
+        axios.get.mockResolvedValueOnce({ data: mockCompany })
+            .mockResolvedValueOnce({ data: mockComments })
+            .mockResolvedValueOnce({ data: mockUserDetails });
+
+        axios.post.mockResolvedValueOnce({});
+
+        render(
+            <MemoryRouter initialEntries={['/company/1']}>
+                <Routes>
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(3));
+
+        const reportButton = screen.getByRole('button', { name: /گزارش نظر/i });
+        fireEvent.click(reportButton);
+
+        const reasonSelect = screen.getByRole('combobox');
+        const reasonText = screen.getByPlaceholderText('توضیح دلیل');
+        const submitButton = screen.getByRole('button', { name: /ارسال گزارش/i });
+
+        fireEvent.change(reasonSelect, { target: { value: 'violence' } });
+        fireEvent.change(reasonText, { target: { value: 'Inappropriate content' } });
+        fireEvent.click(submitButton);
+
+        await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
+            'http://localhost:8000/review_rating/reports/',
+            expect.objectContaining({
+                reason_select: 'violence',
+                reason: 'Inappropriate content',
+                review_id: 1,
+            })
+        ));
+
+        expect(screen.getByText(/گزارش شما با موفقیت ارسال شد./)).toBeInTheDocument();
+    });
+
+    test('should allow admin to submit a reply', async () => {
+        axios.get.mockResolvedValueOnce({ data: mockCompany })
+            .mockResolvedValueOnce({ data: mockComments })
+            .mockResolvedValueOnce({ data: mockUserDetails })
+            .mockResolvedValueOnce({ data: [{ review: 1, description: "Admin reply" }] });
+
+        axios.post.mockResolvedValueOnce({});
+
+        render(
+            <MemoryRouter initialEntries={['/company/1']}>
+                <Routes>
+                    <Route path="company/:id" element={<CompanyDetailPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(4));
+
+        const replyButton = screen.getByRole('button', { name: /ریپلای/i });
+        fireEvent.click(replyButton);
+
+        const replyTextarea = screen.getByPlaceholderText('پاسخ ادمین را وارد کنید...');
+        fireEvent.change(replyTextarea, { target: { value: 'This is an admin reply.' } });
+
+        const submitReplyButton = screen.getByRole('button', { name: /ارسال/i });
+        fireEvent.click(submitReplyButton);
+
+        await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
+            'http://localhost:8000/review_rating/review_responses/',
+            expect.objectContaining({
+                description: 'This is an admin reply.',
+                review: 1,
+            })
+        ));
+
+        expect(screen.getByText(/پاسخ ثبت شد/)).toBeInTheDocument();
+    });
 });
-

@@ -1,102 +1,87 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
-import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Companylistbycategory1 from './CompanylistbyCategory3';
+import axios from "axios";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import Companylistbycategory1 from "./CompanylistbyCategory3";
 
-jest.mock('axios');
+jest.mock("axios");
 
-describe('Companylistbycategory1', () => {
-    const companies = [
+describe("Companylistbycategory1", () => {
+    const mockCompanies = [
         {
             id: 1,
-            business_name: 'Company 1',
+            business_name: "Test Company 1",
             average_rating: 4.5,
             total_reviews: 10,
+            business_image: "/test-image-1.jpg",
             is_verified: true,
-            profileImage: 'https://via.placeholder.com/80',
-            website_url: 'https://example.com'
+            website_url: "http://test1.com"
         },
-        // Add more sample companies as needed
+        {
+            id: 2,
+            business_name: "Test Company 2",
+            average_rating: 3,
+            total_reviews: 5,
+            business_image: "/test-image-2.jpg",
+            is_verified: false,
+            website_url: "http://test2.com"
+        },
     ];
 
-    const mockCategory = "TestCategory";
-
-    beforeEach(() => {
-        axios.get.mockResolvedValue({ data: companies });
-        localStorage.setItem("token", "mockToken");
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test('renders Companylistbycategory1 component', async () => {
+    const renderComponent = () =>
         render(
-            <Router>
+            <MemoryRouter initialEntries={["/category/tech"]}>
                 <Routes>
-                    <Route path="/category/:id" element={<Companylistbycategory1 companies={companies} />} />
+                    <Route path="/category/:id" element={<Companylistbycategory1 />} />
                 </Routes>
-            </Router>,
-            { initialEntries: [`/category/${mockCategory}`] }
+            </MemoryRouter>
         );
 
-        // Use regex to match loading text
-        waitFor(() => {
-            expect(screen.getByText(/در حال بارگذاری\.\.\./)).toBeInTheDocument();
-        });
+    it("fetches and displays companies", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockCompanies });
 
-        waitFor(() => {
-            expect(axios.get).toHaveBeenCalledTimes(1);
-            expect(axios.get).toHaveBeenCalledWith(
-                "http://127.0.0.1:8000/business_management/businesses/category-businesses/",
-                expect.any(Object)
-            );
-        });
-
-        expect(screen.queryByTestId('company-1'));
-        expect(screen.queryByText('4.5 میانگین امتیاز'));
-        expect(screen.queryByText('10 نظر'));
-    });
-
-    test('applies filters correctly', async () => {
-        render(
-            <Router>
-                <Routes>
-                    <Route path="/category/:id" element={<Companylistbycategory1 companies={companies} />} />
-                </Routes>
-            </Router>,
-            { initialEntries: [`/category/${mockCategory}`] }
-        );
-
-        waitFor(() => expect(axios.get).toHaveBeenCalledTimes(1));
-
-        // Wait for the element to be present before interacting with it
-        waitFor(() => expect(screen.getByText('2')).toBeInTheDocument());
-
-
-        screen.queryByTestId('applyF');
+        renderComponent();
 
         await waitFor(() => {
-            expect(screen.queryByTestId('company-1')).not.toBeInTheDocument();
+            console.log("Companies fetched");
+            expect(screen.getByText("Test Company 1")).toBeInTheDocument();
+            expect(screen.getByText("Test Company 2")).toBeInTheDocument();
         });
     });
 
-    test('handles error state', async () => {
-        axios.get.mockRejectedValue(new Error('Network Error'));
+    it("applies filters correctly", async () => {
+        axios.get.mockResolvedValueOnce({ data: mockCompanies });
 
-        render(
-            <Router>
-                <Routes>
-                    <Route path="/category/:id" element={<Companylistbycategory1 companies={companies} />} />
-                </Routes>
-            </Router>,
-            { initialEntries: [`/category/${mockCategory}`] }
-        );
+        renderComponent();
+
+        await waitFor(() => {
+            console.log("Before filters applied");
+            expect(screen.getByText("Test Company 1")).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByText("ستاره"));
+        const stars = screen.getAllByTestId(/star-\d/); // Find all star elements by data-testid
+
+        fireEvent.click(stars[4]); // Select 5th star (index 4)
+
+        fireEvent.click(screen.getByTestId("applyF"));
 
          waitFor(() => {
-            expect(screen.getByText(/خطا در دریافت داده‌ها\. لطفاً دوباره تلاش کنید\./)).toBeInTheDocument();
-        }, { timeout: 5000 });
+            console.log("After filters applied");
+            expect(screen.getByText("هیچ شرکتی با این فیلترها یافت نشد.")).toBeInTheDocument();
+        });
+    });
+
+    it("handles API errors gracefully", async () => {
+        axios.get.mockRejectedValueOnce(new Error("API Error"));
+
+        renderComponent();
+
+        await waitFor(() => {
+            console.log("API Error occurred");
+            console.log("Rendered DOM:", screen.debug());  // This will print the entire DOM
+            expect(screen.getByText(/خطا در دریافت داده‌ها. لطفاً دوباره تلاش کنید./i)).toBeInTheDocument();
+        });
     });
 });

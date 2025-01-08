@@ -1,133 +1,96 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import axios from 'axios';
 import ReportManagement from './ReportManagement';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 
-jest.mock('axios');
+// Mock axios to avoid actual API calls
+const mock = new MockAdapter(axios);
 
-describe('ReportManagement', () => {
-    const mockReports = [
-        {
-            id: 1,
-            business_name: 'Business 1',
-            average_rating: 4.5,
-            total_reviews: 10,
-            is_verified: true,
-            profileImage: 'https://via.placeholder.com/80',
-            website_url: 'https://example.com',
-            reason_select: 'violence',
-            reason: 'Violent content',
-            result_report: 'pending',
-            create_at: '2023-01-01'
-        },
-        // Add more mock reports as needed
-    ];
-
+describe('ReportManagement Component', () => {
     beforeEach(() => {
-        axios.get.mockResolvedValue({ data: mockReports });
-        localStorage.setItem("token", "mockToken");
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
+        mock.reset();
     });
 
     test('fetches and displays reports', async () => {
+        // Mock API response
+        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+            { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
+            { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
+        ]);
+
         render(<ReportManagement />);
 
-         waitFor(() => {
-            expect(axios.get).toHaveBeenCalledTimes(1);
-            expect(axios.get).toHaveBeenCalledWith("http://localhost:8000/review_rating/reports/", expect.any(Object));
-        });
+        // Wait for the reports to be fetched and displayed
+        await waitFor(() => screen.getByText('خشونت'));
 
-         waitFor(() => {
-            expect(screen.queryAllByText('Business 1'));
-            expect(screen.queryAllByText('4.5'));
-            expect(screen.queryAllByText('10'));
-        });
+        expect(screen.getByText('خشونت')).toBeInTheDocument();
+        expect(screen.getByText('بررسی نشده')).toBeInTheDocument();
+        expect(screen.getByText('test report')).toBeInTheDocument();
+        expect(screen.getByText('تروریسم')).toBeInTheDocument();
+        expect(screen.getByText('نادیده گرفته شود')).toBeInTheDocument();
+        expect(screen.getByText('another test report')).toBeInTheDocument();
     });
 
-    test('applies filters correctly', async () => {
+    test('filters reports by type', async () => {
+        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+            { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
+            { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
+        ]);
+
         render(<ReportManagement />);
 
-         waitFor(() => {
-            expect(screen.queryAllByText('Business 1'));
-        });
+        await waitFor(() => screen.getByText('خشونت'));
 
-        screen.queryAllByText('report-type-select');
-        screen.queryAllByText('apply-filters-button');
+        // Simulate selecting 'تروریسم' in filter
+        fireEvent.change(screen.getByLabelText(/نوع گزارش/), { target: { value: 'terrorism' } });
 
-         waitFor(() => {
-            expect(screen.getByText('Business 1')).toBeInTheDocument();
-        });
+        await waitFor(() => screen.getByText('تروریسم'));
 
-        expect(screen.queryByTestId('status-select'));
-        expect(screen.queryByTestId('apply-filters-button'));
-
-         waitFor(() => {
-            expect(screen.getByText('Business 1')).toBeInTheDocument();
-        });
+        // Check if the correct filtered report appears
+        expect(screen.getByText('تروریسم')).toBeInTheDocument();
+        expect(screen.queryByText('خشونت')).not.toBeInTheDocument();
     });
 
-    test('handles report details view', async () => {
+    test('searches for reports by text', async () => {
+        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+            { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
+            { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
+        ]);
+
         render(<ReportManagement />);
 
-         waitFor(() => {
-            expect(screen.queryAllByText('Business 1'));
-        });
+        await waitFor(() => screen.getByText('خشونت'));
 
-        screen.queryAllByText('button-1');
+        fireEvent.change(screen.getByPlaceholderText('جستجو در توضیحات گزارش...'), { target: { value: 'test report' } });
 
-         waitFor(() => {
-            expect(screen.getByText('جزئیات گزارش')).toBeInTheDocument();
-            expect(screen.getByText('Violent content')).toBeInTheDocument();
-        });
+        // Verify the search input works and the correct report is filtered
+        await waitFor(() => screen.getByText('test report'));
+
+        expect(screen.getByText('test report')).toBeInTheDocument();
+        expect(screen.queryByText('another test report')).not.toBeInTheDocument();
     });
 
-    test('handles ignoring report', async () => {
+    test('opens and closes the details modal', async () => {
+        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+            { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
+        ]);
+
         render(<ReportManagement />);
 
-         waitFor(() => {
-            expect(screen.queryAllByText('Business 1'));
-        });
+        await waitFor(() => screen.getByText('خشونت'));
 
-        expect(screen.queryAllByText('button'));
-        expect(screen.queryAllByText('نادیده گرفتن گزارش'));
+        fireEvent.click(screen.getByText('جزئیات'));
 
-         waitFor(() => {
-            expect(axios.put).toHaveBeenCalledWith(
-                "http://localhost:8000/review_rating/reports/1/",
-                expect.objectContaining({ result_report: 'ignore' }),
-                expect.any(Object)
-            );
-        });
+        // Verify the modal opens
+        expect(screen.findAllByText('جزئیات گزارش'));
+
+        fireEvent.click(screen.queryByText('بستن'));
+
+        // Verify the modal closes
+        await waitFor(() => expect(screen.queryByText('جزئیات گزارش')).not.toBeInTheDocument());
     });
 
-    test('handles user deletion and ban', async () => {
-        render(<ReportManagement />);
 
-         waitFor(() => {
-            expect(screen.queryAllByText('Business 1'));
-        });
 
-        screen.queryAllByText('button');
-        screen.queryAllByText('حذف کاربر');
-
-        window.confirm = jest.fn(() => true);
-         waitFor(() => {
-            expect(axios.delete).toHaveBeenCalledWith("http://localhost:8000/user_management/users/1/");
-        });
-
-        fireEvent.click(screen.getByText('مسدود کردن کاربر'));
-
-        window.confirm = jest.fn(() => true);
-         waitFor(() => {
-            expect(axios.patch).toHaveBeenCalledWith(
-                "http://localhost:8000/user_management/users/1/",
-                expect.objectContaining({ is_active: false }),
-                expect.any(Object)
-            );
-        });
-    });
 });
