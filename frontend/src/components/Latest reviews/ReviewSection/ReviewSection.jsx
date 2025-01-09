@@ -40,7 +40,7 @@ const ReviewSection = () => {
             return {
               ...review,
               name: userResponse.data.username,
-              userImage: userResponse.data.user_image || img,
+              userImage: userResponse.data.user_image || "https://via.placeholder.com/150",
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
               business_img: businessResponse.data.business_image,
