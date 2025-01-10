@@ -27,7 +27,58 @@ const CompanyDetailPage = () => {
   const [votes, setVotes] = useState({});
   // بررسی نقش ادمین
   const [isAdmin, setIsAdmin] = useState(false);
+  const toJalali = (gregorianDate) => {
+    const g2j = (gYear, gMonth, gDay) => {
+      const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      const jDaysInMonth = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29, 29];
 
+      let gy = gYear - 1600;
+      let gm = gMonth - 1;
+      let gd = gDay - 1;
+
+      let gDayNo =
+        365 * gy +
+        Math.floor((gy + 3) / 4) -
+        Math.floor((gy + 99) / 100) +
+        Math.floor((gy + 399) / 400);
+      if (gm > 1 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) {
+        ++gDayNo;
+      }
+      for (let i = 0; i < gm; ++i) {
+        gDayNo += gDaysInMonth[i];
+      }
+      gDayNo += gd;
+
+      let jDayNo = gDayNo - 79;
+      let jNp = Math.floor(jDayNo / 12053);
+      jDayNo %= 12053;
+
+      let jy = 979 + 33 * jNp + 4 * Math.floor(jDayNo / 1461);
+      jDayNo %= 1461;
+
+      if (jDayNo >= 366) {
+        jy += Math.floor((jDayNo - 1) / 365);
+        jDayNo = (jDayNo - 1) % 365;
+      }
+
+      let jm = 0;
+      for (let i = 0; i < 11 && jDayNo >= jDaysInMonth[i]; ++i) {
+        jDayNo -= jDaysInMonth[i];
+        jm++;
+      }
+      let jd = jDayNo + 1;
+
+      return { year: jy, month: jm + 1, day: jd };
+    };
+
+    const parts = gregorianDate.split('-');
+    const gYear = parseInt(parts[0], 10);
+    const gMonth = parseInt(parts[1], 10);
+    const gDay = parseInt(parts[2], 10);
+
+    const { year, month, day } = g2j(gYear, gMonth, gDay);
+    return `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+  };
   // گرفتن اطلاعات votes (برای لایک‌ها)
   const fetchVotes = async () => {
     try {
@@ -201,10 +252,10 @@ const CompanyDetailPage = () => {
       stars.push(<FaStar key={`full-${i}`} style={{ color: "#FFD700" }} />);
     }
     if (halfStar) {
-      stars.push(<FaStarHalfAlt key="half" style={{ color: "#FFD700" }} />);
+      stars.push(<FaStarHalfAlt key="half" style={{ color: "#FFD700",transform:"rotate(138deg)", }} />);
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700" }} />);
+      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700"  }} />);
     }
 
     return stars;
@@ -239,8 +290,9 @@ const CompanyDetailPage = () => {
             style={{ width: "150px", height: "150px", objectFit: "cover" }}
           />
           <h2>{company.business_name}</h2>
+          <div>{renderStars(company.average_rating)}</div>
           <small className="text-muted">
-            {company.average_rating?.toFixed(1)} میانگین امتیاز | {company.total_reviews} نظر
+          میانگین   {company.average_rating?.toFixed(1)}  امتیاز | {company.total_reviews} نظر
           </small>
           <div>
             <button className="btn btn-primary mt-2" onClick={handleReviewSubmit}>
@@ -278,7 +330,7 @@ const CompanyDetailPage = () => {
                   {/* نمایش امتیاز با ستاره */}
                   <div>{renderStars(comment.rank)}</div>
 
-                  <small className="text-muted">{comment.created_at}</small>
+                  <small className="text-muted">{toJalali(comment.created_at)}</small>
                   <p>{comment.review_text}</p>
 
                   {/* دکمه لایک */}
@@ -375,7 +427,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
 
       <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>گزارش نظر</Modal.Title>
+          <Modal.Title style={{marginLeft:"70%"}}>گزارش نظر</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <select
@@ -406,7 +458,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
             <option value="UserBan">مسدود کردن کاربر</option>
           </select>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="justify-content-start">
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             انصراف
           </Button>
