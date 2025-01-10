@@ -33,7 +33,7 @@
   width: 100%; /* کارت‌ها تمام عرض سطر را می‌گیرند */
 }
 .review-card1:hover{
-  background-color: grey;
+  background-color: rgb(225, 225, 225);
   transition: 0.3s;
 }
 .user-image1 {
