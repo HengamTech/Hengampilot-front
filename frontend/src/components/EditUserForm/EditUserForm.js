@@ -117,7 +117,7 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
       if (response.status === 200) {
         alert("اطلاعات با موفقیت به‌روزرسانی شد.");
-        navigate("/dashboard");
+        navigate("/login");
       } else {
         alert("خطا در به‌روزرسانی اطلاعات.");
       }
