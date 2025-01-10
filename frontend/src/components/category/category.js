@@ -35,7 +35,7 @@ const Categories = () => {
           <div
             className="category-card col-12 col-sm-11 col-md-4 col-lg-2 mb-4"
             key={index}
-            onClick={() => handleClick(category.id)}
+            onClick={() => handleClick(category.category_name)}
           >
             <div className="category-card-inner shadow p-3 bg-white rounded h-100 hover-scale">
               <div className="mb-2">
