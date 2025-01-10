@@ -10,6 +10,11 @@ import {
   Table,
   Modal
 } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserEdit,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("settings");
@@ -224,7 +229,8 @@ const SettingsPage = () => {
                             size="sm"
                             onClick={() => handleDeleteCategory(cat.id)}
                           >
-                            حذف
+                            حذف  <FontAwesomeIcon icon={faTrash} />
+                             
                           </Button>
                         </td>
                       </tr>
