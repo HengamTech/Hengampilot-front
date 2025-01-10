@@ -277,8 +277,8 @@ const BusinessManager = () => {
 
       {/* مودال ویرایش بیزنس */}
       <Modal dir="rtl" show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>ویرایش بیزنس</Modal.Title>
+        <Modal.Header closeButton ><closeButton></closeButton>
+          <Modal.Title style={{marginLeft:"65%"}} >ویرایش بیزنس</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
@@ -337,13 +337,14 @@ const BusinessManager = () => {
               />
             </Form.Group>
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer style={{marginLeft:"55%"}}>
+          <Button variant="primary" type="submit">
+              ذخیره تغییرات
+            </Button>
             <Button variant="secondary" onClick={handleClose}>
               بستن
             </Button>
-            <Button variant="primary" type="submit">
-              ذخیره تغییرات
-            </Button>
+            
           </Modal.Footer>
         </Form>
       </Modal>
