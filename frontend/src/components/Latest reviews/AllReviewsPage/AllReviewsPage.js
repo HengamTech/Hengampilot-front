@@ -307,9 +307,9 @@ const AllReviewsPage = () => {
               <div className="card p-2 shadow-sm">
                 <div className="row">
                   <div className="d-flex justify-content-between">
-                    <div className="d-flex justify-content-start">
+                    <div className="d-flex justify-content-start" style={{marginBottom:"42px"}}>
                       <img
-                        src={review.userimage}
+                        src={review.userimage || 'https://via.placeholder.com/80'}
                         alt={review.businessName}
                         className="rounded-circle img-fluid"
                         style={{ height: '70px', width: '70px', marginBottom: '-10px' }}
