@@ -57,7 +57,7 @@ const HeroSection = () => {
             <input
               dir="rtl"
               type="text"
-              className="text-filed form-control search-input text-center w-50"
+              className="text-filed form-control search-input  w-50"
               placeholder="جستجوی شرکت‌ها"
               value={searchTerm}
               onChange={handleSearchChange}
