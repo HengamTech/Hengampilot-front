@@ -31,6 +31,9 @@
     background-color: transparent;
     margin: 10px 0;
 }
+.bb:hover{
+    background-color: #59F1B6;
+}
 
 .bb .icon {
     font-size: 35px;
