@@ -7,9 +7,14 @@ import {
   FaRegStar,
   FaCheck,
   FaTimes,
-  FaTrash,
+  
 } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserEdit,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ReviewManagementPage = () => {
   const token = localStorage.getItem("token");
@@ -328,10 +333,13 @@ const ReviewManagementPage = () => {
                   style={{ cursor: "pointer", margin: "0 3px" }}
                   onClick={() => updateReviewHidden(review.id, false)}
                 />
-                <FaTrash
+                <Button variant="danger" size="sm"
                   style={{ cursor: "pointer", margin: "0 3px" }}
                   onClick={() => deleteReview(review.id)}
-                />
+                >
+                     <FontAwesomeIcon icon={faTrash} />   
+
+                </Button>
               </td>
             </tr>
           ))}
