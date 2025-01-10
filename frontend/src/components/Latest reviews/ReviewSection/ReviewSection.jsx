@@ -17,23 +17,22 @@ const ReviewSection = () => {
     const fetchReviews = async () => {
       try {
         const token = localStorage.getItem("token");
-        const { data } = await axios.get("http://localhost:8000/review_rating/reviews/", 
-        //  {
-        //   headers: { Authorization: `Bearer ${token}` },
-        // }
-      );
+        // دریافت همه نظرات
+        const { data } = await axios.get(
+          "http://localhost:8000/review_rating/reviews/"
+          // { headers: { Authorization: `Bearer ${token}` } }
+        );
 
+        // تکمیل اطلاعات هر نظر
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const userResponse = await axios.get(
-              `http://localhost:8000/user_management/users/${review.user}/`,
-              // {
-              //   headers: { Authorization: `Bearer ${token}` },
-              // }
+              `http://localhost:8000/user_management/users/${review.user}/`
+              // { headers: { Authorization: `Bearer ${token}` } }
             );
 
             const businessResponse = await axios.get(
-              `http://localhost:8000/business_management/businesses/${review.business_id}/`,
+              `http://localhost:8000/business_management/businesses/${review.business_id}/`
               // { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -64,11 +63,28 @@ const ReviewSection = () => {
     navigate(`/review/${id}`);
   };
 
-  // فقط hidden == true را در نظر می‌گیریم
+  // فقط نظرات مخفی (hidden === true) را برمی‌داریم
   const hiddenReviewsOnly = reviews.filter((r) => r.hidden === true);
-  const filledReviews = [...hiddenReviewsOnly.slice(0, ITEMS_PER_PAGE)];
 
-  // اگر کارت خالی نیاز دارید (برای پر کردن 4 کارت):
+  // تابع کمکی برای شافل (درهم) کردن آرایه
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      // جایگزینی
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  // نظرات را شافل می‌کنیم تا هر بار 4 نظر رندوم نمایش داده شوند
+  const shuffledHidden = shuffle([...hiddenReviewsOnly]);
+
+  // 4 نظر از نظرات مخفی تصادفی
+  const filledReviews = shuffledHidden.slice(0, ITEMS_PER_PAGE);
+
+  // اگر کارت خالی نیاز دارید (برای پر کردن تا 4 کارت):
   while (filledReviews.length < ITEMS_PER_PAGE) {
     filledReviews.push({
       id: `empty-${filledReviews.length}`,
@@ -84,10 +100,16 @@ const ReviewSection = () => {
   return (
     <div className="review-section">
       <div className="row">
-        <div className="d-flex col col-md-8" style={{ marginTop: "-2px", fontSize: "12px", borderRadius: "50%" }}>
+        <div
+          className="d-flex col col-md-8"
+          style={{ marginTop: "-2px", fontSize: "12px", borderRadius: "50%" }}
+        >
           {reviews.length > ITEMS_PER_PAGE && (
             <button className="view-more-button" onClick={handleViewMore}>
-              <FontAwesomeIcon icon={faArrowCircleLeft} style={{ fontSize: "18px", color: " #28a745;" }} />
+              <FontAwesomeIcon
+                icon={faArrowCircleLeft}
+                style={{ fontSize: "18px", color: " #28a745;" }}
+              />
               مشاهده بیشتر
             </button>
           )}
@@ -111,12 +133,16 @@ const ReviewCard = ({ review, handleReadMore }) => {
 
   const toJalali = (gregorianDate) => {
     if (!gregorianDate) return "نامشخص";
-
+    // تبدیل تاریخ میلادی به شمسی (در صورت نیاز)
     // ...
+    return gregorianDate; // یا هر فرمت شمسی موردنظرتان
   };
 
   return (
-    <div className="card p-1 h-100 cardselect" onClick={() => handleReadMore(review.id)}>
+    <div
+      className="card p-1 h-100 cardselect"
+      onClick={() => handleReadMore(review.id)}
+    >
       <img
         src={review.userImage}
         alt={review.name}
