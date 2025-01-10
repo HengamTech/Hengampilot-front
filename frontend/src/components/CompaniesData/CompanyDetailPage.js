@@ -452,8 +452,8 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
             onChange={(e) => setResultReport(e.target.value)}
             className="form-select mt-2"
           >
-            <option value="Unchecked">بررسی نشده</option>
-            <option value="ignore">نادیده گرفته شود</option>
+            {/* <option value="Unchecked">بررسی نشده</option>
+            <option value="ignore">نادیده گرفته شود</option> */}
             <option value="Remove">حذف شود</option>
             <option value="UserBan">مسدود کردن کاربر</option>
           </select>
