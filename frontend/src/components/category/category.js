@@ -33,26 +33,32 @@ const Categories = () => {
       <div className="row text-center">
         {categories.map((category, index) => (
           <div
-            className="category-card col-12 col-sm-11 col-md-4 col-lg-2 mb-4"
+            className="category-card col-12 col-sm-10 col-md-4 col-lg-2 mb-4"
             key={index}
             onClick={() => handleClick(category.category_name)}
           >
-            <div className="category-card-inner shadow p-3 bg-white rounded h-100 hover-scale">
+            <div className="cs category-card-inner shadow p-3 bg-white rounded h-100 hover-scale">
               <div className="mb-2">
                 {category.category_image ? (
                   <img
                     src={category.category_image}
                     alt={category.category_name}
                     style={{
-                      width: "30px",
-                      height: "30px",
+                      width: "50px",
+                      height: "50px",
                       objectFit: "cover",
                       borderRadius: "50%",
                     }}
                   />
                 ) : (
-                  "📁"
-                )}
+                  <span
+                  style={{
+                 fontSize: "35px",    // اندازه فونت برای ایموجی
+                  }}
+                >
+                  📁
+                </span>
+                                )}
               </div>
               <p className="m-0">{category.category_name}</p>
             </div>

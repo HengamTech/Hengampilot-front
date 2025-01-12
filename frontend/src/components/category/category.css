@@ -6,7 +6,21 @@
   transform: scale(1.05); /* بزرگتر شدن در هاور */
     cursor: pointer;
 }
-
+@media (max-width: 573px){
+  .cs{
+    margin-right:60px ;
+  }
+}
+@media(min-width:577) and (max-width:768){
+  .cs{
+    margin-left: 30px;
+  }
+}
+/* @media(min-width:783) and (max-width:935){
+  .cs{
+    margin-left: 70000px;
+  }
+} */
 .category-card  {
   transition: color 0.3s ease;
   margin-left: 38px;
