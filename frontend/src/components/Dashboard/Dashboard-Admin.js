@@ -36,25 +36,294 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const AdminDashboard = () => {
   const [startDate, setStartDate] = useState(""); // تاریخ شروع فیلتر نمودار
   const [endDate, setEndDate] = useState("");   // تاریخ پایان فیلتر نمودار
-  const [activePage, setActivePage] = useState("");
   const [activeTab, setActiveTab] = useState("AdminDashboard");
 
   // ----- state های مربوط به نمودار -----
-  const [chartLabels, setChartLabels] = useState([
-    // در ابتدا می‌توانیم خالی بگذاریم، چون با fetch جایگزین می‌شوند
-  ]);
-  const [chartDataValues, setChartDataValues] = useState([
-    // در ابتدا خالی
-  ]);
+  const [chartLabels, setChartLabels] = useState([]);
+  const [chartDataValues, setChartDataValues] = useState([]);
 
-  // داده پیش‌فرض نمودار:
-  // مقدار دهی داینامیک در useEffect
+  // ----- state های مربوط به لاگ‌ها -----
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [showAllLogs, setShowAllLogs] = useState(false);
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
+  const [totalUsers, setTotalUsers] = useState(null);
+  const [TotalReviews, setTotalReviews] = useState(null);
+  const [totalReports, setTotalReports] = useState(null); // تعداد کل گزارش‌ها
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // متد خروج
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("user_admin");
+    const logoutEvent = new Event("logout");
+    window.dispatchEvent(logoutEvent);
+    navigate("/login");
+  };
+
+  // چک کردن ادمین بودن کاربر
+  useEffect(() => {
+    const user_admin = localStorage.getItem("user_admin");
+    if (!token || Boolean(user_admin) === false) {
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
+
+  // تعداد کل کاربران
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/user_management/users/total-users/",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setTotalUsers(response.data.total_users);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || "خطا در دریافت اطلاعات");
+        setLoading(false);
+      }
+    };
+    fetchTotalUsers();
+  }, [token]);
+
+  // تعداد کل نظرات
+  useEffect(() => {
+    const fetchTotalReviews = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/review_rating/reviews/count-all-reviews/",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setTotalReviews(response.data.count);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || "خطا در دریافت اطلاعات");
+        setLoading(false);
+      }
+    };
+    fetchTotalReviews();
+  }, [token]);
+
+  // تعداد کل گزارش‌ها
+  useEffect(() => {
+    const fetchTotalReports = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/review_rating/reports/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTotalReports(response.data.length);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || "خطا در دریافت اطلاعات گزارش‌ها");
+        setLoading(false);
+      }
+    };
+    fetchTotalReports();
+  }, [token]);
+
+  // گرفتن اطلاعات نظرات برای نمودار روزانه
+  useEffect(() => {
+    const fetchAllReviewsForChart = async () => {
+      try {
+        const resp = await axios.get("http://localhost:8000/review_rating/reviews/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const reviews = resp.data; 
+        const dailyCounts = {};
+
+        reviews.forEach((review) => {
+          const dateStr = review.created_at
+            ? moment.utc(review.created_at).format("YYYY-MM-DD")
+            : null;
+          if (!dateStr) return;
+          if (!dailyCounts[dateStr]) {
+            dailyCounts[dateStr] = 0;
+          }
+          dailyCounts[dateStr]++;
+        });
+
+        const sortedDates = Object.keys(dailyCounts).sort(
+          (a, b) => new Date(a) - new Date(b)
+        );
+        setChartLabels(sortedDates);
+        setChartDataValues(sortedDates.map((d) => dailyCounts[d]));
+      } catch (err) {
+        console.error("خطا در دریافت نظرات برای نمودار:", err);
+      }
+    };
+    fetchAllReviewsForChart();
+  }, [token]);
+
+  // -------------------------------
+  //      مدیریت لاگ‌های اخیر
+  // -------------------------------
+  const [logsLoading, setLogsLoading] = useState(false);
+
+  // تبدیل action_type به فارسی
+  const mapActionTypeToFarsi = (action) => {
+    switch (action) {
+      case "CREATE":
+        return "ایجاد";
+      case "DELETE":
+        return "حذف";
+      case "UPDATE":
+        return "ویرایش";
+      default:
+        return action;
+    }
+  };
+
+  // تبدیل content_type به فارسی
+  const mapContentTypeToFarsi = (contentType) => {
+    switch (contentType) {
+      case "business_management | category":
+        return " دسته بندی";
+      case "user_management | user":
+        return "کاربر";
+      case "review_rating | review":
+        return "نظر";
+      case "review_rating | reports":
+        return "گزارش کاربر";
+      case "review_rating | vote":
+        return "لایک کاربر";
+      case "business_management | business":
+        return "مدیریت بیزنس";
+
+      default:
+        return contentType || "نامشخص";
+    }
+  };
+
+  const toJalali = (gregorianDateStr) => {
+    if (!gregorianDateStr) return "نامشخص"; // بررسی ورودی نامعتبر
+  
+    // دریافت تاریخ میلادی
+    const gregorianDate = new Date(gregorianDateStr);
+    if (isNaN(gregorianDate)) return "نامشخص"; // بررسی تاریخ نامعتبر
+  
+    // محاسبه منطقه زمانی تهران (UTC+3:30 یا UTC+4:30 با توجه به تغییرات تابستانی)
+    const tehranOffset = 3.5 * 60 * 60 * 1000; // اختلاف تهران با UTC
+    const tehranDate = new Date(gregorianDate.getTime() + tehranOffset);
+  
+    // استخراج سال، ماه و روز میلادی
+    const gYear = tehranDate.getUTCFullYear();
+    const gMonth = tehranDate.getUTCMonth() + 1; // ماه از 0 شروع می‌شود
+    const gDay = tehranDate.getUTCDate();
+  
+    // محاسبات تبدیل به شمسی
+    const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    const jDaysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+  
+    const gLeap = (gYear % 4 === 0 && gYear % 100 !== 0) || gYear % 400 === 0;
+    if (gLeap) gDaysInMonth[1] = 29;
+  
+    const gy = gYear - 1600;
+    const gm = gMonth - 1;
+    const gd = gDay - 1;
+  
+    let gDayNo =
+      365 * gy +
+      Math.floor((gy + 3) / 4) -
+      Math.floor((gy + 99) / 100) +
+      Math.floor((gy + 399) / 400);
+  
+    for (let i = 0; i < gm; ++i) gDayNo += gDaysInMonth[i];
+    gDayNo += gd;
+  
+    let jDayNo = gDayNo - 79;
+  
+    const jNp = Math.floor(jDayNo / 12053);
+    jDayNo %= 12053;
+  
+    let jy = 979 + 33 * jNp + 4 * Math.floor(jDayNo / 1461);
+    jDayNo %= 1461;
+  
+    if (jDayNo >= 366) {
+      jy += Math.floor((jDayNo - 1) / 365);
+      jDayNo = (jDayNo - 1) % 365;
+    }
+  
+    let jm, jd;
+    for (jm = 0; jm < 11 && jDayNo >= jDaysInMonth[jm]; ++jm)
+      jDayNo -= jDaysInMonth[jm];
+    jd = jDayNo + 1;
+  
+    // استخراج ساعت، دقیقه و ثانیه
+    const hours = tehranDate.getUTCHours();
+    const minutes = tehranDate.getUTCMinutes();
+    const seconds = tehranDate.getUTCSeconds();
+  
+    // فرمت‌دهی خروجی نهایی
+    return `${jy}/${jm + 1 < 10 ? "0" : ""}${jm + 1}/${jd < 10 ? "0" : ""}${jd} ${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+  
+
+  // گرفتن لاگ‌ها از اندپوینت جدید
+  useEffect(() => {
+    const fetchAuditLogs = async () => {
+      setLogsLoading(true);
+      try {
+        const resp = await axios.get("http://localhost:8000/analytics/audit-logs/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const logsData = resp.data || [];
+
+        // چون گفتید object_id همان شناسه کاربر است، نام کاربر را هم می‌گیریم
+        const enrichedLogs = await Promise.all(
+          logsData.map(async (logItem) => {
+            let userName = "نامشخص";
+            try {
+              if (logItem.object_id) {
+                const userResp = await axios.get(
+                  `http://localhost:8000/user_management/users/${logItem.object_id}/`,
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                userName = userResp.data.username || "نامشخص";
+              }
+            } catch (error) {
+              console.error("خطا در گرفتن نام کاربر برای لاگ:", error);
+            }
+
+            const faActionType = mapActionTypeToFarsi(logItem.action_type);
+            const faContentType = mapContentTypeToFarsi(logItem.content_type);
+
+            return {
+              ...logItem,
+              userName,
+              faActionType,
+              faContentType,
+            };
+          })
+        );
+
+        setAuditLogs(enrichedLogs);
+      } catch (error) {
+        console.error("خطا در گرفتن لاگ‌ها:", error);
+      } finally {
+        setLogsLoading(false);
+      }
+    };
+    fetchAuditLogs();
+  }, [token]);
+
+  // فقط 5 لاگ اول یا همه
+  const visibleLogs = showAllLogs ? auditLogs : auditLogs.slice(0, 5);
+
+  // داده پیش‌فرض نمودار
   let chartData = {
-    labels: chartLabels, // بر اساس state پویا
+    labels: chartLabels,
     datasets: [
       {
         label: "تعداد نظرات ثبت‌شده",
-        data: chartDataValues, // بر اساس state پویا
+        data: chartDataValues,
         borderColor: "#007bff",
         backgroundColor: "rgba(0, 123, 255, 0.1)",
       },
@@ -89,150 +358,6 @@ const AdminDashboard = () => {
       },
     ],
   };
-
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-  const [totalUsers, setTotalUsers] = useState(null);
-  const [TotalReviews, setTotalReviews] = useState(null);
-  const [totalReports, setTotalReports] = useState(null); // تعداد کل گزارش‌ها
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [userids, setUserIds] = useState(null);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("user_admin");
-    const logoutEvent = new Event("logout");
-    window.dispatchEvent(logoutEvent);
-    navigate("/login");
-  };
-
-  // چک کردن ادمین بودن کاربر
-  useEffect(() => {
-    const user_admin = localStorage.getItem("user_admin");
-    if (!token || Boolean(user_admin) === false) {
-      navigate("/login");
-      return;
-    }
-  }, [navigate]);
-
-  // تعداد کل کاربران
-  useEffect(() => {
-    const fetchTotalUsers = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/user_management/users/total-users/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTotalUsers(response.data.total_users);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "خطا در دریافت اطلاعات");
-        setLoading(false);
-      }
-    };
-    fetchTotalUsers();
-  }, [token]);
-
-  // تعداد کل نظرات
-  useEffect(() => {
-    const fetchTotalReviews = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/review_rating/reviews/count-all-reviews/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTotalReviews(response.data.count);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "خطا در دریافت اطلاعات");
-        setLoading(false);
-      }
-    };
-    fetchTotalReviews();
-  }, [token]);
-
-  // گرفتن userId بر اساس username
-  useEffect(() => {
-    const fetchuserid = async () => {
-      const username = localStorage.getItem("username");
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/user_management/users/fetch-by-username/?username=${username}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        localStorage.setItem("userId", response.data.id);
-        setUserIds(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "خطا در دریافت اطلاعات");
-        setLoading(false);
-      }
-    };
-    fetchuserid();
-  }, [token]);
-
-  // تعداد کل گزارش‌ها
-  useEffect(() => {
-    const fetchTotalReports = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/review_rating/reports/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTotalReports(response.data.length);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || "خطا در دریافت اطلاعات گزارش‌ها");
-        setLoading(false);
-      }
-    };
-    fetchTotalReports();
-  }, [token]);
-
-  // گرفتن اطلاعات نظرات برای نمودار روزانه
-  useEffect(() => {
-    const fetchAllReviewsForChart = async () => {
-    try {
-      const resp = await axios.get("http://localhost:8000/review_rating/reviews/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const reviews = resp.data; // آرایه نظرات
-      const dailyCounts = {};
-
-      reviews.forEach((review) => {
-        // تاریخ میلادی را از فیلد `created_at` بگیریم و با moment.utc پردازش کنیم
-        const dateStr = review.created_at
-          ? moment.utc(review.created_at).format("YYYY-MM-DD") // تاریخ استاندارد شده
-          : null;
-
-        if (!dateStr) return;
-
-        // افزایش شمارنده
-        if (!dailyCounts[dateStr]) {
-          dailyCounts[dateStr] = 0;
-        }
-        dailyCounts[dateStr]++;
-      });
-
-      // مرتب‌سازی تاریخ‌ها
-      const sortedDates = Object.keys(dailyCounts).sort(
-        (a, b) => new Date(a) - new Date(b)
-      );
-
-      // تنظیم labelها و داده‌ها
-      setChartLabels(sortedDates);
-      setChartDataValues(sortedDates.map((d) => dailyCounts[d]));
-    } catch (err) {
-      console.error("خطا در دریافت نظرات برای نمودار:", err);
-    }
-  };
-
-  fetchAllReviewsForChart();
-  }, [token]);
 
   return (
     <div className="container-fluid" style={{ direction: "rtl" }}>
@@ -324,12 +449,11 @@ const AdminDashboard = () => {
                   تنظیمات
                 </a>
               </li>
-
               <li className="nav-item">
                 <a
                   href="#"
                   className="nav-link text-white d-flex align-items-center gap-2"
-                  onClick={() => handleLogout()}
+                  onClick={handleLogout}
                 >
                   <FontAwesomeIcon icon={faSignOutAlt} />
                   خروج
@@ -371,13 +495,12 @@ const AdminDashboard = () => {
                       onClick={() => setActiveTab("ReportsManager")}
                     >
                       <h5>گزارش‌های جدید</h5>
-                      {/* مقدار 12 را با totalReports جایگزین می‌کنیم */}
                       <h2>{totalReports}</h2>
                     </div>
                   </div>
                 </div>
 
-                {/* Recent Activity */}
+                {/* آخرین فعالیت‌ها: جایگزینی با لاگ‌های جدید */}
                 <div className="mt-5">
                   <h5>آخرین فعالیت‌ها</h5>
                   <table className="table table-striped table-bordered text-center">
@@ -386,24 +509,35 @@ const AdminDashboard = () => {
                         <th>ردیف</th>
                         <th>کاربر</th>
                         <th>عملیات</th>
+                        <th>نوع محتوا</th>
                         <th>تاریخ</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>علی</td>
-                        <td>ایجاد نظر جدید</td>
-                        <td>2023/11/12</td> {/* تاریخ میلادی */}
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>زهرا</td>
-                        <td>ارتقا حساب کاربری</td>
-                        <td>2023/11/10</td> {/* تاریخ میلادی */}
-                      </tr>
+                      {auditLogs.length === 0 && (
+                        <tr>
+                          <td colSpan="5">هیچ فعالیتی ثبت نشده است.</td>
+                        </tr>
+                      )}
+                      {(showAllLogs ? auditLogs : auditLogs.slice(0, 5)).map((logItem, index) => (
+                        <tr key={logItem.id || index}>
+                          <td>{index + 1}</td>
+                          <td>{logItem.userName || "نامشخص"}</td>
+                          <td>{logItem.faActionType || "نامشخص"}</td>
+                          <td>{logItem.faContentType || "نامشخص"}</td>
+                          <td>{toJalali(logItem.action_time)}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
+                  {auditLogs.length > 5 && (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setShowAllLogs(!showAllLogs)}
+                    >
+                      {showAllLogs ? "نمایش کمتر" : "لاگ‌های بیشتر"}
+                    </button>
+                  )}
                 </div>
 
                 {/* Filters */}
@@ -437,7 +571,12 @@ const AdminDashboard = () => {
                 {/* Chart */}
                 <div className="mt-5">
                   <h5>نمودار نظرات</h5>
-                  <Line data={filteredData} />
+                  <Line
+                    data={{
+                      labels: filteredData.labels,
+                      datasets: filteredData.datasets,
+                    }}
+                  />
                 </div>
               </Tab.Pane>
 
