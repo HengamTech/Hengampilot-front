@@ -18,6 +18,15 @@
   font-family: myFirstFont;
   src: url("B-NAZANIN.TTF");
 }
+  @media (max-width: 991px) {
+  .profile-mobile {
+    margin-right: -20px; /* فاصله بیشتر در حالت موبایل */
+  }
+
+
+
+}
+
 /* سبک دکمه‌های ورود و ثبت‌نام */
 .navbar__left {
   display: flex;

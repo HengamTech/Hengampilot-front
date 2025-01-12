@@ -1,70 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Navbar.css';
-import Logo from './Logo1.png';
-// اگر از React-Bootstrap یا هر کتابخانه دیگری برای لیست نتایج استفاده می‌کنید، آن را ایمپورت کنید:
-import { ListGroup } from 'react-bootstrap';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import Logo from "./Logo1.png";
+import { ListGroup } from "react-bootstrap";
+import axios from "axios";
 
 function Navbar() {
   const navigate = useNavigate();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-
-  // --- stateهای مربوط به جستجو ---
+  const [username, setUsername] = useState("");
+  const [userImage, setUserImage] = useState(null); 
+  // اگر userImage خالی باشد، آیکون کاربری نشان داده می‌شود.
+  const[Userrole,setUserrole] =useState(null);
+  // --- state‌های مربوط به جستجو ---
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
   useEffect(() => {
     // بررسی وضعیت لاگین در بارگذاری اولیه
-    const token = localStorage.getItem('token');
-    const storedUsername = localStorage.getItem('username');
-    if (token && storedUsername) {
+    const token = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+    const storedUserId = localStorage.getItem("userId");
+
+    if (token && storedUsername && storedUserId) {
       setIsLoggedIn(true);
       setUsername(storedUsername);
+      // دریافت عکس پروفایل کاربر
+      fetchUserProfile(storedUserId); 
     }
 
     // مدیریت رویدادهای ورود و خروج
-    const handleLoginEvent = (e) => {
+    const handleLoginEvent = async (e) => {
       setIsLoggedIn(true);
-      setUsername(e.detail.username);
+      setUsername(e.detail.username || ""); 
+      // اگر لاگین انجام شده، ولی هنوز userId در localStorage نیست، 
+      // لازم است در صفحه‌ی لاگین این را ست کنید.
+      const newUserId = localStorage.getItem("userId");
+      if (newUserId) {
+        await fetchUserProfile(newUserId);
+      }
     };
+
     const handleLogoutEvent = () => {
       setIsLoggedIn(false);
-      setUsername('');
+      setUsername("");
+      setUserImage(null);
     };
 
-    window.addEventListener('login', handleLoginEvent);
-    window.addEventListener('logout', handleLogoutEvent);
+    window.addEventListener("login", handleLoginEvent);
+    window.addEventListener("logout", handleLogoutEvent);
 
     return () => {
-      window.removeEventListener('login', handleLoginEvent);
-      window.removeEventListener('logout', handleLogoutEvent);
+      window.removeEventListener("login", handleLoginEvent);
+      window.removeEventListener("logout", handleLogoutEvent);
     };
   }, []);
 
-  const handleLogin = () => navigate('/login');
-  const handleSignUp = () => navigate('/signup');
-  const handleDashboard = () => navigate('/dashboard');
+  // تابع کمکی برای گرفتن عکس پروفایل (و سایر اطلاعات کاربر)
+  const fetchUserProfile = async (userId) => {
+    if (!userId) return; // اگر userId نباشد، بی‌فایده است
 
+    try {
+      // درخواست به اندپوینت user_management
+      const response = await axios.get(
+        `http://localhost:8000/user_management/users/${userId}/`
+      );
+      setUserrole(response.data.is_admin);
+      // فرض بر این است که فیلد user_image آدرس عکس کاربر باشد
+      if (response.data.user_image) {
+        setUserImage(response.data.user_image);
+      } else {
+        setUserImage(null); 
+      }
+    } catch (error) {
+      console.error("خطا در دریافت پروفایل کاربر:", error);
+    }
+  };
+
+  const handleLogin = () => navigate("/login");
+  const handleSignUp = () => navigate("/signup");
+  const handleDashboard = () =>{
+    if(Userrole ===false){
+    navigate("/dashboard");
+    }
+    else {
+      navigate("/admindashboard");
+    }
+  }
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('userId');
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     setIsLoggedIn(false);
 
-    const logoutEvent = new Event('logout');
+    const logoutEvent = new Event("logout");
     window.dispatchEvent(logoutEvent);
 
-    navigate('/');
-  };
-  const handleaboutus = () => {
-    navigate('/aboutus');
+    navigate("/");
   };
 
-  // --- تابع جستجو: مشابه آنچه در HeroSection داشتید ---
+  const handleaboutus = () => {
+    navigate("/aboutus");
+  };
+
+  // --- تابع جستجو ---
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -76,10 +117,12 @@ function Navbar() {
     }
 
     try {
-      // درخواست به سرور برای دریافت نتایج
-      const response = await axios.get("http://localhost:8000/business_management/businesses/", {
-        params: { ordering: "business_name", search: value },
-      });
+      const response = await axios.get(
+        "http://localhost:8000/business_management/businesses/",
+        {
+          params: { ordering: "business_name", search: value },
+        }
+      );
       setSearchResults(response.data || []);
       setIsDropdownVisible(true);
     } catch (error) {
@@ -127,7 +170,7 @@ function Navbar() {
             </li>
             <li className="nav-item text-nowrap">
               <a className="nav-link" href="#feedback">
- نظر های اخیر
+                نظر های اخیر
               </a>
             </li>
             <li className="nav-item">
@@ -137,7 +180,7 @@ function Navbar() {
             </li>
           </ul>
 
-          {/* بخش جستجو: یک ظرف با position: relative */}
+          {/* بخش جستجو */}
           <div className="mx-3 flex-grow-1" style={{ position: "relative" }}>
             <input
               className="form-control rounded"
@@ -148,7 +191,6 @@ function Navbar() {
               onChange={handleSearchChange}
               onFocus={() => setIsDropdownVisible(searchResults.length > 0)}
             />
-            {/* کشویی نتایج جستجو */}
             {isDropdownVisible && (
               <ListGroup
                 className="position-absolute bg-white"
@@ -171,7 +213,9 @@ function Navbar() {
                     <div>
                       <strong>{biz.business_name}</strong>
                       <br />
-                      <small className="text-muted">{biz.website_url || "بدون آدرس وب‌سایت"}</small>
+                      <small className="text-muted">
+                        {biz.website_url || "بدون آدرس وب‌سایت"}
+                      </small>
                     </div>
                   </ListGroup.Item>
                 ))}
@@ -180,7 +224,7 @@ function Navbar() {
           </div>
 
           {!isLoggedIn ? (
-            <div className="d-flex">
+            <div className="d-flex mt-3 mt-lg-0">
               <button
                 className="btn btn-primary flex-fill me-2"
                 style={{ marginLeft: "10px" }}
@@ -196,7 +240,7 @@ function Navbar() {
               </button>
             </div>
           ) : (
-            <div className="dropdown" key={username}>
+            <div className="dropdown mt-3 mt-lg-0 profile-mobile" key={username}>
               <button
                 className="btn btn-secondary dropdown-toggle"
                 style={{ marginRight: "35px" }}
@@ -205,19 +249,49 @@ function Navbar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <i className="fas fa-user me-2"></i> {username}
+                {/* اگر عکس پروفایل داریم */}
+                {userImage ? (
+                  <img
+                    src={userImage}
+                    alt="User Avatar"
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "50%",
+                      marginRight: "5px",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  // در غیر این صورت آیکون قبلی
+                  <i className="fas fa-user me-2"></i>
+                )}
+                {username}
               </button>
               <ul
                 className="dropdown-menu dropdown-menu-end right-to-left"
                 aria-labelledby="dropdownMenuButton"
+                style={{
+                  position: "absolute", // موقعیت منوی کشویی
+                  top: "100%", // دقیقا زیر دکمه
+                  marginTop: "5px", // فاصله از دکمه
+                  Width: "50px", // عرض منوی کشویی
+                  
+                }}
               >
                 <li>
-                  <button className="dropdown-item right-to-left" onClick={handleDashboard}>
+                  <button
+                    className="dropdown-item right-to-left"
+                    onClick={handleDashboard}
+                  >
                     داشبورد
                   </button>
                 </li>
                 <li>
-                  <button className="dropdown-item right-to-left" onClick={handleLogout}>
+                  <button
+                    className="dropdown-item right-to-left"
+                    onClick={handleLogout}
+                  >
                     خروج
                   </button>
                 </li>
