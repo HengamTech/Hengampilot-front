@@ -51,6 +51,7 @@ function LoginPage() {
                     }
                 );
                 console.log(response1.data);
+                localStorage.setItem('userId',response1.data.id)
                 console.log(Boolean(response1.data.is_admin));
                     if(Boolean(response1.data.is_admin)==false){
                         console.log("کاربرعادی است");
