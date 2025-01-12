@@ -117,7 +117,7 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
       if (response.status === 200) {
         alert("اطلاعات با موفقیت به‌روزرسانی شد.");
-        navigate("/login");
+        navigate("/dashboard");
       } else {
         alert("خطا در به‌روزرسانی اطلاعات.");
       }
@@ -133,7 +133,7 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
   if (loading) return <p>در حال بارگذاری...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-
+  localStorage.setItem('username',formData.username);
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">ویرایش اطلاعات کاربر</h2>
