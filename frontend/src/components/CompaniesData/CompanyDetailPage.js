@@ -308,55 +308,62 @@ const CompanyDetailPage = () => {
             <p>هنوز هیچ نظری ثبت نشده است.</p>
           ) : (
             <div>
-              {comments.map((comment) => (
-                <div key={comment.id} className="border-bottom py-3">
-                  {/* تصویر و نام کاربر */}
-                  <div className="d-flex align-items-center mb-2">
-                    <img
-                      src={
-                        userDetails[comment.user]?.userimage ||
-                        "https://via.placeholder.com/50"
-                      }
-                      alt="User"
-                      width="40px"
-                      className="rounded-circle me-2"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <strong>
-                      {userDetails[comment.user]?.userId || "در حال بارگذاری..."}
-                    </strong>
-                  </div>
+  {comments.map((comment) => {
+    console.log('comment.hidden',comment.hidden)
+    if (comment.hidden === false) return null; // حذف کامنت‌های مخفی
 
-                  {/* نمایش امتیاز با ستاره */}
-                  <div>{renderStars(comment.rank)}</div>
+    return (
+      <div key={comment.id} className="border-bottom py-3">
+        {/* تصویر و نام کاربر */}
+        <div className="d-flex align-items-center mb-2">
+          <img
+            src={
+              userDetails[comment.user]?.userimage ||
+              "https://via.placeholder.com/50"
+            }
+            alt="User"
+            width="40px"
+            className="rounded-circle me-2"
+            style={{ objectFit: "cover" }}
+          />
+          <strong>
+            {userDetails[comment.user]?.userId || "در حال بارگذاری..."}
+          </strong>
+        </div>
 
-                  <small className="text-muted">{toJalali(comment.created_at)}</small>
-                  <p>{comment.review_text}</p>
+        {/* نمایش امتیاز با ستاره */}
+        <div>{renderStars(comment.rank)}</div>
 
-                  {/* دکمه لایک */}
-                  <div className="d-flex justify-content-start">
-                  <LikeButton
-                    reviewId={comment.id}
-                    handleLike={handleLike}
-                    votes={votes[comment.id]?.length || 0}
-                  />
+        <small className="text-muted">{toJalali(comment.created_at)}</small>
+        <p>{comment.review_text}</p>
 
-                  {/* دکمه گزارش */}
-                  <ReportButton
-                    reviewId={comment.id}
-                    reviewUserId={comment.user}
-                    token={token}
-                  />
+        {/* دکمه لایک */}
+        <div className="d-flex justify-content-start">
+          <LikeButton
+            reviewId={comment.id}
+            handleLike={handleLike}
+            votes={votes[comment.id]?.length || 0}
+          />
+
+          {/* دکمه گزارش */}
+          <ReportButton
+            reviewId={comment.id}
+            reviewUserId={comment.user}
+            token={token}
+          />
+        </div>
+        
+        {/* ریپلای ادمین */}
+        <AdminReplySection
+          reviewId={comment.id}
+          token={token}
+          isAdmin={isAdmin}
+        />
+      </div>
+    );
+  })}
 </div>
-                  {/* ریپلای ادمین */}
-                  <AdminReplySection
-                    reviewId={comment.id}
-                    token={token}
-                    isAdmin={isAdmin}
-                  />
-                </div>
-              ))}
-            </div>
+
           )}
         </div>
       </div>
