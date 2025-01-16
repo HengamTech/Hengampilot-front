@@ -144,21 +144,21 @@ const ReviewCard = ({ review, handleReadMore }) => {
       onClick={() => handleReadMore(review.id)}
     >
       <img
-        src={review.userImage}
-        alt={review.name}
+        src={review.userImage || 'https://via.placeholder.com/50'}
+        // alt={review.name}
         className="user-image mb-0 mx-auto d-block"
         style={{ width: "80px", height: "80px", borderRadius: "50%" }}
       />
       <div className="card-body d-flex flex-column">
         <h5 className="card-title">{review.name}</h5>
-        <div className="stars mb-1" style={{ marginTop: "-11px" }}>
+        <div className="stars mb-1" style={{ marginTop: "-11px",fontSize:"28px" }}>
           {[...Array(5)].map((_, index) => (
             <span key={index} className={index < review.rank ? "star filled" : "star"}>
               ★
             </span>
           ))}
         </div>
-        <p>{review.created_at ? toJalali(review.created_at) : "نامشخص"}</p>
+        {/* <p>{review.created_at ? toJalali(review.created_at) : "نامشخص"}</p> */}
 
         <p className="card-text aa">
           {review.review_text
