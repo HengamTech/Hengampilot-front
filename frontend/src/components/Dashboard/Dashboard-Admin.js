@@ -196,7 +196,8 @@ const AdminDashboard = () => {
         return "لایک کاربر";
       case "business_management | business":
         return "مدیریت بیزنس";
-
+      case "review_rating | review response":
+        return "پاسخ مدیر";
       default:
         return contentType || "نامشخص";
     }
@@ -494,7 +495,7 @@ const AdminDashboard = () => {
                       className="card text-center p-4 hoverEffect2 text-dark"
                       onClick={() => setActiveTab("ReportsManager")}
                     >
-                      <h5>گزارش‌های جدید</h5>
+                      <h5>تعداد گزارش ها </h5>
                       <h2>{totalReports}</h2>
                     </div>
                   </div>
