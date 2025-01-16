@@ -273,8 +273,8 @@ const ReviewManagementPage = () => {
             onChange={(e) => setFilterHidden(e.target.value)}
           >
             <option value="all">همه نظرات</option>
-            <option value="hidden">مخفی شده</option>
-            <option value="visible">قابل مشاهده</option>
+            <option value="hidden">تایید شده</option>
+            <option value="visible">تایید نشده</option>
           </select>
         </div>
       </div>
@@ -323,7 +323,7 @@ const ReviewManagementPage = () => {
               {/* تبدیل تاریخ به شمسی */}
               <td>{toJalali(review.created_at)}</td>
 
-              <td>{review.hidden ? "تایید شده" : "رد شده"}</td>
+              <td>{review.hidden ? "تایید شده" : "تایید نشده"}</td>
               <td>
                 <FaCheck
                   style={{ cursor: "pointer", margin: "0 3px" }}
