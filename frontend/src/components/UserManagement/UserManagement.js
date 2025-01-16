@@ -49,8 +49,8 @@ const UserManagement = () => {
 
   const handleToggleBlockUser = async (id, isActive) => {
     const confirmationMessage = isActive
-      ? "آیا از رفع مسدودی این کاربر مطمئن هستید؟"
-      : "آیا از مسدود کردن این کاربر مطمئن هستید؟";
+      ? "آیا از مسدود کردن این کاربر مطمئن هستید؟"
+      : "آیا از رفع مسدودی این کاربر مطمئن هستید؟";
 
     if (window.confirm(confirmationMessage)) {
       try {
@@ -71,7 +71,7 @@ const UserManagement = () => {
           )
         );
 
-        alert(isActive ? "کاربر با موفقیت رفع مسدودی شد." : "کاربر با موفقیت مسدود شد.");
+        alert(isActive ? "کاربر با موفقیت مسدود شد." : "کاربر با موفقیت رفع مسدودی شد.");
       } catch (error) {
         console.error("خطا در تغییر وضعیت کاربر:", error.response?.data || error.message);
       }
