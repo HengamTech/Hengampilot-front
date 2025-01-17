@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./category.css";
 
-const Categories = () => {
+const Categories = ({id}) => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
@@ -27,6 +27,7 @@ const Categories = () => {
   };
 
   return (
+    <section id={id}>
     <div className="container mt-4">
       <h2 className="text-center mb-5" id="category">دسته‌بندی‌ها</h2>
 
@@ -66,6 +67,7 @@ const Categories = () => {
         ))}
       </div>
     </div>
+    </section>
   );
 };
 
