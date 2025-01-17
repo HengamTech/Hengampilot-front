@@ -43,10 +43,10 @@ function App() {
           element={
             <>
               <Navbar />
-              <HeroSection/>
+              <HeroSection id="hero"/>
           
-                    <Categories/>                  
-              <ReviewSection/>
+                    <Categories id="Categories"/>                  
+              <ReviewSection id="latestreview"/>
               <Footer />
             </>
           }
