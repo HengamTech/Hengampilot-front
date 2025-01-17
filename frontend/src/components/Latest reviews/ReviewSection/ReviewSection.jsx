@@ -9,7 +9,7 @@ import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 const ITEMS_PER_PAGE = 4;
 const COMMENT_MAX_LENGTH = 50;
 
-const ReviewSection = () => {
+const ReviewSection = ({id}) => {
   const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
 
@@ -98,6 +98,7 @@ const ReviewSection = () => {
   }
 
   return (
+    <section id={id}>
     <div className="review-section">
       <div className="row">
         <div
@@ -124,6 +125,8 @@ const ReviewSection = () => {
         ))}
       </div>
     </div>
+    </section>
+
   );
 };
 
