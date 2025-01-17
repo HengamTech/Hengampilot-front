@@ -2,8 +2,34 @@ import React from 'react';
 import './Footer.css';
 import { FaInstagram, FaYoutube, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import Logo from './Logo1.png';
-
+import { useNavigate } from "react-router-dom";
 const Footer = () => {
+    const navigate = useNavigate();
+    const handlecategory = () =>{
+        navigate("/");
+        setTimeout(() =>{
+        const section1 = document.getElementById("Categories");
+        section1.scrollIntoView({behavior:"smooth"});
+        },100);
+      }
+      const handlereview = () => {
+      navigate("/"); // بازگشت به صفحه اصلی
+      setTimeout(() => {
+        const section = document.getElementById("latestreview");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" }); // اسکرول به بخش مورد نظر
+        } else {
+          console.error("Section with ID 'latestreview' not found.");
+        }
+      }, 100); // تاخیر برای اطمینان از بارگذاری DOM
+    };
+    const handleworks = () => {
+        navigate("/");
+        setTimeout(() =>{
+        const section2 =document.getElementById("hero");
+        section2.scrollIntoView({behavior:"smooth"});
+        },100);
+    };
     return (
         <footer className="footer">
             <div className="footer-content">
@@ -28,16 +54,15 @@ const Footer = () => {
                 <div className="footer-section">
                     <h4>کسب و کار</h4>
                     <ul>
-                        <li><a href="/">HengamPilot</a></li>
-                        <li><a href="/login">ورود برای کسب و کار</a></li>
+                        <li><a href="#Categories" onClick={handlecategory}>دسته بندی ها</a></li>
+                        <li><a href="#latestreview" onClick={handlereview}>نظر های اخیر</a></li>
                     </ul>
                 </div>
                 <div className="footer-section">
                     <h4>درباره ما</h4>
                     <ul>
                         <li><a href="/aboutus">درباره ما</a></li>
-                        <li><a href="/contactUs">ارتباط با ما</a></li>
-                        <li><a href="/">چگونه دستیار هنگام کار می کند</a></li>
+                        <li><a href="#hero"onClick={handleworks}>چگونه دستیار هنگام کار می کند</a></li>
                     </ul>
                 </div>
             </div>
