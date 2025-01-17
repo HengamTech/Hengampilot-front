@@ -4,6 +4,16 @@ import "./Navbar.css";
 import Logo from "./Logo1.png";
 import { ListGroup } from "react-bootstrap";
 import axios from "axios";
+import "@fortawesome/fontawesome-free/css/all.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  faCommentDots,
+  faChartBar,
+  faFileAlt,
+  faCog,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -78,6 +88,24 @@ function Navbar() {
       console.error("خطا در دریافت پروفایل کاربر:", error);
     }
   };
+  const handlecategory = () =>{
+    navigate("/");
+    setTimeout(() =>{
+    const section1 = document.getElementById("Categories");
+    section1.scrollIntoView({behavior:"smooth"});
+    },100);
+  }
+  const handlereview = () => {
+  navigate("/"); // بازگشت به صفحه اصلی
+  setTimeout(() => {
+    const section = document.getElementById("latestreview");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" }); // اسکرول به بخش مورد نظر
+    } else {
+      console.error("Section with ID 'latestreview' not found.");
+    }
+  }, 100); // تاخیر برای اطمینان از بارگذاری DOM
+};
 
   const handleLogin = () => navigate("/login");
   const handleSignUp = () => navigate("/signup");
@@ -159,17 +187,17 @@ function Navbar() {
             style={{ marginRight: "20px" }}
           >
             <li className="nav-item">
-              <a className="nav-link" href="#categories">
+              <a className="nav-link" href="#Categories" onClick={handlecategory}>
                 دسته بندی
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#blog">
+              {/* <a className="nav-link" href="#blog">
                 هنگام
-              </a>
+              </a> */}
             </li>
             <li className="nav-item text-nowrap">
-              <a className="nav-link" href="#feedback">
+              <a className="nav-link" href="#latestreview" onClick={handlereview}>
                 نظر های اخیر
               </a>
             </li>
@@ -242,7 +270,7 @@ function Navbar() {
           ) : (
             <div className="dropdown mt-3 mt-lg-0 profile-mobile" key={username}>
               <button
-                className="btn btn-secondary dropdown-toggle"
+                className="btn btn-light dropdown-toggle"
                 style={{ marginRight: "35px" }}
                 type="button"
                 id="dropdownMenuButton"
@@ -255,8 +283,8 @@ function Navbar() {
                     src={userImage}
                     alt="User Avatar"
                     style={{
-                      width: "30px",
-                      height: "30px",
+                      width: "50px",
+                      height: "50px",
                       borderRadius: "50%",
                       marginRight: "5px",
                       objectFit: "cover",
@@ -264,27 +292,28 @@ function Navbar() {
                   />
                 ) : (
                   // در غیر این صورت آیکون قبلی
-                  <i className="fas fa-user me-2"></i>
+                  <i className="fas fa-user me-2"style={{fontSize:"26px"}}></i>
                 )}
-                {username}
+                {/* {username} */}
               </button>
               <ul
-                className="dropdown-menu dropdown-menu-end right-to-left"
+                className="dropdown-menu dropdown-menu-end "
                 aria-labelledby="dropdownMenuButton"
                 style={{
                   position: "absolute", // موقعیت منوی کشویی
                   top: "100%", // دقیقا زیر دکمه
                   marginTop: "5px", // فاصله از دکمه
-                  Width: "50px", // عرض منوی کشویی
+                  width: "20px", // عرض منوی کشویی
                   
                 }}
               >
-                <li>
+                <div className="text-end">
+                <li >
                   <button
                     className="dropdown-item right-to-left"
                     onClick={handleDashboard}
                   >
-                    داشبورد
+                    <FontAwesomeIcon icon={faChartBar} /> داشبورد <i class="fas fa-arrow-left"style={{marginRight:"50px"}}></i>
                   </button>
                 </li>
                 <li>
@@ -292,9 +321,10 @@ function Navbar() {
                     className="dropdown-item right-to-left"
                     onClick={handleLogout}
                   >
-                    خروج
+                    <FontAwesomeIcon icon={faSignOutAlt} /> خروج <i class="fas fa-arrow-left"style={{marginRight:"60px"}}></i>
                   </button>
                 </li>
+                </div>
               </ul>
             </div>
           )}
