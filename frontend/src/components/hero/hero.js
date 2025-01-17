@@ -14,7 +14,7 @@ import { Container, Row, Col, ListGroup } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const HeroSection = () => {
+const HeroSection = ({id}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [businesses, setBusinesses] = useState([]);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -43,6 +43,7 @@ const HeroSection = () => {
   };
 
   return (
+    <section id={id}>
     <Container fluid className="hero-section px-4 align-content-start justify-content-start">
       <Row className="align-items-start justify-content-center mt-5">
         <Col md={5} className="text-right mx-5">
@@ -137,6 +138,7 @@ const HeroSection = () => {
         </Col>
       </Row>
     </Container>
+    </section>
   );
 };
 
