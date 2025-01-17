@@ -187,7 +187,7 @@ const AdminDashboard = () => {
       case "business_management | category":
         return " دسته بندی";
       case "user_management | user":
-        return "کاربر";
+        return "مدیریت کاربر";
       case "review_rating | review":
         return "نظر";
       case "review_rating | reports":
@@ -198,6 +198,8 @@ const AdminDashboard = () => {
         return "مدیریت بیزنس";
       case "review_rating | review response":
         return "پاسخ مدیر";
+      case "user_management | notifications":
+        return "نوتیف از سمت کاربر";  
       default:
         return contentType || "نامشخص";
     }
@@ -508,7 +510,7 @@ const AdminDashboard = () => {
                     <thead>
                       <tr>
                         <th>ردیف</th>
-                        <th>کاربر</th>
+                        {/* <th>کاربر</th> */}
                         <th>عملیات</th>
                         <th>نوع محتوا</th>
                         <th>تاریخ</th>
@@ -523,7 +525,7 @@ const AdminDashboard = () => {
                       {(showAllLogs ? auditLogs : auditLogs.slice(0, 5)).map((logItem, index) => (
                         <tr key={logItem.id || index}>
                           <td>{index + 1}</td>
-                          <td>{logItem.userName || "نامشخص"}</td>
+                          {/* <td>{logItem.userName || "نامشخص"}</td> */}
                           <td>{logItem.faActionType || "نامشخص"}</td>
                           <td>{logItem.faContentType || "نامشخص"}</td>
                           <td>{toJalali(logItem.action_time)}</td>
