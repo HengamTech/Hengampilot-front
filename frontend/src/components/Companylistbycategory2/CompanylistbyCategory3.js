@@ -43,9 +43,9 @@ const Companylistbycategory1 = () => {
       const response = await axios.get(
         "http://127.0.0.1:8000/business_management/businesses/category-businesses/",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
           params:{
             // سرور طبق کد شما انتظار category_name را به‌صورت کوئری دریافت می‌کند
             category_name: category_name,
