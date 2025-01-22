@@ -127,7 +127,7 @@ const CompanyDetailPage = () => {
       const response = await axios.get(
         `http://localhost:8000/business_management/businesses/reviews/`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          // headers: { Authorization: `Bearer ${token}` },
           params: { id, ordering, search },
         }
       );
@@ -168,11 +168,11 @@ const CompanyDetailPage = () => {
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/user_management/users/${userId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }
       );
       setUserDetails(prevDetails => ({
         ...prevDetails,
@@ -192,6 +192,8 @@ const CompanyDetailPage = () => {
     fetchComments(id, ordering, search);
     fetchAdminStatus();
     fetchVotes();
+    // const intervalid = setInterval(() =>fetchComments(id,ordering,search),5000);
+    // return() => clearInterval(intervalid);
   }, [id, ordering, search]);
 
   // کلیک روی دکمه ثبت نظر
