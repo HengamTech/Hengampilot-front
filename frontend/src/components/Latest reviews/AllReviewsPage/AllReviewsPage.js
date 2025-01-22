@@ -7,21 +7,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const AllReviewsPage = () => {
+  // --- state اصلی شما ---
   const [reviews, setReviews] = useState([]);
   const [votes, setVotes] = useState({});
   const [filteredReviews, setFilteredReviews] = useState([]);
   const [filters, setFilters] = useState({
     username: '',
     businessName: '',
-    // حذف minRank, maxRank؛ بجای آن starFilter یک فیلد ستاره
     starFilter: 0,
     reviewText: '',
   });
 
+  // --- state برای صفحه‌بندی ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3; // تعداد نظرات در هر صفحه
+
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('token');
 
-  // برای بررسی اینکه آیا کاربر ادمین است یا نه
+  // برای بررسی نقش ادمین
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -36,35 +40,25 @@ const AllReviewsPage = () => {
             },
           }
         );
-        setIsAdmin(response.data.is_admin); // فرض بر این است که فیلد is_admin برمی‌گردد
+        setIsAdmin(response.data.is_admin);
       } catch (error) {
         console.error('Error fetching user admin status:', error);
       }
     };
-    
-    
+
     // گرفتن تمام نظرات
     const fetchReviews = async () => {
       try {
-        const { data } = await axios.get('http://localhost:8000/review_rating/reviews/', {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        });
-
+        const { data } = await axios.get('http://localhost:8000/review_rating/reviews/');
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const [businessResponse, userResponse] = await Promise.all([
-              axios.get(`http://localhost:8000/business_management/businesses/${review.business_id}/`, {
-                // headers: {
-                //   Authorization: `Bearer ${token}`,
-                // },
-              }),
-              axios.get(`http://localhost:8000/user_management/users/${review.user}/`, {
-                // headers: {
-                //   Authorization: `Bearer ${token}`,
-                // },
-              }),
+              axios.get(
+                `http://localhost:8000/business_management/businesses/${review.business_id}/`
+              ),
+              axios.get(
+                `http://localhost:8000/user_management/users/${review.user}/`
+              ),
             ]);
 
             return {
@@ -77,11 +71,12 @@ const AllReviewsPage = () => {
             };
           })
         );
-      
+
         setReviews(enrichedReviews);
+
+        // به‌صورت پیش‌فرض، فقط hidden را در فیلتر تنظیم کرده‌اید
         const hiddenReviews = enrichedReviews.filter((review) => review.hidden === true);
         setFilteredReviews(hiddenReviews);
-        // setFilteredReviews(enrichedReviews);
       } catch (error) {
         console.error('Error fetching reviews:', error);
       }
@@ -112,9 +107,19 @@ const AllReviewsPage = () => {
     fetchAdminStatus();
     fetchReviews();
     fetchVotes();
+
+    // هر 5 ثانیه یکبار مجددا fetch کند
+    // const intervalId = setInterval(fetchReviews, 5000);
+    // return () => clearInterval(intervalId);
   }, [token, userId]);
 
+  // تابع لایک کردن یک نظر
   const handleLike = async (reviewId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('ابتدا وارد شوید');
+      return;
+    }
     if (votes[reviewId]?.includes(userId)) {
       alert('شما قبلاً به این نظر رأی داده‌اید.');
       return;
@@ -143,7 +148,7 @@ const AllReviewsPage = () => {
     }
   };
 
-  // مدیریت تغییر فیلدهای متنی و فیلترها
+  // کنترل فیلترها
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
@@ -152,7 +157,6 @@ const AllReviewsPage = () => {
     }));
   };
 
-  // کلیک روی ستاره (یک فیلد واحد) => تنظیم starFilter
   const handleStarFilterChange = (starValue) => {
     setFilters((prev) => ({
       ...prev,
@@ -160,29 +164,40 @@ const AllReviewsPage = () => {
     }));
   };
 
+  // اعمال فیلترها
   const applyFilters = () => {
+    // اعمال فیلترها روی نظرات
     const filtered = reviews.filter((review) => {
+      // بررسی نام کاربری
       const usernameMatch = filters.username
-        ? review.username.toLowerCase().includes(filters.username.toLowerCase())
+        ? review.username && review.username.toLowerCase().includes(filters.username.toLowerCase())
         : true;
-
+  
+      // بررسی نام کسب‌وکار
       const businessMatch = filters.businessName
-        ? review.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
+        ? review.businessName && review.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
         : true;
-
-      // فیلتر بر اساس تعداد ستاره (review.rank >= starFilter)
+  
+      // بررسی تعداد ستاره (برابر یا بیشتر از مقدار وارد شده)
       const starMatch = review.rank >= filters.starFilter;
-
+  
+      // بررسی متن نظر
       const textMatch = filters.reviewText
-        ? review.review_text.toLowerCase().includes(filters.reviewText.toLowerCase())
+        ? review.review_text && review.review_text.toLowerCase().includes(filters.reviewText.toLowerCase())
         : true;
-
+  
+      // بازگشت نتیجه نهایی
       return usernameMatch && businessMatch && starMatch && textMatch;
     });
-
+  
     setFilteredReviews(filtered);
+  
+    // بازنشانی به صفحه اول بعد از اعمال فیلترها
+    // setCurrentPage(1);
   };
+  
 
+  // تابع تبدیل تاریخ به جلالی
   const toJalali = (gregorianDate) => {
     const g2j = (gYear, gMonth, gDay) => {
       const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -236,9 +251,47 @@ const AllReviewsPage = () => {
     return `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
   };
 
+  // --- توابع صفحه‌بندی ---
+  // محاسبه نظرات صفحه جاری:
+  const getPaginatedReviews = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredReviews.slice(startIndex, endIndex);
+  };
+
+  // کامپوننت کنترل صفحه‌بندی:
+  const PaginationControls = ({ totalReviews, currentPage, onPageChange }) => {
+    const totalPages = Math.ceil(totalReviews / pageSize);
+    // اگر فقط یک صفحه داریم، دکمه‌ها را نمایش ندهید
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="pagination mt-3 d-flex justify-content-center">
+        <button
+          className="btn btn-secondary btn-sm me-2"
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(currentPage - 1)}
+        >
+          قبلی
+        </button>
+        <span>
+          صفحه {currentPage} از {totalPages}
+        </span>
+        <button
+          className="btn btn-secondary btn-sm ms-2"
+          disabled={currentPage === totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+        >
+          بعدی
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="container">
       <h2 className="text-center my-4">همه نظرات</h2>
+
       <div className="row" dir="rtl">
         <aside
           className="col-md-3 shadow p-3 mb-3 bg-white rounded h-100"
@@ -273,13 +326,10 @@ const AllReviewsPage = () => {
                 className="form-control"
               />
             </div>
-            {/* فیلتر تعداد ستاره با شکل ستاره */}
+            {/* فیلتر تعداد ستاره */}
             <div className="col-md-12 mb-3">
               <p>تعداد ستاره:</p>
-              <StarFilter
-                currentValue={filters.starFilter}
-                onStarClick={handleStarFilterChange}
-              />
+              <StarFilter currentValue={filters.starFilter} onStarClick={handleStarFilterChange} />
             </div>
             {/* فیلد متن نظر */}
             <div className="col-md-12 mb-3">
@@ -302,12 +352,16 @@ const AllReviewsPage = () => {
 
         {/* لیست نظرات */}
         <div className="col col-md-6">
-          {filteredReviews.map((review) => (
+          {/* 
+            به جای filteredReviews.map(...)، 
+            از getPaginatedReviews() برای صفحه‌بندی استفاده می‌کنیم 
+          */}
+          {getPaginatedReviews().map((review) => (
             <div key={review.id} className="review-card1 col-md-4 mb-4">
               <div className="card p-2 shadow-sm">
                 <div className="row">
                   <div className="d-flex justify-content-between">
-                    <div className="d-flex justify-content-start" style={{marginBottom:"42px"}}>
+                    <div className="d-flex justify-content-start mx-1" style={{ marginBottom: '42px' }}>
                       <img
                         src={review.userimage || 'https://via.placeholder.com/80'}
                         alt={review.businessName}
@@ -318,7 +372,7 @@ const AllReviewsPage = () => {
                         {review.username}
                       </h6>
                     </div>
-                    <div style={{textAlign:"center"}}>
+                    <div className='mx-1' style={{ textAlign: 'center' }}>
                       <img
                         src={review.business_image}
                         width="70px"
@@ -329,21 +383,18 @@ const AllReviewsPage = () => {
                       <p>{review.businessName}</p>
                     </div>
                   </div>
-                  <div className="stars " style={{ marginTop: '-35px' }}>
+                  <div className="stars mx-1" style={{ marginTop: '-35px' }}>
                     {[...Array(5)].map((_, index) => (
-                      <span
-                        key={index}
-                        className={index < review.rank ? 'star filled' : 'star'}
-                      >
+                      <span key={index} className={index < review.rank ? 'star filled' : 'star'}>
                         ★
                       </span>
                     ))}
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <p className="date">{toJalali(review.created_at)}</p>
+                  <p className="date mx-1">{toJalali(review.created_at)}</p>
                 </div>
-                <div className="review-info1 ">
+                <div className="review-info1">
                   <p
                     className="comment mb-3"
                     style={{
@@ -355,25 +406,12 @@ const AllReviewsPage = () => {
                   >
                     {review.review_text}
                   </p>
-
-                  <div
-                    style={{
-                      borderTop: '2px solid #e5e5dd',
-                    }}
-                  ></div>
+                  <div style={{ borderTop: '2px solid #e5e5dd' }}></div>
                   <div className="d-flex justify-content-between"></div>
-                  <div
-                    style={{
-                      borderTop: '2px solid #e5e5dd',
-                    }}
-                  ></div>
+                  <div style={{ borderTop: '2px solid #e5e5dd' }}></div>
 
                   <div className="d-flex justify-content-between">
-                    <LikeButton
-                      reviewId={review.id}
-                      handleLike={handleLike}
-                      votes={votes[review.id]?.length || 0}
-                    />
+                    <LikeButton reviewId={review.id} handleLike={handleLike} votes={votes[review.id]?.length || 0} />
                     <ReportButton
                       style={{ width: '120px' }}
                       reviewId={review.id}
@@ -390,11 +428,20 @@ const AllReviewsPage = () => {
           ))}
         </div>
       </div>
+      {/* نمایش کنترل‌های صفحه‌بندی زیر لیست نظرات */}
+      <PaginationControls
+        totalReviews={filteredReviews.length}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
+      <div>
+        <h1>sakam</h1>
+      </div>
     </div>
   );
 };
 
-/** کامپوننت StarFilter: امکان انتخاب تعداد ستاره (1 تا 5) با کلیک روی آن‌ها */
+/** همان کد اصلی کامپوننت StarFilter شما */
 const StarFilter = ({ currentValue, onStarClick }) => {
   const handleClick = (starValue) => {
     onStarClick(starValue);
@@ -416,20 +463,22 @@ const StarFilter = ({ currentValue, onStarClick }) => {
           ★
         </span>
       ))}
-          </div>
+    </div>
   );
 };
 
+/** همان کد اصلی کامپوننت LikeButton شما */
 const LikeButton = ({ reviewId, handleLike, votes }) => {
   return (
     <div className="like-dislike-buttons">
-      <button onClick={() => handleLike(reviewId)} className="btn btn-success btn-sm">
+      <button onClick={() => handleLike(reviewId)} className="dd btn transparent-bg btn-sm">
         👍 {votes}
       </button>
     </div>
   );
 };
 
+/** همان کد اصلی کامپوننت ReportButton شما */
 const ReportButton = ({ reviewId, reviewUserId, token }) => {
   const [showModal, setShowModal] = useState(false);
   const [reasonSelect, setReasonSelect] = useState('');
@@ -438,6 +487,11 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
   const userId = localStorage.getItem('userId');
 
   const handleReport = async () => {
+     const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('ابتدا وارد شوید');
+      return;
+    }
     if (!reasonSelect || !reason) {
       alert('لطفاً تمام فیلدها را پر کنید.');
       return;
@@ -474,7 +528,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
 
       <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>گزارش نظر</Modal.Title>
+          <Modal.Title style={{marginLeft:"70%"}}>گزارش نظر</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <select
@@ -503,12 +557,14 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
             <option value="UserBan">مسدود کردن کاربر</option>
           </select>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            انصراف
-          </Button>
+        <Modal.Footer className='d-flex justify-content-start' >
+        
+          
           <Button variant="danger" onClick={handleReport}>
             ارسال گزارش
+          </Button>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            انصراف
           </Button>
         </Modal.Footer>
       </Modal>
@@ -516,23 +572,16 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
   );
 };
 
-/* 
-   تغییرات در زیر: 
-   - اگر پاسخی وجود نداشته باشد (replies.length === 0)، 
-     دکمه "پاسخ های مدیر" نمایش داده نمی‌شود.
-   - "ریپلای" و فرم آن فقط برای ادمین قابل مشاهده است.
-   - StarFilter جایگزین minRank و maxRank شده است.
-*/
+/** همان کد اصلی کامپوننت AdminReplySection شما */
 const AdminReplySection = ({ reviewId, token }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [replies, setReplies] = useState([]);
-  const [showAllReplies, setShowAllReplies] = useState(false); // کنترل نمایش لیست پاسخ‌های مدیر
+  const [showAllReplies, setShowAllReplies] = useState(false);
 
   const userId = localStorage.getItem('userId');
 
-  // بررسی نقش ادمین
   useEffect(() => {
     const fetchAdminStatus = async () => {
       try {
@@ -551,7 +600,6 @@ const AdminReplySection = ({ reviewId, token }) => {
     fetchAdminStatus();
   }, [token, userId]);
 
-  // گرفتن پاسخ‌های مدیر
   useEffect(() => {
     const fetchReplies = async () => {
       try {
@@ -559,7 +607,6 @@ const AdminReplySection = ({ reviewId, token }) => {
           `http://localhost:8000/review_rating/review_responses/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // فقط پاسخ‌هایی که مربوط به این reviewId هستند
         const filtered = data.filter((resp) => resp.review === reviewId);
         setReplies(filtered);
       } catch (err) {
@@ -569,7 +616,6 @@ const AdminReplySection = ({ reviewId, token }) => {
     fetchReplies();
   }, [reviewId, token]);
 
-  // هندل ثبت پاسخ جدید (فقط برای ادمین)
   const handleReplySubmit = async () => {
     if (!replyText.trim()) {
       alert('لطفاً متن پاسخ را وارد کنید.');
@@ -590,7 +636,7 @@ const AdminReplySection = ({ reviewId, token }) => {
       setShowReplyForm(false);
       setReplyText('');
 
-      // پس از ارسال، مجدداً پاسخ‌ها را بگیریم
+      // بروزرسانی لیست پاسخ‌ها
       const { data } = await axios.get(
         `http://localhost:8000/review_rating/review_responses/`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -603,26 +649,26 @@ const AdminReplySection = ({ reviewId, token }) => {
     }
   };
 
-  // نمایش / پنهان کردن لیست پاسخ‌های مدیر
   const toggleAllReplies = () => {
     setShowAllReplies(!showAllReplies);
   };
 
-  // اگر هیچ پاسخی وجود ندارد => دکمه "پاسخ های مدیر" هم نشان داده نشود
   if (replies.length === 0 && !isAdmin) {
     return null;
   }
 
   return (
-    <div className="mt-3" >
-      {/* اگر پاسخی وجود دارد یا ادمین است => دکمه را نشان بده */}
+    <div className="mt-3">
       {(replies.length > 0 || isAdmin) && (
-        <Button className="btn btn-secondary btn-sm"style={{marginLeft:"10px"}} onClick={toggleAllReplies}>
+        <Button
+          className="btn btn-secondary btn-sm"
+          style={{ marginLeft: '10px' }}
+          onClick={toggleAllReplies}
+        >
           {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ های مدیر'}
         </Button>
       )}
 
-      {/* اگر showAllReplies true باشد، پاسخ‌های مدیر نمایش داده می‌شوند */}
       {showAllReplies && replies.length > 0 && (
         <div className="mt-3">
           <strong>پاسخ های مدیر:</strong>
@@ -637,18 +683,15 @@ const AdminReplySection = ({ reviewId, token }) => {
               }}
             >
               <p className="m-0">{resp.description}</p>
-              <small className="text-muted">
-                {new Date(resp.created_at).toLocaleString('fa-IR')}
-              </small>
+              <small className="text-muted">{new Date(resp.created_at).toLocaleString('fa-IR')}</small>
             </div>
           ))}
         </div>
       )}
 
-      {/* ریپلای و فرم آن فقط برای ادمین */}
       {isAdmin && (
         <>
-          <Button className='btn btn-success btn-sm'  onClick={() => setShowReplyForm(!showReplyForm)}>
+          <Button className="btn btn-success btn-sm" onClick={() => setShowReplyForm(!showReplyForm)}>
             {showReplyForm ? 'بستن' : 'ریپلای'}
           </Button>
 
