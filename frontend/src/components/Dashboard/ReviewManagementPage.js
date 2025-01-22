@@ -349,21 +349,22 @@ const ReviewManagementPage = () => {
       {/* مودال نمایش جزئیات نظر */}
       <Modal show={showModal} onHide={handleCloseModal} dir="rtl">
         <Modal.Header closeButton>
-          <Modal.Title>جزئیات نظر</Modal.Title>
+          <Modal.Title style={{marginLeft:"70%"}}>جزئیات نظر</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedReviewDetail ? (
             <>
               <p>
-                <strong>تاریخ ثبت نظر: </strong>
-                {toJalali(selectedReviewDetail.created_at)}
+                <h6>تاریخ ثبت نظر:  {toJalali(selectedReviewDetail.created_at)}</h6>
+               
               </p>
               
-                <strong >متن نظر کاربر:</strong>
+                <h6 >متن نظر کاربر:</h6>
               <div style={{
                 maxHeight: "200px",
                 overflow:"auto",
-                fontSize:"24px",
+                fontSize:"16px",
+                marginTop:"7px",
                 textAlign: "justify",
                 lineHeight:"1.8",
                 padding: "10px",
