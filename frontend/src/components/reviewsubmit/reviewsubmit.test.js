@@ -7,6 +7,8 @@ import ReviewSubmit from './ReviewSubmit';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 
+import { API_BASE_URL } from '../config';
+
 // Mock useParams and useNavigate to return the necessary values
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -41,7 +43,7 @@ describe('ReviewSubmit', () => {
         localStorage.setItem('username', 'mockUsername');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onGet('http://127.0.0.1:8000/business_management/businesses/mockBusinessId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/business_management/businesses/mockBusinessId/`).reply(200, {
             business_name: 'Mock Business',
         });
 
@@ -58,7 +60,7 @@ describe('ReviewSubmit', () => {
         localStorage.setItem('username', 'mockUsername');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onGet('http://127.0.0.1:8000/business_management/businesses/mockBusinessId/').reply(500);
+        mock.onGet(`${API_BASE_URL}/business_management/businesses/mockBusinessId/`).reply(500);
 
         renderWithRouter(<ReviewSubmit />);
 
@@ -72,7 +74,7 @@ describe('ReviewSubmit', () => {
         localStorage.setItem('username', 'mockUsername');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onGet('http://127.0.0.1:8000/business_management/businesses/mockBusinessId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/business_management/businesses/mockBusinessId/`).reply(200, {
             business_name: 'Mock Business',
         });
 
@@ -92,11 +94,11 @@ describe('ReviewSubmit', () => {
         localStorage.setItem('username', 'mockUsername');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onGet('http://127.0.0.1:8000/business_management/businesses/mockBusinessId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/business_management/businesses/mockBusinessId/`).reply(200, {
             business_name: 'Mock Business',
         });
 
-        mock.onPost('http://127.0.0.1:8000/review_rating/reviews/').reply(201);
+        mock.onPost(`${API_BASE_URL}/review_rating/reviews/`).reply(201);
 
         renderWithRouter(<ReviewSubmit />);
 
@@ -116,11 +118,11 @@ describe('ReviewSubmit', () => {
         localStorage.setItem('username', 'mockUsername');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onGet('http://127.0.0.1:8000/business_management/businesses/mockBusinessId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/business_management/businesses/mockBusinessId/`).reply(200, {
             business_name: 'Mock Business',
         });
 
-        mock.onPost('http://127.0.0.1:8000/review_rating/reviews/').reply(500);
+        mock.onPost(`${API_BASE_URL}/review_rating/reviews/`).reply(500);
 
         renderWithRouter(<ReviewSubmit />);
 

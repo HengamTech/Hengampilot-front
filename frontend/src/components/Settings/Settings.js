@@ -16,6 +16,8 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { API_BASE_URL } from '../config';
+
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("settings");
   const [categories, setCategories] = useState([]);
@@ -43,7 +45,7 @@ const SettingsPage = () => {
   const fetchCategories = async () => {
     const token = getToken();
     try {
-      const res = await axios.get("http://localhost:8000/business_management/category/", {
+      const res = await axios.get(`${API_BASE_URL}/business_management/category/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCategories(res.data);
@@ -78,7 +80,7 @@ const SettingsPage = () => {
         if (selectedCategoryImage) formData.append("category_image", selectedCategoryImage);
 
         const res = await axios.post(
-          "http://localhost:8000/business_management/category/",
+          `${API_BASE_URL}/business_management/category/`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -115,7 +117,7 @@ const SettingsPage = () => {
         if (editSelectedCategoryImage) formData.append("category_image", editSelectedCategoryImage);
 
         const res = await axios.put(
-          `http://localhost:8000/business_management/category/${catId}/`,
+          `${API_BASE_URL}/business_management/category/${catId}/`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -136,7 +138,7 @@ const SettingsPage = () => {
   const handleDeleteCategory = async (id) => {
     const token = getToken();
     try {
-      await axios.delete(`http://localhost:8000/business_management/category/${id}/`, {
+      await axios.delete(`${API_BASE_URL}/business_management/category/${id}/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCategories((prev) => prev.filter((item) => item.id !== id));

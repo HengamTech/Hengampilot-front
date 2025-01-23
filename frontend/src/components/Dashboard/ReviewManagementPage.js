@@ -16,6 +16,8 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { API_BASE_URL } from '../config';
+
 const ReviewManagementPage = () => {
   const token = localStorage.getItem("token");
 
@@ -92,7 +94,7 @@ const ReviewManagementPage = () => {
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/review_rating/reviews/",
+        `${API_BASE_URL}/review_rating/reviews/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -108,7 +110,7 @@ const ReviewManagementPage = () => {
 
       const businessPromises = businessIds.map((bizId) =>
         axios
-          .get(`http://localhost:8000/business_management/businesses/${bizId}/`, {
+          .get(`${API_BASE_URL}/business_management/businesses/${bizId}/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => ({ bizId, bizName: res.data.business_name }))
@@ -117,7 +119,7 @@ const ReviewManagementPage = () => {
 
       const userPromises = userIds.map((userId) =>
         axios
-          .get(`http://localhost:8000/user_management/users/${userId}/`, {
+          .get(`${API_BASE_URL}/user_management/users/${userId}/`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => ({ userId, username: res.data.username }))
@@ -172,7 +174,7 @@ const ReviewManagementPage = () => {
       };
 
       await axios.put(
-        `http://localhost:8000/review_rating/reviews/${id}/`,
+        `${API_BASE_URL}/review_rating/reviews/${id}/`,
         updatedReview,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -198,7 +200,7 @@ const ReviewManagementPage = () => {
   const deleteReview = async (id) => {
     if (window.confirm("آیا از حذف این نظر مطمئن هستید؟")) {
       try {
-        await axios.delete(`http://localhost:8000/review_rating/reviews/${id}/`, {
+        await axios.delete(`${API_BASE_URL}/review_rating/reviews/${id}/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setReviews((prev) => prev.filter((review) => review.id !== id));

@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 
+import { API_BASE_URL } from '../config';
+
 const ReviewSubmit = () => {
   const navigate = useNavigate();
   const { id: businessId } = useParams(); // دریافت ID شرکت از URL
@@ -37,7 +39,7 @@ const ReviewSubmit = () => {
     const fetchBusinessName = async () => {
       try {
         const businessResponse = await axios.get(
-            `http://127.0.0.1:8000/business_management/businesses/${businessId}/`,
+            `${API_BASE_URL}/business_management/businesses/${businessId}/`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -90,7 +92,7 @@ const ReviewSubmit = () => {
 
       try {
         const response = await axios.post(
-            "http://127.0.0.1:8000/review_rating/reviews/",
+            `${API_BASE_URL}/review_rating/reviews/`,
             {
               review_text: formData.review_text,
               rank: formData.rank,

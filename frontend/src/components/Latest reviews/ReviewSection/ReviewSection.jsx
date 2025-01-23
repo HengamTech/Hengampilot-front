@@ -6,6 +6,8 @@ import img from "./noon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
+import { API_BASE_URL } from '../../config';
+
 const ITEMS_PER_PAGE = 4;
 const COMMENT_MAX_LENGTH = 50;
 
@@ -19,7 +21,7 @@ const ReviewSection = ({id}) => {
         const token = localStorage.getItem("token");
         // دریافت همه نظرات
         const { data } = await axios.get(
-          "http://localhost:8000/review_rating/reviews/"
+          `${API_BASE_URL}/review_rating/reviews/`
           // { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -27,12 +29,12 @@ const ReviewSection = ({id}) => {
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const userResponse = await axios.get(
-              `http://localhost:8000/user_management/users/${review.user}/`
+              `${API_BASE_URL}/user_management/users/${review.user}/`
               // { headers: { Authorization: `Bearer ${token}` } }
             );
 
             const businessResponse = await axios.get(
-              `http://localhost:8000/business_management/businesses/${review.business_id}/`
+              `${API_BASE_URL}/business_management/businesses/${review.business_id}/`
               // { headers: { Authorization: `Bearer ${token}` } }
             );
 

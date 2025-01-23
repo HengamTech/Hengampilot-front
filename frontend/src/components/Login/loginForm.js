@@ -4,6 +4,9 @@ import './loginForm.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
+
+import { API_BASE_URL } from '../config';
+
 console.log('jwtDecode:', jwtDecode);
 function LoginPage() {
     const [username, setUsername] = useState('');
@@ -27,7 +30,7 @@ function LoginPage() {
         setLoading(true);
         try {
             // درخواست ورود به سرور
-            const response = await axios.post('http://127.0.0.1:8000/api/token/', {
+            const response = await axios.post(`${API_BASE_URL}/api/token/`, {
                 username,
                 password,
             });
@@ -43,7 +46,7 @@ function LoginPage() {
                 console.log('Decoded Token:', decodedToken);
                 console.log('hey:',decodedToken.is_superuser);
                 const response1 = await axios.get(
-                    `http://127.0.0.1:8000/user_management/users/fetch-by-username/?username=${username}`,
+                    `${API_BASE_URL}/user_management/users/fetch-by-username/?username=${username}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

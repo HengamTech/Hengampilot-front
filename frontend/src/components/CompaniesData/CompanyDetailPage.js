@@ -9,6 +9,8 @@ import { Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFlag } from '@fortawesome/free-solid-svg-icons';
 
+import { API_BASE_URL } from '../config';
+
 const CompanyDetailPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -82,7 +84,7 @@ const CompanyDetailPage = () => {
   // گرفتن اطلاعات votes (برای لایک‌ها)
   const fetchVotes = async () => {
     try {
-      const { data } = await axios.get('http://localhost:8000/review_rating/votes/', {
+      const { data } = await axios.get(`${API_BASE_URL}/review_rating/votes/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -108,7 +110,7 @@ const CompanyDetailPage = () => {
     if (!userId) return;
     try {
       const { data } = await axios.get(
-        `http://localhost:8000/user_management/users/${userId}/`,
+        `${API_BASE_URL}/user_management/users/${userId}/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -125,7 +127,7 @@ const CompanyDetailPage = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:8000/business_management/businesses/reviews/`,
+        `${API_BASE_URL}/business_management/businesses/reviews/`,
         {
           // headers: { Authorization: `Bearer ${token}` },
           params: { id, ordering, search },
@@ -153,7 +155,7 @@ const CompanyDetailPage = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/business_management/businesses/${id}/`
+        `${API_BASE_URL}/business_management/businesses/${id}/`
       );
       setCompany(response.data);
     } catch (err) {
@@ -167,7 +169,7 @@ const CompanyDetailPage = () => {
   const loadUserDetails = async (userId) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/user_management/users/${userId}/`,
+        `${API_BASE_URL}/user_management/users/${userId}/`,
         // {
         //   headers: {
         //     Authorization: `Bearer ${token}`,
@@ -222,7 +224,7 @@ const CompanyDetailPage = () => {
 
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/votes/',
+        `${API_BASE_URL}/review_rating/votes/`,
         {
           user: userId,
           review: reviewId,
@@ -402,7 +404,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
 
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/reports/',
+        `${API_BASE_URL}/review_rating/reports/`,
         {
           reason_select: reasonSelect,
           result_report: resultReport,
@@ -492,7 +494,7 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
     const fetchReplies = async () => {
       try {
         const { data } = await axios.get(
-          'http://localhost:8000/review_rating/review_responses/',
+          `${API_BASE_URL}/review_rating/review_responses/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -513,7 +515,7 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
     }
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/review_responses/',
+        `${API_BASE_URL}/review_rating/review_responses/`,
         {
           description: replyText,
           review: reviewId,
@@ -528,7 +530,7 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
 
       // بروزرسانی لیست پاسخ‌ها
       const { data } = await axios.get(
-        'http://localhost:8000/review_rating/review_responses/',
+        `${API_BASE_URL}/review_rating/review_responses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

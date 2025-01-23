@@ -31,6 +31,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+
+import { API_BASE_URL } from '../config';
+
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const AdminDashboard = () => {
@@ -80,7 +84,7 @@ const AdminDashboard = () => {
     const fetchTotalUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/user_management/users/total-users/",
+          `${API_BASE_URL}/user_management/users/total-users/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setTotalUsers(response.data.total_users);
@@ -98,7 +102,7 @@ const AdminDashboard = () => {
     const fetchTotalReviews = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/review_rating/reviews/count-all-reviews/",
+          `${API_BASE_URL}/review_rating/reviews/count-all-reviews/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setTotalReviews(response.data.count);
@@ -115,7 +119,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchTotalReports = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/review_rating/reports/", {
+        const response = await axios.get(`${API_BASE_URL}/review_rating/reports/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTotalReports(response.data.length);
@@ -132,7 +136,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAllReviewsForChart = async () => {
       try {
-        const resp = await axios.get("http://localhost:8000/review_rating/reviews/", {
+        const resp = await axios.get(`${API_BASE_URL}/review_rating/reviews/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -274,7 +278,7 @@ const AdminDashboard = () => {
     const fetchAuditLogs = async () => {
       setLogsLoading(true);
       try {
-        const resp = await axios.get("http://localhost:8000/analytics/audit-logs/", {
+        const resp = await axios.get(`${API_BASE_URL}/analytics/audit-logs/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const logsData = resp.data || [];
@@ -286,7 +290,7 @@ const AdminDashboard = () => {
             try {
               if (logItem.object_id) {
                 const userResp = await axios.get(
-                  `http://localhost:8000/user_management/users/${logItem.object_id}/`,
+                  `${API_BASE_URL}/user_management/users/${logItem.object_id}/`,
                   { headers: { Authorization: `Bearer ${token}` } }
                 );
                 userName = userResp.data.username || "نامشخص";

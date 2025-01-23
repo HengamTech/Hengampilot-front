@@ -3,6 +3,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 
+import { API_BASE_URL } from '../config';
+
 const ReviewForm = () => {
   const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ const ReviewForm = () => {
       }
 
       const response = await axios.get(
-        'http://127.0.0.1:8000/business_management/category/',
+        `${API_BASE_URL}/business_management/category/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -111,7 +113,7 @@ const ReviewForm = () => {
         }
 
         const response = await axios.post(
-          'http://127.0.0.1:8000/business_management/businesses/',
+          `${API_BASE_URL}/business_management/businesses/`,
           formDataToSend,
           {
             headers: { Authorization: `Bearer ${token}` },

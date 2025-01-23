@@ -15,6 +15,8 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { API_BASE_URL } from './config';
+
 function Navbar() {
   const navigate = useNavigate();
 
@@ -75,7 +77,7 @@ function Navbar() {
     try {
       // درخواست به اندپوینت user_management
       const response = await axios.get(
-        `http://localhost:8000/user_management/users/${userId}/`
+        `${API_BASE_URL}/user_management/users/${userId}/`
       );
       setUserrole(response.data.is_admin);
       // فرض بر این است که فیلد user_image آدرس عکس کاربر باشد
@@ -146,7 +148,7 @@ function Navbar() {
 
     try {
       const response = await axios.get(
-        "http://localhost:8000/business_management/businesses/",
+        `${API_BASE_URL}/business_management/businesses/`,
         {
           params: { ordering: "business_name", search: value },
         }

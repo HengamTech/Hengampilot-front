@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+
+import { API_BASE_URL } from '../../config';
+
 const toJalali = (gregorianDate) => {
   const g2j = (gYear, gMonth, gDay) => {
     const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -68,7 +71,7 @@ const UserReviews = () => {
       try {
         // 1) دریافت نظرات کاربر
         const reviewsResponse = await axios.get(
-          'http://localhost:8000/review_rating/reviews/reviews-by-user/',
+          `${API_BASE_URL}/review_rating/reviews/reviews-by-user/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -81,7 +84,7 @@ const UserReviews = () => {
 
         // 2) دریافت اطلاعات کاربر
         const userResponse = await axios.get(
-          `http://localhost:8000/user_management/users/${id}/`,
+          `${API_BASE_URL}/user_management/users/${id}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -99,7 +102,7 @@ const UserReviews = () => {
         // 4) همزمان اطلاعات هر بیزنس را می‌گیریم
         const businessPromises = businessIds.map((businessId) =>
           axios
-            .get(`http://localhost:8000/business_management/businesses/${businessId}/`, {
+            .get(`${API_BASE_URL}/business_management/businesses/${businessId}/`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
