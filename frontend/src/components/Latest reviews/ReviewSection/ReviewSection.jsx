@@ -6,7 +6,7 @@ import img from "./noon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 5;
 const COMMENT_MAX_LENGTH = 50;
 
 const ReviewSection = ({id}) => {
@@ -106,10 +106,10 @@ const ReviewSection = ({id}) => {
           style={{ marginTop: "-2px", fontSize: "12px", borderRadius: "50%" }}
         >
           {reviews.length > ITEMS_PER_PAGE && (
-            <button className="view-more-button" onClick={handleViewMore}>
+            <button className="view-more-button mx-5" onClick={handleViewMore}>
               <FontAwesomeIcon
                 icon={faArrowCircleLeft}
-                style={{ fontSize: "18px", color: " #28a745;" }}
+                style={{ fontSize: "18px",color: " #28a745;" }}
               />
               مشاهده بیشتر
             </button>
@@ -117,9 +117,9 @@ const ReviewSection = ({id}) => {
         </div>
         <h2 className="col">مشاهده نظرسنجی‌های اخیر</h2>
       </div>
-      <div className="row">
+      <div className="row d-flex justify-content-center">
         {filledReviews.map((review, index) => (
-          <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
+          <div className="col-lg-2 col-md-4 col-sm-6 mb-4" key={index}>
             <ReviewCard review={review} handleReadMore={handleReadMore} />
           </div>
         ))}
@@ -143,7 +143,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
 
   return (
     <div
-      className="card p-1 h-100 cardselect"
+      className="card p-1  cardselect"
       onClick={() => handleReadMore(review.id)}
     >
       <img
@@ -163,7 +163,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
         </div>
         {/* <p>{review.created_at ? toJalali(review.created_at) : "نامشخص"}</p> */}
 
-        <p className="card-text aa">
+        <p className="card-text aa"style={{height:"30px"}}>
           {review.review_text
             ? review.review_text.length > COMMENT_MAX_LENGTH
               ? `${review.review_text.substring(0, COMMENT_MAX_LENGTH)}...`
@@ -175,7 +175,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
             <img
               src={review.business_img}
               alt={review.name}
-              style={{ width: "55px", height: "55px", marginRight: "8px" }}
+              style={{ width: "55px", height: "55px", marginRight: "4px",marginLeft:"-20px" }}
             />
           )}
           <div className="brand2">
