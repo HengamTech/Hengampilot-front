@@ -11,7 +11,7 @@
 }
 .brand{
   display:flex;
-  padding:15px;
+  padding:12px;
   border-top: 5px solid #e5e5dd;
 }
 .brand2{
@@ -19,7 +19,7 @@
   flex-direction: column;
 }
 .cardselect:hover{
-  background-color: #28a745;
+  background-color: #c1c5c2;
   transition: 0.3s;
 
 }
