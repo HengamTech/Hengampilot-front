@@ -292,7 +292,7 @@ const CompanyDetailPage = () => {
             style={{ width: "150px", height: "150px", objectFit: "cover" }}
           />
           <h2>{company.business_name}</h2>
-          <div>{renderStars(company.average_rating)}</div>
+          <div style={{fontSize:"24px"}}>{renderStars(company.average_rating)}</div>
           <small className="text-muted">
           میانگین   {company.average_rating?.toFixed(1)}  امتیاز | {company.total_reviews} نظر
           </small>
@@ -334,10 +334,10 @@ const CompanyDetailPage = () => {
         </div>
 
         {/* نمایش امتیاز با ستاره */}
-        <div>{renderStars(comment.rank)}</div>
+        <div className="mx-2">{renderStars(comment.rank)}</div>
 
-        <small className="text-muted">{toJalali(comment.created_at)}</small>
-        <p>{comment.review_text}</p>
+        <small className="text-muted mx-2">{toJalali(comment.created_at)}</small>
+        <p className="mx-2">{comment.review_text}</p>
 
         {/* دکمه لایک */}
         <div className="d-flex justify-content-start">
@@ -379,7 +379,7 @@ const CompanyDetailPage = () => {
 const LikeButton = ({ reviewId, handleLike, votes }) => {
   return (
     <div className="like-dislike-buttons mb-2">
-      <button onClick={() => handleLike(reviewId)} className="btn btn-success btn-sm">
+      <button onClick={() => handleLike(reviewId)} className="btn transparent-bg btn-sm">
         👍 {votes}
       </button>
     </div>
