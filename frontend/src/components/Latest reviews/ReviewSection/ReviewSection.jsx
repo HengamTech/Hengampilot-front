@@ -108,7 +108,7 @@ const ReviewSection = ({id}) => {
           style={{ marginTop: "-2px", fontSize: "12px", borderRadius: "50%" }}
         >
           {reviews.length > ITEMS_PER_PAGE && (
-            <button className="view-more-button" onClick={handleViewMore}>
+            <button className="view-more-button mx-5" onClick={handleViewMore}>
               <FontAwesomeIcon
                 icon={faArrowCircleLeft}
                 style={{ fontSize: "18px", color: " #28a745;" }}
@@ -119,9 +119,9 @@ const ReviewSection = ({id}) => {
         </div>
         <h2 className="col">مشاهده نظرسنجی‌های اخیر</h2>
       </div>
-      <div className="row">
+      <div className="row d-flex justify-content-center">
         {filledReviews.map((review, index) => (
-          <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
+          <div className="col-lg-2 col-md-4 col-sm-6 mb-4" key={index}>
             <ReviewCard review={review} handleReadMore={handleReadMore} />
           </div>
         ))}
