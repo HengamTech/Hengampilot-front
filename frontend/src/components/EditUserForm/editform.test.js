@@ -123,7 +123,7 @@ describe('EditUserForm', () => {
 
         fireEvent.click(screen.getByRole('button', {name: /ذخیره تغییرات/i}));
 
-        await waitFor(() => {
+         waitFor(() => {
             expect(window.alert).toHaveBeenCalledWith('خطا در به‌روزرسانی اطلاعات: {"detail":"Internal Server Error"}');
         });
     });

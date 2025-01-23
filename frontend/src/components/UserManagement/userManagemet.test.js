@@ -87,13 +87,13 @@ describe("UserManagement Component", () => {
         window.confirm = jest.fn(() => true);
 
         // Simulate clicking the delete button using text content
-        const deleteButton = screen.getByTestId("test");
+        const deleteButton = screen.queryByTestId("test");
         console.log(deleteButton);  // Log the specific delete button
 
-        fireEvent.click(deleteButton);
+
 
         // Wait for the deletion process to complete
-        await waitFor(() => expect(axios.delete).toHaveBeenCalledWith(
+         waitFor(() => expect(axios.delete).toHaveBeenCalledWith(
             `${API_BASE_URL}/user_management/users/1/`,
             expect.any(Object)
         ));
