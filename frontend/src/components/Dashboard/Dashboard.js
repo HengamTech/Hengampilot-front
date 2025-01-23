@@ -11,6 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
+import { API_BASE_URL } from '../config';
+
 const UserDashboard = () => {
     const [userData, setUserData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ const UserDashboard = () => {
             try {
                 // ارسال درخواست GET برای دریافت اطلاعات کاربر بر اساس یوزرنیم
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/user_management/users/fetch-by-username/?username=${username}`,
+                    `${API_BASE_URL}/user_management/users/fetch-by-username/?username=${username}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -100,7 +102,7 @@ const UserDashboard = () => {
                 <aside className="col-12 col-md-3 bg-dark text-white p-3">
                     <div className="text-center mb-4">
                         <img
-                            src={`http://127.0.0.1:8000${userData.user_image}`}
+                            src={`${API_BASE_URL}${userData.user_image}`}
                             alt="User"
                             width="70px"
                             className="rounded-circle mb-2"

@@ -7,6 +7,8 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 
+import { API_BASE_URL } from '../config';
+
 // Mock useParams and useNavigate to return the necessary values
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -43,7 +45,7 @@ describe('EditUserForm', () => {
 
     it('fetches user data and updates form fields', async () => {
         localStorage.setItem('token', 'mockToken');
-        mock.onGet('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(200, {
             email: 'john.doe@example.com',
             username: 'johndoe',
         });
@@ -58,7 +60,7 @@ describe('EditUserForm', () => {
 
     it('shows error message when fetching user data fails', async () => {
         localStorage.setItem('token', 'mockToken');
-        mock.onGet('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(500, {
+        mock.onGet(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(500, {
             detail: 'Internal Server Error'
         });
 
@@ -71,12 +73,12 @@ describe('EditUserForm', () => {
 
     it('handles form submission successfully', async () => {
         localStorage.setItem('token', 'mockToken');
-        mock.onGet('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(200, {
             email: 'john.doe@example.com',
             username: 'johndoe',
         });
 
-        mock.onPut('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(200);
+        mock.onPut(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(200);
 
         renderWithRouter(<EditUserForm/>, {route: '/edit/mockUserId'});
 
@@ -99,12 +101,12 @@ describe('EditUserForm', () => {
 
     it('shows error message when form submission fails', async () => {
         localStorage.setItem('token', 'mockToken');
-        mock.onGet('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(200, {
             email: 'john.doe@example.com',
             username: 'johndoe',
         });
 
-        mock.onPut('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(500, {
+        mock.onPut(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(500, {
             detail: 'Internal Server Error'
         });
 
@@ -150,7 +152,7 @@ describe('EditUserForm', () => {
 
     it('redirects to login if token is missing when submitting form', async () => {
         localStorage.setItem('token', 'mockToken');
-        mock.onGet('http://127.0.0.1:8000/user_management/users/mockUserId/').reply(200, {
+        mock.onGet(`${API_BASE_URL}/user_management/users/mockUserId/`).reply(200, {
             email: 'john.doe@example.com',
             username: 'johndoe',
         });

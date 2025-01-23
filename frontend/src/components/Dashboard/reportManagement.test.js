@@ -4,6 +4,8 @@ import ReportManagement from './ReportManagement';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
+import { API_BASE_URL } from '../config';
+
 // Mock axios to avoid actual API calls
 const mock = new MockAdapter(axios);
 
@@ -14,7 +16,7 @@ describe('ReportManagement Component', () => {
 
     test('fetches and displays reports', async () => {
         // Mock API response
-        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+        mock.onGet(`${API_BASE_URL}/review_rating/reports/`).reply(200, [
             { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
             { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
         ]);
@@ -33,7 +35,7 @@ describe('ReportManagement Component', () => {
     });
 
     test('filters reports by type', async () => {
-        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+        mock.onGet(`${API_BASE_URL}/review_rating/reports/`).reply(200, [
             { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
             { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
         ]);
@@ -53,7 +55,7 @@ describe('ReportManagement Component', () => {
     });
 
     test('searches for reports by text', async () => {
-        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+        mock.onGet(`${API_BASE_URL}/review_rating/reports/`).reply(200, [
             { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
             { id: 2, reason_select: 'terrorism', result_report: 'ignore', create_at: '2025-01-07', reason: 'another test report' },
         ]);
@@ -72,7 +74,7 @@ describe('ReportManagement Component', () => {
     });
 
     test('opens and closes the details modal', async () => {
-        mock.onGet('http://localhost:8000/review_rating/reports/').reply(200, [
+        mock.onGet(`${API_BASE_URL}/review_rating/reports/`).reply(200, [
             { id: 1, reason_select: 'violence', result_report: 'Unchecked', create_at: '2025-01-08', reason: 'test report' },
         ]);
 

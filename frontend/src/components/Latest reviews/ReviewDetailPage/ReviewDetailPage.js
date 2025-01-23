@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import img from './noon.png';
 
+import { API_BASE_URL } from '../../config';
+
 // const reviews = [
 //   { id: 2, name: "محمد احمدی", date: "1403/08/08", rating: 3, comment: " Inception is undoubtedly one of my all-time favorite films. Directed by Christopher Nolan, it offers a remarkable fusion of mind-bending storytelling, outstanding performances, and visually stunning scenes that have left a lasting impression on me.", productImage: img, userImage: img },
 //   { id: 3, name: "سارا رضایی", date: "1403/08/08", rating: 5, comment: "توضیحات", productImage: img, userImage: img },
@@ -71,7 +73,7 @@ const ReviewDetailPage = () => {
     const fetchReview = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`http://localhost:8000/review_rating/reviews/${id}/`, {
+        const { data } = await axios.get(`${API_BASE_URL}/review_rating/reviews/${id}/`, {
           // headers: {
           //   Authorization: `Bearer ${token}`,
           // },
@@ -80,12 +82,12 @@ const ReviewDetailPage = () => {
         console.log(data);
             console.log(review.user);
 
-            const userResponse = await axios.get(`http://localhost:8000/user_management/users/${data.user}/`, {
+            const userResponse = await axios.get(`${API_BASE_URL}/user_management/users/${data.user}/`, {
               // headers: {
               //   Authorization: `Bearer ${token}`,
               // },
             });
-            const businessResponse = await axios.get(`http://localhost:8000/business_management/businesses/${data.business_id}/`, {
+            const businessResponse = await axios.get(`${API_BASE_URL}/business_management/businesses/${data.business_id}/`, {
               // headers: {
               //   Authorization: `Bearer ${token}`,
               // },

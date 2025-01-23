@@ -6,6 +6,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import React from 'react';
 import '@testing-library/jest-dom';
 
+import { API_BASE_URL } from '../config';
+
 const mock = new MockAdapter(axios);
 
 describe('ReviewForm', () => {
@@ -51,7 +53,7 @@ describe('ReviewForm', () => {
         localStorage.setItem('token', 'mockToken');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onPost('http://127.0.0.1:8000/business_management/businesses/').reply(201, {});
+        mock.onPost(`${API_BASE_URL}/business_management/businesses/`).reply(201, {});
 
         render(
             <Router>
@@ -77,7 +79,7 @@ describe('ReviewForm', () => {
         localStorage.setItem('token', 'mockToken');
         localStorage.setItem('userId', 'mockUserId');
 
-        mock.onPost('http://127.0.0.1:8000/business_management/businesses/').reply(500);
+        mock.onPost(`${API_BASE_URL}/business_management/businesses/`).reply(500);
 
         render(
             <Router>

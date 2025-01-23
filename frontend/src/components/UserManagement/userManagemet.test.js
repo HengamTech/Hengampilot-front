@@ -3,7 +3,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
 import UserManagement from "./UserManagement";
-import '@testing-library/jest-dom'; // Add this import
+import '@testing-library/jest-dom'; 
+
+import { API_BASE_URL } from '../config';
 
 jest.mock("axios");
 
@@ -92,7 +94,7 @@ describe("UserManagement Component", () => {
 
         // Wait for the deletion process to complete
         await waitFor(() => expect(axios.delete).toHaveBeenCalledWith(
-            "http://localhost:8000/user_management/users/1/",
+            `${API_BASE_URL}/user_management/users/1/`,
             expect.any(Object)
         ));
 
@@ -124,7 +126,7 @@ describe("UserManagement Component", () => {
 
         // Ensure the PATCH request is called correctly
         await waitFor(() => expect(axios.patch).toHaveBeenCalledWith(
-            "http://localhost:8000/user_management/users/1/",
+            `${API_BASE_URL}/user_management/users/1/`,
             { is_active: false },
             expect.any(Object)
         ));

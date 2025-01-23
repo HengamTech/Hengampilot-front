@@ -6,6 +6,8 @@ import img from "./noon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
+import { API_BASE_URL } from '../../config';
+
 const ITEMS_PER_PAGE = 5;
 const COMMENT_MAX_LENGTH = 50;
 
@@ -19,7 +21,7 @@ const ReviewSection = ({id}) => {
         const token = localStorage.getItem("token");
         // دریافت همه نظرات
         const { data } = await axios.get(
-          "http://localhost:8000/review_rating/reviews/"
+          `${API_BASE_URL}/review_rating/reviews/`
           // { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -27,12 +29,12 @@ const ReviewSection = ({id}) => {
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const userResponse = await axios.get(
-              `http://localhost:8000/user_management/users/${review.user}/`
+              `${API_BASE_URL}/user_management/users/${review.user}/`
               // { headers: { Authorization: `Bearer ${token}` } }
             );
 
             const businessResponse = await axios.get(
-              `http://localhost:8000/business_management/businesses/${review.business_id}/`
+              `${API_BASE_URL}/business_management/businesses/${review.business_id}/`
               // { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -106,10 +108,10 @@ const ReviewSection = ({id}) => {
           style={{ marginTop: "-2px", fontSize: "12px", borderRadius: "50%" }}
         >
           {reviews.length > ITEMS_PER_PAGE && (
-            <button className="view-more-button mx-5" onClick={handleViewMore}>
+            <button className="view-more-button" onClick={handleViewMore}>
               <FontAwesomeIcon
                 icon={faArrowCircleLeft}
-                style={{ fontSize: "18px",color: " #28a745;" }}
+                style={{ fontSize: "18px", color: " #28a745;" }}
               />
               مشاهده بیشتر
             </button>
@@ -117,9 +119,9 @@ const ReviewSection = ({id}) => {
         </div>
         <h2 className="col">مشاهده نظرسنجی‌های اخیر</h2>
       </div>
-      <div className="row d-flex justify-content-center">
+      <div className="row">
         {filledReviews.map((review, index) => (
-          <div className="col-lg-2 col-md-4 col-sm-6 mb-4" key={index}>
+          <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={index}>
             <ReviewCard review={review} handleReadMore={handleReadMore} />
           </div>
         ))}
@@ -143,7 +145,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
 
   return (
     <div
-      className="card p-1  cardselect"
+      className="card p-1 h-100 cardselect"
       onClick={() => handleReadMore(review.id)}
     >
       <img
@@ -163,7 +165,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
         </div>
         {/* <p>{review.created_at ? toJalali(review.created_at) : "نامشخص"}</p> */}
 
-        <p className="card-text aa"style={{height:"30px"}}>
+        <p className="card-text aa">
           {review.review_text
             ? review.review_text.length > COMMENT_MAX_LENGTH
               ? `${review.review_text.substring(0, COMMENT_MAX_LENGTH)}...`
@@ -175,7 +177,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
             <img
               src={review.business_img}
               alt={review.name}
-              style={{ width: "55px", height: "55px", marginRight: "4px",marginLeft:"-20px" }}
+              style={{ width: "55px", height: "55px", marginRight: "8px" }}
             />
           )}
           <div className="brand2">

@@ -3,13 +3,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./category.css";
 
+import { API_BASE_URL } from "../config";
+
 const Categories = ({id}) => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/business_management/category/");
+      const res = await axios.get(`${API_BASE_URL}/business_management/category/`);
       setCategories(res.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

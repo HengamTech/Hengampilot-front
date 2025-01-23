@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { API_BASE_URL } from '../config';
+
 const EditUserForm = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
 
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/user_management/users/${userId}/`,
+          `${API_BASE_URL}/user_management/users/${userId}/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -104,7 +106,7 @@ const [previewImage, setPreviewImage] = useState(null); // پیش‌نمایش �
       console.log("FormData to send:", [...formDataToSend.entries()]); // نمایش کل داده‌های FormData
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/user_management/users/${userId}/`,
+        `${API_BASE_URL}/user_management/users/${userId}/`,
         formDataToSend,
         {
           headers: {
