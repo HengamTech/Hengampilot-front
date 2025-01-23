@@ -4,6 +4,9 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import CompanyDetailPage from './CompanyDetailPage';
 
+import { API_BASE_URL } from '../config';
+
+
 jest.mock('axios');
 
 const mockCompany = {
@@ -52,7 +55,7 @@ describe('CompanyDetailPage', () => {
             </MemoryRouter>
         );
 
-        await waitFor(() => expect(axios.get).toHaveBeenCalledWith("http://127.0.0.1:8000/business_management/businesses/1/"));
+        await waitFor(() => expect(axios.get).toHaveBeenCalledWith(`${API_BASE_URL}/business_management/businesses/1/`));
 
         expect(screen.getByText(/Test Company/)).toBeInTheDocument();
         expect(screen.getByText(/A description of Test Company/)).toBeInTheDocument();
@@ -110,7 +113,7 @@ describe('CompanyDetailPage', () => {
         fireEvent.click(likeButton);
 
         await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
-            'http://localhost:8000/review_rating/votes/',
+            `${API_BASE_URL}/review_rating/votes/`,
             expect.objectContaining({
                 review: 1,
                 user: expect.any(String),
@@ -147,7 +150,7 @@ describe('CompanyDetailPage', () => {
         fireEvent.click(submitButton);
 
         await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
-            'http://localhost:8000/review_rating/reports/',
+            `${API_BASE_URL}/review_rating/reports/`,
             expect.objectContaining({
                 reason_select: 'violence',
                 reason: 'Inappropriate content',
@@ -186,7 +189,7 @@ describe('CompanyDetailPage', () => {
         fireEvent.click(submitReplyButton);
 
         await waitFor(() => expect(axios.post).toHaveBeenCalledWith(
-            'http://localhost:8000/review_rating/review_responses/',
+            `${API_BASE_URL}/review_rating/review_responses/`,
             expect.objectContaining({
                 description: 'This is an admin reply.',
                 review: 1,

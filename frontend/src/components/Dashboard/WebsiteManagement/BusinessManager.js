@@ -8,6 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
+import { API_BASE_URL } from '../../config';
+
 const BusinessManager = () => {
   const [businesses, setBusinesses] = useState([]);
   const [categories, setCategories] = useState({});
@@ -37,7 +39,7 @@ const BusinessManager = () => {
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:8000/business_management/businesses/',
+        `${API_BASE_URL}/business_management/businesses/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +57,7 @@ const BusinessManager = () => {
       if (categoryIds.length > 0) {
         const categoryPromises = categoryIds.map((catId) =>
           axios
-            .get(`http://localhost:8000/business_management/category/${catId}/`, {
+            .get(`${API_BASE_URL}/business_management/category/${catId}/`, {
               headers: { Authorization: `Bearer ${token}` },
             })
             .then((res) => ({
@@ -163,7 +165,7 @@ const BusinessManager = () => {
 
       if (currentBusiness.id) {
         await axios.put(
-          `http://localhost:8000/business_management/businesses/${currentBusiness.id}/`,
+          `${API_BASE_URL}/business_management/businesses/${currentBusiness.id}/`,
           formData,
           {
             headers: {
@@ -187,7 +189,7 @@ const BusinessManager = () => {
     if (window.confirm('آیا از حذف این بیزنس اطمینان دارید؟')) {
       try {
         await axios.delete(
-          `http://localhost:8000/business_management/businesses/${id}/`,
+          `${API_BASE_URL}/business_management/businesses/${id}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

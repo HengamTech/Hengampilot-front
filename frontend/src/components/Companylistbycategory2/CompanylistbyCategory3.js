@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { API_BASE_URL } from '../config';
+
 const Companylistbycategory1 = () => {
   const navigate = useNavigate();
   // از آدرس URL پارامتر category_name را می‌گیریم
@@ -41,7 +43,7 @@ const Companylistbycategory1 = () => {
 
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/business_management/businesses/category-businesses/",
+        `${API_BASE_URL}/business_management/businesses/category-businesses/`,
         {
           // headers: {
           //   Authorization: `Bearer ${token}`,
@@ -221,7 +223,7 @@ const Companylistbycategory1 = () => {
               <div className="list-group">
                 {companies.map((company) => {
                   const imageSrc =
-                    `http://127.0.0.1:8000${company.business_image}` || "https://via.placeholder.com/80";
+                    `${API_BASE_URL}${company.business_image}` || "https://via.placeholder.com/80";
                     console.log("salam",company.business_image);
                   return (
                     <div

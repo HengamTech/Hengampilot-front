@@ -9,6 +9,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
+import { API_BASE_URL } from '../config';
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,7 +20,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/user_management/users/", {
+        const response = await axios.get(`${API_BASE_URL}/user_management/users/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -35,7 +37,7 @@ const UserManagement = () => {
     if (window.confirm("آیا از حذف این کاربر مطمئن هستید؟")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:8000/user_management/users/${id}/`, {
+        await axios.delete(`${API_BASE_URL}/user_management/users/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,7 +62,7 @@ const UserManagement = () => {
         };
 
         await axios.patch(
-          `http://localhost:8000/user_management/users/${id}/`,
+          `${API_BASE_URL}/user_management/users/${id}/`,
           updatedUser,
           { headers: { Authorization: `Bearer ${token}` } }
         );

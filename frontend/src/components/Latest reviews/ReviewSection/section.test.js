@@ -5,6 +5,8 @@ import '@testing-library/jest-dom'; // Import jest-dom matchers
 import { MemoryRouter } from 'react-router-dom';
 import ReviewSection from './ReviewSection'; // Import the component
 
+import { API_BASE_URL } from '../../config';
+
 // Mock axios
 jest.mock('axios');
 
@@ -37,11 +39,11 @@ const mockBusiness = {
 describe('ReviewSection Component', () => {
     beforeEach(() => {
         axios.get.mockImplementation(url => {
-            if (url === 'http://localhost:8000/review_rating/reviews/') {
+            if (url === `${API_BASE_URL}/review_rating/reviews/`) {
                 return Promise.resolve({ data: mockReviews });
-            } else if (url.startsWith('http://localhost:8000/user_management/users/')) {
+            } else if (url.startsWith(`${API_BASE_URL}/user_management/users/`)) {
                 return Promise.resolve({ data: mockUser });
-            } else if (url.startsWith('http://localhost:8000/business_management/businesses/')) {
+            } else if (url.startsWith(`${API_BASE_URL}/business_management/businesses/`)) {
                 return Promise.resolve({ data: mockBusiness });
             } else {
                 return Promise.reject(new Error('Network Error'));

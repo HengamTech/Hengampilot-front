@@ -12,6 +12,8 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 
+import { API_BASE_URL } from '../config';
+
 const ReportManagement = () => {
   const [reports, setReports] = useState([]);
   const [filteredReports, setFilteredReports] = useState([]);
@@ -107,7 +109,7 @@ const ReportManagement = () => {
   // گرفتن لیست تمام گزارش‌ها
   const fetchReports = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/review_rating/reports/", {
+      const response = await axios.get(`${API_BASE_URL}/review_rating/reports/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReports(response.data);
@@ -125,17 +127,17 @@ const ReportManagement = () => {
   const fetchDetails = async (report) => {
     try {
       const reporterResponse = await axios.get(
-        `http://localhost:8000/user_management/users/${report.review_user_id}/`,
+        `${API_BASE_URL}/user_management/users/${report.review_user_id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const reviewResponse = await axios.get(
-        `http://localhost:8000/review_rating/reviews/${report.review_id}/`,
+        `${API_BASE_URL}/review_rating/reviews/${report.review_id}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const commenterResponse = await axios.get(
-        `http://localhost:8000/user_management/users/${reviewResponse.data.user}/`,
+        `${API_BASE_URL}/user_management/users/${reviewResponse.data.user}/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -171,7 +173,7 @@ const ReportManagement = () => {
       };
 
       await axios.put(
-        `http://localhost:8000/review_rating/reports/${reportId}/`,
+        `${API_BASE_URL}/review_rating/reports/${reportId}/`,
         updatedReport,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -191,7 +193,7 @@ const ReportManagement = () => {
   const deleteUser = async (userId) => {
     if (window.confirm("آیا از حذف این کاربر مطمئن هستید؟")) {
       try {
-        await axios.delete(`http://localhost:8000/user_management/users/${userId}/`, {
+        await axios.delete(`${API_BASE_URL}/user_management/users/${userId}/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         alert("کاربر با موفقیت حذف شد.");
@@ -209,7 +211,7 @@ const ReportManagement = () => {
         };
 
         await axios.patch(
-          `http://localhost:8000/user_management/users/${userId}/`,
+          `${API_BASE_URL}/user_management/users/${userId}/`,
           updatedUser,
           { headers: { Authorization: `Bearer ${token}` } }
         );

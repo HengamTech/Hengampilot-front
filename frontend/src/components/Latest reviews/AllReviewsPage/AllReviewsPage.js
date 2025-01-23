@@ -6,6 +6,8 @@ import img from './noon.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV, faFlag } from '@fortawesome/free-solid-svg-icons';
 
+import { API_BASE_URL } from '../../config';
+
 const AllReviewsPage = () => {
   // --- state اصلی شما ---
   const [reviews, setReviews] = useState([]);
@@ -33,7 +35,7 @@ const AllReviewsPage = () => {
     const fetchAdminStatus = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/user_management/users/${userId}/`,
+          `${API_BASE_URL}/user_management/users/${userId}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -49,15 +51,15 @@ const AllReviewsPage = () => {
     // گرفتن تمام نظرات
     const fetchReviews = async () => {
       try {
-        const { data } = await axios.get('http://localhost:8000/review_rating/reviews/');
+        const { data } = await axios.get(`${API_BASE_URL}/review_rating/reviews/`);
         const enrichedReviews = await Promise.all(
           data.map(async (review) => {
             const [businessResponse, userResponse] = await Promise.all([
               axios.get(
-                `http://localhost:8000/business_management/businesses/${review.business_id}/`
+                `${API_BASE_URL}/business_management/businesses/${review.business_id}/`
               ),
               axios.get(
-                `http://localhost:8000/user_management/users/${review.user}/`
+                `${API_BASE_URL}/user_management/users/${review.user}/`
               ),
             ]);
 
@@ -84,7 +86,7 @@ const AllReviewsPage = () => {
 
     const fetchVotes = async () => {
       try {
-        const { data } = await axios.get('http://localhost:8000/review_rating/votes/', {
+        const { data } = await axios.get(`${API_BASE_URL}/review_rating/votes/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -127,7 +129,7 @@ const AllReviewsPage = () => {
 
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/votes/',
+        `${API_BASE_URL}/review_rating/votes/`,
         {
           user: userId,
           review: reviewId,
@@ -499,7 +501,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
 
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/reports/',
+        `${API_BASE_URL}/review_rating/reports/`,
         {
           reason_select: reasonSelect,
           result_report: resultReport,
@@ -586,7 +588,7 @@ const AdminReplySection = ({ reviewId, token }) => {
     const fetchAdminStatus = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/user_management/users/${userId}/`,
+          `${API_BASE_URL}/user_management/users/${userId}/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -604,7 +606,7 @@ const AdminReplySection = ({ reviewId, token }) => {
     const fetchReplies = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:8000/review_rating/review_responses/`,
+          `${API_BASE_URL}/review_rating/review_responses/`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const filtered = data.filter((resp) => resp.review === reviewId);
@@ -623,7 +625,7 @@ const AdminReplySection = ({ reviewId, token }) => {
     }
     try {
       await axios.post(
-        'http://localhost:8000/review_rating/review_responses/',
+        `${API_BASE_URL}/review_rating/review_responses/`,
         {
           description: replyText,
           review: reviewId,
@@ -638,7 +640,7 @@ const AdminReplySection = ({ reviewId, token }) => {
 
       // بروزرسانی لیست پاسخ‌ها
       const { data } = await axios.get(
-        `http://localhost:8000/review_rating/review_responses/`,
+        `${API_BASE_URL}/review_rating/review_responses/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const filtered = data.filter((resp) => resp.review === reviewId);

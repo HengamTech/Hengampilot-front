@@ -4,6 +4,8 @@ import './SignUpForm.css';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
+import { API_BASE_URL } from '../config';
+
 function SignUpPage() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -58,7 +60,7 @@ function SignUpPage() {
 
         try {
             // Sending POST request to the API to create a user
-            const response = await axios.post('http://127.0.0.1:8000/user_management/users/', {
+            const response = await axios.post(`${API_BASE_URL}/user_management/users/`, {
                 "username": username,  // Sending username
                 "email": email,        // Sending email
                 "password": password,  // Sending password

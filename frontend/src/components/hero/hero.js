@@ -14,6 +14,8 @@ import { Container, Row, Col, ListGroup } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+import { API_BASE_URL } from '../config';
+
 const HeroSection = ({id}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [businesses, setBusinesses] = useState([]);
@@ -31,7 +33,7 @@ const HeroSection = ({id}) => {
     }
 
     try {
-      const response = await axios.get("http://localhost:8000/business_management/businesses/", {
+      const response = await axios.get(`${API_BASE_URL}/business_management/businesses/`, {
         params: { ordering: "business_name", search: value },
       });
 

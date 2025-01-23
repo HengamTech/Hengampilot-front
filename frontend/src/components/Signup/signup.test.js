@@ -6,6 +6,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import React from 'react';
 import '@testing-library/jest-dom';
 
+import { API_BASE_URL } from '../config';
+
 const mock = new MockAdapter(axios);
 
 describe('SignUpPage', () => {
@@ -95,7 +97,7 @@ describe('SignUpPage', () => {
         fireEvent.change(screen.getByLabelText(/ایمیل کاربری/i), { target: { value: 'user@example.com' } });
         fireEvent.change(screen.getByLabelText(/رمز عبور/i), { target: { value: 'Password123!' } });
 
-        mock.onPost('http://127.0.0.1:8000/user_management/users/').reply(200, {
+        mock.onPost(`${API_BASE_URL}/user_management/users/`).reply(200, {
             token: 'mockToken',
             user_id: '1234'
         });
@@ -136,7 +138,7 @@ describe('SignUpPage', () => {
         fireEvent.change(screen.getByLabelText(/ایمیل کاربری/i), { target: { value: 'user@example.com' } });
         fireEvent.change(screen.getByLabelText(/رمز عبور/i), { target: { value: 'Password123!' } });
 
-        mock.onPost('http://127.0.0.1:8000/user_management/users/').reply(500, {
+        mock.onPost(`${API_BASE_URL}/user_management/users/`).reply(500, {
             detail: 'Internal Server Error'
         });
 
