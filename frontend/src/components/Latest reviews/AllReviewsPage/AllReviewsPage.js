@@ -67,7 +67,7 @@ const AllReviewsPage = () => {
               ...review,
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
-              business_image: businessResponse.data.business_image,
+              business_image: businessResponse.data.business_image || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg',
               username: userResponse.data.username,
               userimage: userResponse.data.user_image,
             };
@@ -365,8 +365,8 @@ const AllReviewsPage = () => {
                   <div className="d-flex justify-content-between">
                     <div className="d-flex justify-content-start mx-1" style={{ marginBottom: '42px' }}>
                       <img
-                        src={review.userimage || 'https://via.placeholder.com/80'}
-                        alt={review.businessName}
+                        src={review.userimage || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg'}
+                        // alt={review.businessName}
                         className="rounded-circle img-fluid"
                         style={{ height: '70px', width: '70px', marginBottom: '-10px' }}
                       />
@@ -380,7 +380,7 @@ const AllReviewsPage = () => {
                         width="70px"
                         height="70px"
                         className="img-fluid"
-                        alt="Business"
+                        // alt="Business"
                       />
                       <p>{review.businessName}</p>
                     </div>
@@ -400,15 +400,28 @@ const AllReviewsPage = () => {
                   <p
                     className="comment mb-3"
                     style={{
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                      borderRadius: '8px',
-                      padding: '12px',
-                      backgroundColor: '#fff',
+                      backgroundColor: "#f1f1f1",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      borderLeft: "5px solid #ccc"
                     }}
                   >
                     {review.review_text}
                   </p>
-                  <div style={{ borderTop: '2px solid #e5e5dd' }}></div>
+                  {/* <blockquote
+  className="blockquote mt-2"
+  style={{
+    backgroundColor: "#f1f1f1",
+    padding: "15px",
+    borderRadius: "5px",
+    borderLeft: "5px solid #ccc"
+  }}
+>
+  <p className="mb-0" style={{ fontStyle: "italic" }}>
+    {review.review_text}
+  </p>
+</blockquote>
+                  <div style={{ borderTop: '2px solid #e5e5dd' }}></div> */}
                   <div className="d-flex justify-content-between"></div>
                   <div style={{ borderTop: '2px solid #e5e5dd' }}></div>
 
