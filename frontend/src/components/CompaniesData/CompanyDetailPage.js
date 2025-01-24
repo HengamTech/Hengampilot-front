@@ -4,10 +4,10 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
-/* --- افزوده‌های جدید برای Like, Report, AdminReply --- */
+/* --- افزوده‌های جدید برای Like, Report, AdminReply, Filter --- */
 import { Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFlag } from '@fortawesome/free-solid-svg-icons';
+import { faFlag,faReply, faUserShield  } from '@fortawesome/free-solid-svg-icons';
 
 import { API_BASE_URL } from '../config';
 
@@ -29,6 +29,13 @@ const CompanyDetailPage = () => {
   const [votes, setVotes] = useState({});
   // بررسی نقش ادمین
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // --- state های مربوط به فیلتر در فرانت‌اند ---
+  const [filterUsername, setFilterUsername] = useState("");
+  const [filterRating, setFilterRating] = useState(0); // 0 یعنی انتخاب‌نشده
+  const [filteredComments, setFilteredComments] = useState([]);
+
+  // تبدیل تاریخ میلادی به شمسی
   const toJalali = (gregorianDate) => {
     const g2j = (gYear, gMonth, gDay) => {
       const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -43,6 +50,7 @@ const CompanyDetailPage = () => {
         Math.floor((gy + 3) / 4) -
         Math.floor((gy + 99) / 100) +
         Math.floor((gy + 399) / 400);
+
       if (gm > 1 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) {
         ++gDayNo;
       }
@@ -79,8 +87,11 @@ const CompanyDetailPage = () => {
     const gDay = parseInt(parts[2], 10);
 
     const { year, month, day } = g2j(gYear, gMonth, gDay);
-    return `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+    return `${year}/${month.toString().padStart(2, '0')}/${day
+      .toString()
+      .padStart(2, '0')}`;
   };
+
   // گرفتن اطلاعات votes (برای لایک‌ها)
   const fetchVotes = async () => {
     try {
@@ -129,7 +140,6 @@ const CompanyDetailPage = () => {
       const response = await axios.get(
         `${API_BASE_URL}/business_management/businesses/reviews/`,
         {
-          // headers: { Authorization: `Bearer ${token}` },
           params: { id, ordering, search },
         }
       );
@@ -141,7 +151,6 @@ const CompanyDetailPage = () => {
         .filter(uid => !userDetails[uid])
         .map(uid => loadUserDetails(uid));
       await Promise.all(userFetchPromises);
-
     } catch (err) {
       setError("خطا در دریافت اطلاعات نظرات.");
     } finally {
@@ -169,12 +178,7 @@ const CompanyDetailPage = () => {
   const loadUserDetails = async (userId) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/user_management/users/${userId}/`,
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
+        `${API_BASE_URL}/user_management/users/${userId}/`
       );
       setUserDetails(prevDetails => ({
         ...prevDetails,
@@ -188,15 +192,41 @@ const CompanyDetailPage = () => {
     }
   };
 
-  // در اولین بار و هر بار id/order/search تغییر کرد
+  // در اولین بار و هر بار id / ordering / search تغییر کرد
   useEffect(() => {
     fetchCompany();
     fetchComments(id, ordering, search);
     fetchAdminStatus();
     fetchVotes();
-    // const intervalid = setInterval(() =>fetchComments(id,ordering,search),5000);
-    // return() => clearInterval(intervalid);
   }, [id, ordering, search]);
+
+  // هربار که comments به‌روز شود، filteredComments را هم ست می‌کنیم
+  useEffect(() => {
+    setFilteredComments(comments);
+  }, [comments]);
+
+  // تابع اعمال فیلتر
+  const applyFilter = () => {
+    let newFiltered = [...comments];
+
+    // فیلتر نام کاربری
+    if (filterUsername.trim()) {
+      newFiltered = newFiltered.filter((c) => {
+        const ud = userDetails[c.user];
+        const username = ud?.userId || "";
+        return username
+          .toLowerCase()
+          .includes(filterUsername.trim().toLowerCase());
+      });
+    }
+
+    // فیلتر امتیاز
+    if (filterRating > 0) {
+      newFiltered = newFiltered.filter((c) => Math.floor(c.rank) === filterRating);
+    }
+
+    setFilteredComments(newFiltered);
+  };
 
   // کلیک روی دکمه ثبت نظر
   const handleReviewSubmit = () => {
@@ -208,7 +238,7 @@ const CompanyDetailPage = () => {
     }
   };
 
-  // لایک کردن یک کامنت (comment)
+  // لایک کردن یک کامنت
   const handleLike = async (reviewId) => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -216,7 +246,6 @@ const CompanyDetailPage = () => {
       return;
     }
 
-    // اگر قبلا لایک کرده باشد
     if (votes[reviewId]?.includes(userId)) {
       alert('شما قبلاً به این نظر رأی داده‌اید.');
       return;
@@ -235,7 +264,6 @@ const CompanyDetailPage = () => {
           },
         }
       );
-      // بروزرسانی state votes
       setVotes((prevVotes) => ({
         ...prevVotes,
         [reviewId]: [...(prevVotes[reviewId] || []), userId],
@@ -256,13 +284,52 @@ const CompanyDetailPage = () => {
       stars.push(<FaStar key={`full-${i}`} style={{ color: "#FFD700" }} />);
     }
     if (halfStar) {
-      stars.push(<FaStarHalfAlt key="half" style={{ color: "#FFD700",transform:"rotate(138deg)", }} />);
+      stars.push(
+        <FaStarHalfAlt
+          key="half"
+          style={{ color: "#FFD700", transform: "rotate(138deg)" }}
+        />
+      );
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700"  }} />);
+      stars.push(<FaRegStar key={`empty-${i}`} style={{ color: "#FFD700" }} />);
     }
 
     return stars;
+  };
+
+  // رندر ستاره‌ها برای انتخاب امتیاز در فیلتر
+  const renderFilterStars = () => {
+    const stars = [1, 2, 3, 4, 5];
+    return (
+      <div>
+        {stars.map((starValue) => (
+          <span
+            key={starValue}
+            style={{
+              cursor: "pointer",
+              color: filterRating >= starValue ? "#FFD700" : "#ccc",
+              fontSize: "1.5rem",
+              marginLeft: "5px",
+            }}
+            onClick={() => setFilterRating(starValue)}
+          >
+            <FaStar />
+          </span>
+        ))}
+        {/* گزینه‌ای برای پاک‌کردن فیلتر امتیاز */}
+        {filterRating > 0 && (
+          <Button
+            variant="light"
+            size="sm"
+            style={{ marginRight: "10px" }}
+            onClick={() => setFilterRating(0)}
+          >
+            حذف امتیاز
+          </Button>
+        )}
+      </div>
+    );
   };
 
   if (loading) return <p>در حال بارگذاری...</p>;
@@ -285,7 +352,8 @@ const CompanyDetailPage = () => {
       <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
         بازگشت
       </button>
-      <div className="card shadow-sm border-0 rounded">
+
+      <div className="card shadow-sm border-0 rounded mb-4">
         <div className="card-header text-center bg-white">
           <img
             src={imageSrc}
@@ -294,12 +362,12 @@ const CompanyDetailPage = () => {
             style={{ width: "150px", height: "150px", objectFit: "cover" }}
           />
           <h2>{company.business_name}</h2>
-          <div style={{fontSize:"24px"}}>{renderStars(company.average_rating)}</div>
+          <div style={{ fontSize: "24px" }}>{renderStars(company.average_rating)}</div>
           <small className="text-muted">
-          میانگین   {company.average_rating?.toFixed(1)}  امتیاز | {company.total_reviews} نظر
+            میانگین {company.average_rating?.toFixed(1)} امتیاز | {company.total_reviews} نظر
           </small>
           <div>
-            <button className="btn btn-primary mt-2" onClick={handleReviewSubmit}>
+            <button className="btn btn-primary mt-2"style={{width:"150px"}} onClick={handleReviewSubmit}>
               ثبت نظر
             </button>
           </div>
@@ -307,67 +375,126 @@ const CompanyDetailPage = () => {
         <div className="card-body">
           <h4>توضیحات</h4>
           <p>{company.description}</p>
-          <h4>نظرات کاربران</h4>
-          {comments.length === 0 ? (
-            <p>هنوز هیچ نظری ثبت نشده است.</p>
+        </div>
+      </div>
+
+      {/* بخش نظرات و فیلتر در دو ستون مجزا */}
+      <div className="row">
+        {/* ستون فیلتر (سمت راست در حالت RTL) */}
+        <div className="col-md-3 mb-4">
+          <div
+            style={{
+              position: "sticky",
+              top: "80px",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "16px",
+              background: "#f9f9f9",
+            }}
+          >
+            <h5 className="mb-3">فیلتر نظرات</h5>
+
+            <div className="mb-3">
+              <label>نام کاربری:</label>
+              <input
+                type="text"
+                className="form-control"
+                value={filterUsername}
+                onChange={(e) => setFilterUsername(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>امتیاز:</label>
+              {renderFilterStars()}
+            </div>
+
+            <Button variant="primary" onClick={applyFilter}>
+              اعمال فیلتر
+            </Button>
+          </div>
+        </div>
+
+        {/* ستون نمایش نظرات (هر کامنت در یک سطر) */}
+        <div className="col-md-7">
+          <h4 className="d-flex justify-content-center mb-4">نظرات کاربران</h4>
+          {filteredComments.length === 0 ? (
+            <p>هیچ نظری برای نمایش وجود ندارد.</p>
           ) : (
             <div>
-  {comments.map((comment) => {
-    console.log('comment.hidden',comment.hidden)
-    if (comment.hidden === false) return null; // حذف کامنت‌های مخفی
+              {filteredComments.map((comment) => {
+                // اگر کامنت hidden=false باشد، آن را نشان ندهیم
+                if (comment.hidden === false) return null;
 
-    return (
-      <div key={comment.id} className="border-bottom py-3">
-        {/* تصویر و نام کاربر */}
-        <div className="d-flex align-items-center mb-2">
-          <img
-            src={
-              userDetails[comment.user]?.userimage ||
-              "https://via.placeholder.com/50"
-            }
-            alt="User"
-            width="40px"
-            className="rounded-circle me-2"
-            style={{ objectFit: "cover" }}
-          />
-          <strong>
-            {userDetails[comment.user]?.userId || "در حال بارگذاری..."}
-          </strong>
-        </div>
+                return (
+                  <div
+                    key={comment.id}
+                    className="mb-3 p-3 shadow-lg"
+                    style={{ 
+                      borderRadius: "8px", 
+                      backgroundColor: "white" 
+                    }}
+                  >
+                    {/* تصویر و نام کاربر */}
+                    <div className="d-flex align-items-start mb-2">
+                      <img
+                        src={
+                          userDetails[comment.user]?.userimage ||
+                          'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg'
+                        }
+                        width="40px"
+                        className="rounded-circle me-2"
+                        style={{ objectFit: "cover" }}
+                        alt=""
+                      />
+                      <strong>
+                        {userDetails[comment.user]?.userId || "در حال بارگذاری..."}
+                      </strong>
+                    </div>
 
-        {/* نمایش امتیاز با ستاره */}
-        <div className="mx-2">{renderStars(comment.rank)}</div>
+                    {/* نمایش امتیاز با ستاره */}
+                    <div className="mb-1">{renderStars(comment.rank)}</div>
 
-        <small className="text-muted mx-2">{toJalali(comment.created_at)}</small>
-        <p className="mx-2">{comment.review_text}</p>
+                    <small className="text-muted">{toJalali(comment.created_at)}</small>
+                    <blockquote
+  className="blockquote mt-2"
+  style={{
+    backgroundColor: "#f1f1f1",
+    padding: "15px",
+    borderRadius: "5px",
+    borderLeft: "5px solid #ccc"
+  }}
+>
+  <p className="mb-0" style={{ fontStyle: "italic" }}>
+    {comment.review_text}
+  </p>
+</blockquote>
 
-        {/* دکمه لایک */}
-        <div className="d-flex justify-content-start">
-          <LikeButton
-            reviewId={comment.id}
-            handleLike={handleLike}
-            votes={votes[comment.id]?.length || 0}
-          />
+                    {/* دکمه لایک و گزارش */}
+                    <div className="d-flex justify-content-start">
+                      <LikeButton
+                        reviewId={comment.id}
+                        handleLike={handleLike}
+                        votes={votes[comment.id]?.length || 0}
+                      />
 
-          {/* دکمه گزارش */}
-          <ReportButton
-            reviewId={comment.id}
-            reviewUserId={comment.user}
-            token={token}
-          />
-        </div>
-        
-        {/* ریپلای ادمین */}
-        <AdminReplySection
-          reviewId={comment.id}
-          token={token}
-          isAdmin={isAdmin}
-        />
-      </div>
-    );
-  })}
-</div>
+                      <ReportButton
+                        reviewId={comment.id}
+                        reviewUserId={comment.user}
+                        token={token}
+                      />
+                    </div>
 
+                    {/* ریپلای ادمین */}
+                    <AdminReplySection
+                      reviewId={comment.id}
+                      token={token}
+                      isAdmin={isAdmin}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -375,13 +502,16 @@ const CompanyDetailPage = () => {
   );
 };
 
-/* --- اجزای کمکی (LikeButton, ReportButton, AdminReplySection) مشابه نمونه دوم --- */
+/* --- اجزای کمکی (LikeButton, ReportButton, AdminReplySection) --- */
 
 // کامپوننت لایک
 const LikeButton = ({ reviewId, handleLike, votes }) => {
   return (
     <div className="like-dislike-buttons mb-2">
-      <button onClick={() => handleLike(reviewId)} className="btn transparent-bg btn-sm">
+      <button
+        onClick={() => handleLike(reviewId)}
+        className="btn transparent-bg btn-sm"
+      >
         👍 {votes}
       </button>
     </div>
@@ -433,12 +563,11 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
         style={{ marginRight: '8px' }}
       >
         <FontAwesomeIcon icon={faFlag} style={{ marginLeft: '5px' }} />
-        
       </button>
 
       <Modal dir="rtl" show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title style={{marginLeft:"70%"}}>گزارش نظر</Modal.Title>
+          <Modal.Title style={{ marginLeft: "70%" }}>گزارش نظر</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <select
@@ -463,8 +592,7 @@ const ReportButton = ({ reviewId, reviewUserId, token }) => {
             onChange={(e) => setResultReport(e.target.value)}
             className="form-select mt-2"
           >
-            {/* <option value="Unchecked">بررسی نشده</option>
-            <option value="ignore">نادیده گرفته شود</option> */}
+            <option value="Unchecked">بررسی نشده</option>
             <option value="Remove">حذف شود</option>
             <option value="UserBan">مسدود کردن کاربر</option>
           </select>
@@ -489,7 +617,7 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
   const [replies, setReplies] = useState([]);
   const [showAllReplies, setShowAllReplies] = useState(false);
 
-  // گرفتن پاسخ‌های این کامنت (reviewId)
+  // گرفتن پاسخ‌های این کامنت
   useEffect(() => {
     const fetchReplies = async () => {
       try {
@@ -543,29 +671,27 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
     }
   };
 
-  // اگر هیچ پاسخی وجود ندارد و ادمین نیست => دکمه "پاسخ‌های مدیر" هم نشان نده
-  if (replies.length === 0 && !isAdmin) {
-    return null;
-  }
-
   const toggleAllReplies = () => {
     setShowAllReplies(!showAllReplies);
   };
 
+  // اگر هیچ پاسخی وجود ندارد و ادمین نیست => هیچی نشان نده
+  if (replies.length === 0 && !isAdmin) {
+    return null;
+  }
+
   return (
     <div className="mt-2">
-      {/* اگر پاسخی وجود دارد یا ادمین است => دکمه "پاسخ‌های مدیر" نشان ده */}
       {(replies.length > 0 || isAdmin) && (
         <Button
           className="btn btn-secondary btn-sm"
           onClick={toggleAllReplies}
           style={{ marginRight: '10px' }}
         >
-          {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ‌های مدیر'}
+          {showAllReplies ? 'پنهان کردن پاسخ مدیر' :<FontAwesomeIcon icon={faUserShield} className="text-green-500 w-6 h-6" />}
         </Button>
       )}
 
-      {/* نمایش پاسخ‌های مدیر در صورت کلیک */}
       {showAllReplies && replies.length > 0 && (
         <div className="mt-2">
           <strong>پاسخ های مدیر:</strong>
@@ -588,11 +714,10 @@ const AdminReplySection = ({ reviewId, token, isAdmin }) => {
         </div>
       )}
 
-      {/* فقط ادمین می‌تواند ریپلای جدید بگذارد */}
       {isAdmin && (
         <>
           <Button variant="link" onClick={() => setShowReplyForm(!showReplyForm)}>
-            {showReplyForm ? 'بستن' : 'ریپلای'}
+            {showReplyForm ? 'بستن' :         <FontAwesomeIcon icon={faReply} className="text-blue-500 w-6 h-6" />}
           </Button>
 
           {showReplyForm && (
