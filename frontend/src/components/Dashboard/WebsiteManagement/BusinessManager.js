@@ -225,6 +225,7 @@ const BusinessManager = () => {
       </button>
 
       {businesses.length > 0 ? (
+        <div className='table-responsive'>
         <Table striped bordered hover className="text-center">
           <thead>
             <tr>
@@ -239,20 +240,20 @@ const BusinessManager = () => {
           <tbody>
             {businesses.map((biz, index) => (
               <tr key={biz.id}>
-                <td>{index + 1}</td>
-                <td>{categories[biz.business_category] || 'دسته‌بندی نامشخص'}</td>
-                <td>{biz.business_name}</td>
+                <td style={{width:"40px"}}>{index + 1}</td>
+                <td style={{width:"90px"}}>{categories[biz.business_category] || 'دسته‌بندی نامشخص'}</td>
+                <td style={{width:"90px"}}>{biz.business_name}</td>
 
                 {/* توضیحات را به شکل کلیک‌پذیر (جزئیات) در یک سلول نمایش می‌دهیم */}
-                <td
+                <td 
                   onClick={() => handleDescriptionClick(biz)}
-                  style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                  style={{ width:'70px',cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
                 >
                   مشاهده توضیحات
                 </td>
 
-                <td>{biz.website_url}</td>
-                <td>
+                <td style={{width:"60px"}}>{biz.website_url}</td>
+                <td style={{width:"20px"}}>
                   <Button
                     variant="warning"
                     size="sm"
@@ -273,6 +274,7 @@ const BusinessManager = () => {
             ))}
           </tbody>
         </Table>
+        </div>
       ) : (
         <p>هیچ بیزنسی ثبت نشده است.</p>
       )}
