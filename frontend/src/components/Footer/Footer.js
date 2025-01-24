@@ -46,7 +46,6 @@ const Footer = () => {
                 <div className="footer-section">
                     <h4>انجمن</h4>
                     <ul>
-                        <li><a href="/trust"> اطمینان به بازخورد</a></li>
                         <li><a href="login">ورود</a></li>
                         <li><a href="/signup">ثبت نام</a></li>
                     </ul>
