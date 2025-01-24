@@ -41,10 +41,10 @@ const ReviewSection = ({id}) => {
             return {
               ...review,
               name: userResponse.data.username,
-              userImage: userResponse.data.user_image || "https://via.placeholder.com/150",
+              userImage: userResponse.data.user_image || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg',
               businessName: businessResponse.data.business_name,
               businessUrl: businessResponse.data.website_url,
-              business_img: businessResponse.data.business_image,
+              business_img: businessResponse.data.business_image || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg',
             };
           })
         );
@@ -149,7 +149,7 @@ const ReviewCard = ({ review, handleReadMore }) => {
       onClick={() => handleReadMore(review.id)}
     >
       <img
-        src={review.userImage || 'https://via.placeholder.com/50'}
+        src={review.userImage || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg'}
         // alt={review.name}
         className="user-image mb-0 mx-auto d-block"
         style={{ width: "80px", height: "80px", borderRadius: "50%" }}
@@ -176,8 +176,9 @@ const ReviewCard = ({ review, handleReadMore }) => {
           {review.business_img && (
             <img
               src={review.business_img}
-              alt={review.name}
-              style={{ width: "55px", height: "55px", marginRight: "8px" }}
+              // alt={review.name}
+              style={{ width: "55px", height: "55px", marginRight: "8px",marginLeft:"-20px"
+               }}
             />
           )}
           <div className="brand2">
