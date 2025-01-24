@@ -25,3 +25,24 @@
     transition: 0.3s;
     font-size: 18px;
   }
+  @media(max-width:768px){
+  .slidebar{
+    background-color: blue;
+    top:0;
+    max-height: 72vh;
+  }
+  .bc:hover{
+    background-color: rgb(184, 182, 182);
+    }
+}
+@media(min-width:768px){
+.slidebar{
+  position: sticky;
+  top:0;
+  max-height:64vh;
+  }
+  .bc:hover{
+    background-color: rgb(184, 182, 182);
+    }
+}
+ 

@@ -371,13 +371,13 @@ const AdminDashboard = () => {
       <div className="row min-vh-100">
         {/* Sidebar */}
         <aside
-          className="col-12 col-md-3 bg-dark text-white p-3"
-          style={{
+          className="col-12 col-md-3 bg-dark text-white p-2 slidebar">
+           {/* style={{
             position: "sticky",
             top: 0,
             maxHeight: "72vh",
-          }}
-        >
+          }} */}
+        
           <div className="text-center mb-4">
             <h4>{username}</h4>
             <p>مدیر</p>
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "AdminDashboard" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("AdminDashboard")}
@@ -399,7 +399,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "usermanagement" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("usermanagement")}
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "reviewmanagementpage" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("reviewmanagementpage")}
@@ -423,7 +423,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "BusinessManager" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("BusinessManager")}
@@ -435,7 +435,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "ReportsManager" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("ReportsManager")}
@@ -447,7 +447,7 @@ const AdminDashboard = () => {
               <li className="nav-item mb-3">
                 <a
                   href="#"
-                  className={`nav-link text-white d-flex align-items-center gap-2 ${
+                  className={`bc nav-link text-white d-flex align-items-center gap-2 ${
                     activeTab === "settings" ? "bg-primary" : ""
                   }`}
                   onClick={() => setActiveTab("settings")}
@@ -459,7 +459,7 @@ const AdminDashboard = () => {
               <li className="nav-item">
                 <a
                   href="#"
-                  className="nav-link text-white d-flex align-items-center gap-2"
+                  className="bc nav-link text-white d-flex align-items-center gap-2"
                   onClick={handleLogout}
                 >
                   <FontAwesomeIcon icon={faSignOutAlt} />
