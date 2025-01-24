@@ -35,6 +35,6 @@ jobs:
 
     # مرحله 4: استقرار برنامه (Deployment)
     # - name: Deploy Application
-    #   run: |
-        echo "Deploying application..."
+      # run: |
+        # echo "Deploying application..."
         # اینجا دستورات مخصوص استقرار (deploy) را وارد کنید.
