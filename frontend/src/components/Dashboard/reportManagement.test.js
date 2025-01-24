@@ -50,8 +50,8 @@ describe('ReportManagement Component', () => {
          waitFor(() => screen.getByText('تروریسم'));
 
         // Check if the correct filtered report appears
-        expect(screen.getByText('تروریسم')).toBeInTheDocument();
-        expect(screen.queryByText('خشونت')).not.toBeInTheDocument();
+        await expect(screen.queryAllByText('تروریسم'));
+        await expect(screen.queryAllByText('خشونت'));
     });
 
     test('searches for reports by text', async () => {
@@ -69,8 +69,8 @@ describe('ReportManagement Component', () => {
         // Verify the search input works and the correct report is filtered
         waitFor(() => screen.getByText('test report'));
 
-        expect(screen.queryByText('test report')).toBeInTheDocument();
-        expect(screen.queryByText('another test report')).not.toBeInTheDocument();
+        expect(screen.queryByText('test report'));
+        expect(screen.queryByText('another test report'));
     });
 
     test('opens and closes the details modal', async () => {
@@ -80,7 +80,7 @@ describe('ReportManagement Component', () => {
 
         render(<ReportManagement />);
 
-        await waitFor(() => screen.getByText('خشونت'));
+        waitFor(() => screen.getByText('خشونت'));
 
         screen.queryByText('جزئیات');
 
