@@ -280,19 +280,19 @@ const ReviewManagementPage = () => {
           </select>
         </div>
       </div>
-
+      <div className="table-responsive">
       <table
-        className="table table-striped text-center"
-        style={{ tableLayout: "fixed", width: "100%" }}
+        className="table table-bordered table-striped text-center"
+        // style={{ tableLayout: "fixed", width: "100%" }}
       >
         <colgroup>
-          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "60px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "60px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
           <col style={{ width: "80px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "100px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-          <col style={{ width: "140px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "80px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "40px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "60px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+          <col style={{ width: "70px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
         </colgroup>
         <thead>
           <tr>
@@ -347,7 +347,7 @@ const ReviewManagementPage = () => {
           ))}
         </tbody>
       </table>
-
+      </div>
       {/* مودال نمایش جزئیات نظر */}
       <Modal show={showModal} onHide={handleCloseModal} dir="rtl">
         <Modal.Header closeButton>
