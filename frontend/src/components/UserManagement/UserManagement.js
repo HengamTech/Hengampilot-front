@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserEdit,
   faTrash,
+  faBan,
+  faUnlock,
   faCommentDots,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -15,7 +17,15 @@ const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -107,7 +117,7 @@ const UserManagement = () => {
               onChange={handleSearch}
             />
           </div>
-          <div className="card p-4">
+          <div className="table-responsive p-2">
             <h5>لیست کاربران</h5>
             <table
               className="table table-bordered table-striped mt-3 text-center"
@@ -116,15 +126,18 @@ const UserManagement = () => {
               <colgroup>
                 <col style={{ width: "50px" }} />
                 <col style={{ width: "120px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
-                <col style={{ width: "180px", wordWrap: "break-word", whiteSpace: "pre-wrap" }} />
+              {isLargeScreen  && (  <col style={{ width: "180px", wordWrap: "break-word", whiteSpace: "pre-wrap"}}  />
+              )}
                 <col style={{ width: "100px" }} />
-                <col style={{ width: "200px" }} />
+                <col style={{ width: "120px" }} />
               </colgroup>
               <thead>
                 <tr>
                   <th>ردیف</th>
                   <th>یوزرنیم</th>
+                  {isLargeScreen && (
                   <th>ایمیل</th>
+                  )}
                   <th>نقش</th>
                   <th>عملیات</th>
                 </tr>
@@ -136,9 +149,11 @@ const UserManagement = () => {
                     <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
                       {user.username}
                     </td>
-                    <td style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+                    {isLargeScreen && (
+                    <td  style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
                       {user.email}
                     </td>
+                    )}
                     <td>{user.is_admin ? "مدیر" : "کاربر معمولی"}</td>
                     <td>
                       <Link
@@ -159,11 +174,11 @@ const UserManagement = () => {
                         } mx-1`}
                         onClick={() => handleToggleBlockUser(user.id, user.is_active)}
                       >
-                        {user.is_active ? "مسدود کردن" : "رفع مسدودی"}
+                        {user.is_active ? <FontAwesomeIcon icon={faBan} className="me-2" /> :           <FontAwesomeIcon icon={faUnlock} className="me-2" />}
                       </button>
                       <Link
                         to={`/UserReview/${user.id}`}
-                        className="btn btn-sm btn-primary mx-1"
+                        className="btn btn-sm btn-primary"
                       >
                         <FontAwesomeIcon icon={faCommentDots} />
                       </Link>
