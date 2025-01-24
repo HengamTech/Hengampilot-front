@@ -39,7 +39,7 @@
 .slidebar{
   position: sticky;
   top:0;
-  max-height:64vh;
+  max-height:70vh;
   }
   .bc:hover{
     background-color: rgb(184, 182, 182);
