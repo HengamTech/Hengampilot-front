@@ -7,7 +7,7 @@ const NotFoundPage = () => {
         <div style={styles.container}>
             <div style={styles.imageContainer}>
                 <img
-                    src="https://files.oaiusercontent.com/file-L6qXdLuUVXPszTz5RDEpBv?se=2024-12-11T11%3A16%3A12Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D51bc79bb-55a9-4ae1-87e8-2c1133c5c49b.webp&sig=zbo2me3JQpMVpXxbbwxptC6w1y7HlUCrtrDL5XEpA%2BY%3D"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyXC1MU3X0FQjZ3upsCGU0U2IMFYhmnHRJOg&s"
                     alt="Page not found"
                     style={styles.image}
                 />

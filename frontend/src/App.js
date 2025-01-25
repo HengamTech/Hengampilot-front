@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+import './assets/fonts/global.css';
+
 import Navbar from './components/Navbar';
 import Footer from './components/Footer/Footer';
 import LoginPage from './components/Login/loginForm';

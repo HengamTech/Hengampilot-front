@@ -1,5 +1,6 @@
 import React from 'react';
 import './Footer.css';
+import '../../assets/fonts/global.css';
 import { FaInstagram, FaYoutube, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import Logo from './Logo1.png';
 import { useNavigate } from "react-router-dom";
