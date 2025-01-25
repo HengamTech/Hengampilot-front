@@ -34,7 +34,12 @@ jobs:
         tags: alirezabg18/hengampilotfinal1:latest
 
     # مرحله 4: استقرار برنامه (Deployment)
-    # - name: Deploy Application
-      # run: |
-        # echo "Deploying application..."
-        # اینجا دستورات مخصوص استقرار (deploy) را وارد کنید.
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 188.121.99.72 >> ~/.ssh/known_hosts
+    - name: Deploy to Server
+      run: |
+        ssh ubuntu@188.121.99.72 "cd /path/to/project && git pull && ./deploy-script.sh"
