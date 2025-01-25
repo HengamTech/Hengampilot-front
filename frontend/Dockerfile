@@ -5,7 +5,7 @@ FROM node:18 AS build
 WORKDIR /app
 
 # Copy package.json and package-lock.json to the working directory
-COPY ./package.json ./package-lock.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install --unsafe-perm=true
@@ -24,6 +24,9 @@ FROM nginx:alpine
 
 # Copy the build artifacts to the NGINX directory
 COPY --from=build /app/build /usr/share/nginx/html
+
+# Copy the custom NGINX configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the default HTTP port
 EXPOSE 80
