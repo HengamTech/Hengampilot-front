@@ -5,6 +5,7 @@ import Logo from "./Logo1.png";
 import { ListGroup } from "react-bootstrap";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
+import '../assets/fonts/global.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,

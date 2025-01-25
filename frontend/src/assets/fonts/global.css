@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'KA_Razan';
+    src: url('Estedad-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Estedad-Regular', sans-serif;
+}
