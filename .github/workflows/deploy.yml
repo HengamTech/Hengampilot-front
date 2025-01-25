@@ -41,10 +41,10 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 188.121.99.72 >> ~/.ssh/known_hosts
     - name: Debug SSH Setup
-        run: |
+      run: |
         ls -la ~/.ssh
         cat ~/.ssh/known_hosts
         ssh -vvv ubuntu@188.121.99.72 "exit"  
     - name: Deploy to Server
-        run: |
+      run: |
         ssh ubuntu@188.121.99.72 "cd /path/to/project && git pull && ./deploy-script.sh"
