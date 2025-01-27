@@ -39,12 +39,12 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 188.121.99.72 >> ~/.ssh/known_hosts
+        ssh-keyscan -H 5.34.193.179 >> ~/.ssh/known_hosts
     - name: Debug SSH Setup
       run: |
         ls -la ~/.ssh
         cat ~/.ssh/known_hosts
-    #     ssh -vvv ubuntu@188.121.99.72 "exit"  
+        ssh -vvv ubuntu@5.34.193.179 "exit"  
     # - name: Deploy to Server
     #   run: |
     #     ssh ubuntu@188.121.99.72 "cd /path/to/project && git pull && ./deploy-script.sh"
