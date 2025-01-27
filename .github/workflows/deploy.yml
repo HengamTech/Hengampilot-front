@@ -44,7 +44,7 @@ jobs:
       run: |
         ls -la ~/.ssh
         cat ~/.ssh/known_hosts
-       # ssh -vvv ubuntu@5.34.193.179 "exit"  
-    # - name: Deploy to Server
-    #   run: |
-    #     ssh ubuntu@188.121.99.72 "cd /path/to/project && git pull && ./deploy-script.sh"
+        ssh -vvv ubuntu@5.34.193.179 "exit"  
+    - name: Deploy to Server
+      run: |
+        ssh ubuntu@5.34.193.179 "cd /path/to/project && git pull && ./deploy-script.sh"
