@@ -74,21 +74,31 @@ function Navbar() {
   // تابع کمکی برای گرفتن عکس پروفایل (و سایر اطلاعات کاربر)
   const fetchUserProfile = async (userId) => {
     if (!userId) return; // اگر userId نباشد، بی‌فایده است
-
+  
     try {
       // درخواست به اندپوینت user_management
       const response = await axios.get(
         `${API_BASE_URL}/user_management/users/${userId}/`
       );
-      setUserrole(response.data.is_admin);
-      // فرض بر این است که فیلد user_image آدرس عکس کاربر باشد
-      if (response.data.user_image) {
-        setUserImage(response.data.user_image);
+  
+      // بررسی وضعیت is_active کاربر
+      if (Boolean(response.data.is_active) === false) {
+        handleLogout(); // اگر کاربر غیرفعال است، لاگ‌اوت کن
       } else {
-        setUserImage(null); 
+        setUserrole(response.data.is_admin);
+        // فرض بر این است که فیلد user_image آدرس عکس کاربر باشد
+        if (response.data.user_image) {
+          setUserImage(response.data.user_image);
+        } else {
+          setUserImage(null);
+        }
       }
     } catch (error) {
       console.error("خطا در دریافت پروفایل کاربر:", error);
+      // اگر خطای 401 با پیام User is inactive دریافت شد، کاربر را لاگ‌اوت کنید
+      if (error.response && error.response.status === 401 && error.response.data.detail === "User is inactive") {
+        handleLogout(); // فراخوانی تابع لاگ‌اوت
+      }
     }
   };
   const handlecategory = () =>{

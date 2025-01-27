@@ -49,7 +49,10 @@ const UserDashboard = () => {
             } catch (err) {
                 // در صورت بروز خطا، نوع آن را بررسی کرده و پیام مناسب نمایش می‌دهیم
                 if (err.response) {
-                    setError(`خطا: ${err.response.status} - ${err.response.data.detail || "خطای ناشناخته"}`);
+                    if (err.response.status === 401 && err.response.data.detail === "User is inactive") {
+                        navigate('/notfound'); // هدایت به صفحه NotFoundPage
+                    } else {    
+                    setError(`خطا: ${err.response.status} - ${err.response.data.detail || "خطای ناشناخته"}`);}
                 } else if (err.request) {
                     setError("پاسخی از سمت سرور دریافت نشد. لطفا اتصال اینترنت خود را بررسی کنید.");
                 } else {
