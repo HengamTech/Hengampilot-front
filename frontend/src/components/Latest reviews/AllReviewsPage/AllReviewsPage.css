@@ -25,7 +25,12 @@
   gap: 20px; /* فاصله بین کارت‌ها */
   padding-bottom: 20px;
 }
-
+@media(min-width:768px){
+  .bl{
+    position :sticky;
+    top :0;
+  }
+}
 .review-card1 {
   background-color: #f9f9f9;
   padding: 2px;
