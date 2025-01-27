@@ -95,7 +95,7 @@ const ReviewDetailPage = () => {
             setReview({
               ...data,
               name: userResponse.data.username,
-              userImage: userResponse.data.user_image || img,
+              userImage: userResponse.data.user_image || 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg',
               businessName:businessResponse.data.business_name,
               businessUrl:businessResponse.data.website_url
             });
