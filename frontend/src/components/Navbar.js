@@ -241,12 +241,13 @@ function Navbar() {
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    <div>
-                      <strong>{biz.business_name}</strong>
-                      <br />
+                    <div className="d-flex justify-content-between align-items-center">
                       <small className="text-muted">
                         {biz.website_url || "بدون آدرس وب‌سایت"}
                       </small>
+                      <br/>
+                      <strong>{biz.business_name}<span><img src={biz.business_image}width="40px"></img></span></strong>
+
                     </div>
                   </ListGroup.Item>
                 ))}
@@ -284,7 +285,7 @@ function Navbar() {
                 {userImage ? (
                   <img
                     src={userImage}
-                    alt="User Avatar"
+                    // alt="User Avatar"
                     style={{
                       width: "50px",
                       height: "50px",
