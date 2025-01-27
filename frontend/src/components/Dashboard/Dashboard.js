@@ -102,8 +102,8 @@ const UserDashboard = () => {
                 <aside className="col-12 col-md-3 bg-dark text-white p-3">
                     <div className="text-center mb-4">
                         <img
-                            src={`${API_BASE_URL}${userData.user_image}`}
-                            alt="User"
+                            src={userData?.user_image ?`${API_BASE_URL}${userData.user_image}` : 'https://t4.ftcdn.net/jpg/01/86/29/31/360_F_186293166_P4yk3uXQBDapbDFlR17ivpM6B1ux0fHG.jpg'}
+                            // alt="User"
                             width="70px"
                             className="rounded-circle mb-2"
                         />
