@@ -268,25 +268,21 @@ const AllReviewsPage = () => {
     if (totalPages <= 1) return null;
 
     return (
-      <div className="pagination mt-3 d-flex justify-content-center">
-        <button
-          className="btn btn-secondary btn-sm me-2"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-        >
-          قبلی
-        </button>
-        <span>
-          صفحه {currentPage} از {totalPages}
-        </span>
-        <button
-          className="btn btn-secondary btn-sm ms-2"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-        >
-          بعدی
-        </button>
-      </div>
+      <div className="d-flex justify-content-center align-items-center">
+  {Array.from({ length: totalPages }, (_, index) => {
+    const page = index + 1;
+    return (
+      <button
+        key={page}
+        className={`btn btn-lg me-1 ms-1 ${page === currentPage ? 'btn-primary' : 'btn-secondary'}`}
+        onClick={() => onPageChange(page)}
+      >
+        {page}
+      </button>
+    );
+  })}
+</div>
+
     );
   };
 
@@ -296,12 +292,13 @@ const AllReviewsPage = () => {
 
       <div className="row" dir="rtl">
         <aside
-          className="col-md-3 shadow p-3 mb-3 bg-white rounded h-100"
+          className="bl col-md-3 shadow p-3 mb-3 bg-white rounded h-100"
           dir="rtl"
           style={{
             padding: '10px',
             boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
             backgroundColor: '#FFFDF5',
+           
           }}
         >
           <h5>فیلترها</h5>
@@ -353,7 +350,7 @@ const AllReviewsPage = () => {
         </aside>
 
         {/* لیست نظرات */}
-        <div className="col col-md-6">
+        <div className="col col-md-6 mx-4">
           {/* 
             به جای filteredReviews.map(...)، 
             از getPaginatedReviews() برای صفحه‌بندی استفاده می‌کنیم 
@@ -450,7 +447,6 @@ const AllReviewsPage = () => {
         onPageChange={setCurrentPage}
       />
       <div>
-        <h1>sakam</h1>
       </div>
     </div>
   );
