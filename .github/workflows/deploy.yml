@@ -39,12 +39,14 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
         ssh-keyscan -H 5.34.193.179 >> ~/.ssh/known_hosts
-    # - name: Debug SSH Setup
-    #   run: |
-    #     ls -la ~/.ssh
-    #     cat ~/.ssh/known_hosts
-    #     ssh -vvv ubuntu@5.34.193.179 "exit"  
+    - name: Debug SSH Setup
+      run: |
+        ls -la ~/.ssh
+        cat ~/.ssh/known_hosts
+        ssh -vvv ubuntu@5.34.193.179 "exit"  
     - name: Deploy to Server
       run: |
         ssh ubuntu@5.34.193.179 "cd /path/to/project && git pull && ./deploy-script.sh"
