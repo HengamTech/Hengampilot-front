@@ -34,12 +34,12 @@ jobs:
         tags: alirezabg18/hengampilotfinal1:latest
 
     # مرحله 4: استقرار برنامه (Deployment)
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 188.121.99.72 >> ~/.ssh/known_hosts
+    # - name: Set up SSH
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H 188.121.99.72 >> ~/.ssh/known_hosts
     # - name: Debug SSH Setup
     #   run: |
     #     ls -la ~/.ssh
