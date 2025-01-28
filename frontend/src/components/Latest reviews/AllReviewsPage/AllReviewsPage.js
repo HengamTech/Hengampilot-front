@@ -4,7 +4,7 @@ import './AllReviewsPage.css';
 import axios from 'axios';
 import img from './noon.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV, faFlag } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faFlag , faReply , faUserShield } from '@fortawesome/free-solid-svg-icons';
 
 import { API_BASE_URL } from '../../config';
 
@@ -676,7 +676,7 @@ const AdminReplySection = ({ reviewId, token }) => {
           style={{ marginLeft: '10px' }}
           onClick={toggleAllReplies}
         >
-          {showAllReplies ? 'پنهان کردن پاسخ مدیر' : 'پاسخ های مدیر'}
+          {showAllReplies ? 'پنهان کردن پاسخ مدیر' : <FontAwesomeIcon icon={faUserShield} className="text-green-500 w-6 h-6" />}
         </Button>
       )}
 
@@ -703,7 +703,7 @@ const AdminReplySection = ({ reviewId, token }) => {
       {isAdmin && (
         <>
           <Button className="btn btn-success btn-sm" onClick={() => setShowReplyForm(!showReplyForm)}>
-            {showReplyForm ? 'بستن' : 'ریپلای'}
+            {showReplyForm ? 'بستن' :  <FontAwesomeIcon icon={faReply} className="text-blue-500 w-6 h-6" />}
           </Button>
 
           {showReplyForm && (
