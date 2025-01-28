@@ -174,7 +174,7 @@ const Companylistbycategory1 = () => {
               </div>
             </div>
 
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="form-label">وضعیت شرکت</label>
               <div className="form-check">
                 <input
@@ -188,7 +188,7 @@ const Companylistbycategory1 = () => {
                   تایید شده
                 </label>
               </div>
-            </div>
+            </div> */}
 
             <button data-testid="applyF" className="btn btn-primary w-100" onClick={applyFilters}>
               اعمال فیلتر
