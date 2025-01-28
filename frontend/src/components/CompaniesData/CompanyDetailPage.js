@@ -472,7 +472,7 @@ const CompanyDetailPage = () => {
 </blockquote>
 
                     {/* دکمه لایک و گزارش */}
-                    <div className="d-flex justify-content-start">
+                    <div className="d-flex justify-content-between">
                       <LikeButton
                         reviewId={comment.id}
                         handleLike={handleLike}
