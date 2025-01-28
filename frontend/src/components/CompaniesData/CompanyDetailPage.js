@@ -384,12 +384,13 @@ const CompanyDetailPage = () => {
         <div className="col-md-3 mb-4">
           <div
             style={{
+              padding: '10px',
               position: "sticky",
               top: "80px",
-              border: "1px solid #ccc",
+              boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
               borderRadius: "8px",
-              padding: "16px",
-              background: "#f9f9f9",
+              backgroundColor: 'white',
+             
             }}
           >
             <h5 className="mb-3">فیلتر نظرات</h5>
@@ -409,7 +410,7 @@ const CompanyDetailPage = () => {
               {renderFilterStars()}
             </div>
 
-            <Button variant="primary" onClick={applyFilter}>
+            <Button className="w-100" variant="primary" onClick={applyFilter}>
               اعمال فیلتر
             </Button>
           </div>
