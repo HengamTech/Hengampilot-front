@@ -161,7 +161,7 @@ const SettingsPage = () => {
                   <Form.Label>نام دسته‌بندی جدید</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="مثلاً غذای دریایی"
+                    placeholder="نام دسته بندی"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
                   />
