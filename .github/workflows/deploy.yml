@@ -3,7 +3,7 @@ name: Continuous Deployment
 on:
   push:
     branches:
-      - main # این workflow روی شاخه main اجرا می‌شود
+      - main
   pull_request:
     branches:
       - main
@@ -25,7 +25,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # مرحله 3: ساخت Docker Image و ارسال به DockerHub
+    # مرحله 3: ساخت و ارسال Docker Image به DockerHub
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
@@ -33,7 +33,7 @@ jobs:
         push: true
         tags: alirezabg18/hengampilotfinal1:latest
 
-    # مرحله 4: استقرار برنامه (Deployment)
+    # مرحله 4: استقرار برنامه روی سرور
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
@@ -46,22 +46,25 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh ubuntu@188.121.111.56 << 'EOF'
-          # set -e  # اگر خطایی رخ دهد، اجرای دستورات متوقف می‌شود
+          set -e  # متوقف کردن اسکریپت در صورت بروز خطا
           cd Hengampilot-front/frontend || { echo "Error: Directory not found!"; exit 1; }
           git stash
           git pull
 
-          # حذف کانتینر قدیمی در صورت وجود
-          sudo docker stop frontend || true
-          sudo docker rm -f forntend || true
-          sudo docker rmi alirezabg18/hengampilotfinal1:latest || true
+          # ورود به DockerHub روی سرور
+          echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-          # اجرای Docker
-          uses: docker/login-action@v2
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+          # بررسی و حذف کانتینر قبلی در صورت وجود
+          if [ "$(sudo docker ps -aq -f name=frontend)" ]; then
+            echo "Stopping and removing existing container..."
+            sudo docker stop frontend || true
+            sudo docker rm -f frontend || true
+          fi
 
-          sudo docker pull alirezabg18/hengampilotfinal1:latest
-          sudo docker run -d --name frontend -p 3000:3000 alirezabg18/hengampilotfinal1:latest
+          # حذف ایمیج قدیمی
+          sudo docker rmi -f alirezabg18/hengampilotfinal1:latest || true
+
+          # دانلود و اجرای ایمیج جدید از DockerHub
+          docker pull alirezabg18/hengampilotfinal1:latest
+          docker run -d --name frontend -p 3000:3000 alirezabg18/hengampilotfinal1:latest
         EOF
