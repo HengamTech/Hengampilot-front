@@ -58,4 +58,4 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh ubuntu@188.121.111.56 "cd /path/to/project && git pull && ./deploy-script.sh"
+        ssh ubuntu@188.121.111.56 "cd Hengampilot-front/frontend && git pull && ./deploy-script.sh"
