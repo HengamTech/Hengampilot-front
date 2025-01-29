@@ -18,14 +18,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # مرحله 2: لاگین به DockerHub (اگر از Docker استفاده می‌کنید)
+    # مرحله 2: لاگین به DockerHub
     - name: Log in to DockerHub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # مرحله 3: ساخت Docker Image
+    # مرحله 3: ساخت Docker Image و ارسال به DockerHub
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
@@ -46,8 +46,17 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh ubuntu@188.121.111.56 << 'EOF'
-          cd Hengampilot-front/frontend
+          set -e  # اگر خطایی رخ دهد، اجرای دستورات متوقف می‌شود
+          cd Hengampilot-front/frontend || { echo "Error: Directory not found!"; exit 1; }
           git stash
           git pull
-          ./deploy-script.sh
+
+          # حذف کانتینر قدیمی در صورت وجود
+          docker stop hengampilot-container || true
+          docker rm hengampilot-container || true
+          docker rmi alirezabg18/hengampilotfinal1:latest || true
+
+          # اجرای Docker
+          docker pull alirezabg18/hengampilotfinal1:latest
+          docker run -d --name hengampilot-container -p 80:80 alirezabg18/hengampilotfinal1:latest
         EOF
