@@ -53,7 +53,7 @@ jobs:
 
           # حذف کانتینر قدیمی در صورت وجود
           sudo docker stop frontend || true
-          sudo docker rm forntend || true
+          sudo docker rm -f forntend || true
           sudo docker rmi alirezabg18/hengampilotfinal1:latest || true
 
           # اجرای Docker
