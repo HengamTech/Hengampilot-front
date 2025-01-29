@@ -52,11 +52,11 @@ jobs:
           git pull
 
           # حذف کانتینر قدیمی در صورت وجود
-          docker stop hengampilot-container || true
-          docker rm hengampilot-container || true
-          docker rmi alirezabg18/hengampilotfinal1:latest || true
+          sudo docker stop frontend || true
+          sudo docker rm forntend || true
+          sudo docker rmi alirezabg18/hengampilotfinal1:latest || true
 
           # اجرای Docker
-          docker pull alirezabg18/hengampilotfinal1:latest
-          docker run -d --name hengampilot-container -p 80:80 alirezabg18/hengampilotfinal1:latest
+          sudo docker pull alirezabg18/hengampilotfinal1:latest
+          sudo docker run -d --name frontend -p 3000:3000 alirezabg18/hengampilotfinal1:latest
         EOF
