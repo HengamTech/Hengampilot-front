@@ -39,23 +39,15 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-    
-         # Generate a public key from the private key
-        ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
-    
-        # Check the fingerprint of the public key
-        ssh-keygen -l -f ~/.ssh/id_rsa.pub
-
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/id_rsa
         ssh-keyscan -H 188.121.111.56 >> ~/.ssh/known_hosts
-    - name: Debug SSH Setup
-      run: |
-        ls -la ~/.ssh
-        cat ~/.ssh/id_rsa
-        cat ~/.ssh/known_hosts
-        ssh -vvv ubuntu@188.121.111.56 "exit"
 
     - name: Deploy to Server
       run: |
-        ssh ubuntu@188.121.111.56 "cd Hengampilot-front/frontend && git pull && ./deploy-script.sh"
+        ssh ubuntu@188.121.111.56 << 'EOF'
+          cd Hengampilot-front/frontend
+          git stash
+          git pull
+          ./deploy-script.sh
+        EOF
