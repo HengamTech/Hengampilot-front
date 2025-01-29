@@ -34,28 +34,28 @@ jobs:
         tags: alirezabg18/hengampilotfinal1:latest
 
     # مرحله 4: استقرار برنامه (Deployment)
-    # - name: Set up SSH
-    #   run: |
-    #     mkdir -p ~/.ssh
-    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-    #     chmod 600 ~/.ssh/id_rsa
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
     
-    #      # Generate a public key from the private key
-    #     ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+         # Generate a public key from the private key
+        ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
     
-    #     # Check the fingerprint of the public key
-    #     ssh-keygen -l -f ~/.ssh/id_rsa.pub
+        # Check the fingerprint of the public key
+        ssh-keygen -l -f ~/.ssh/id_rsa.pub
 
-    #     eval "$(ssh-agent -s)"
-    #     ssh-add ~/.ssh/id_rsa
-    #     ssh-keyscan -H 188.121.111.56 >> ~/.ssh/known_hosts
-    # - name: Debug SSH Setup
-    #   run: |
-    #     ls -la ~/.ssh
-    #     cat ~/.ssh/id_rsa
-    #     cat ~/.ssh/known_hosts
-    #     ssh -vvv ubuntu@188.121.111.56 "exit"
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        ssh-keyscan -H 188.121.111.56 >> ~/.ssh/known_hosts
+    - name: Debug SSH Setup
+      run: |
+        ls -la ~/.ssh
+        cat ~/.ssh/id_rsa
+        cat ~/.ssh/known_hosts
+        ssh -vvv ubuntu@188.121.111.56 "exit"
 
-    # - name: Deploy to Server
-    #   run: |
-    #     ssh ubuntu@188.121.111.56 "cd /path/to/project && git pull && ./deploy-script.sh"
+    - name: Deploy to Server
+      run: |
+        ssh ubuntu@188.121.111.56 "cd /path/to/project && git pull && ./deploy-script.sh"
